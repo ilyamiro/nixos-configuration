@@ -106,7 +106,7 @@
 
   qt = {
     enable = true;
-    style = "adwaita-dark";
+    style = "adwaita";
     platformTheme = "gnome";
   };
 
@@ -140,7 +140,8 @@
     hunspellDicts.en_US
     obsidian
     obs-studio
-    gnome-tweaks
+    gnome-themes-extra
+    fastfetch
   ];
 
   environment.variables.XDG_DATA_DIRS = lib.mkForce "/home/your_user/.nix-profile/share:/run/current-system/sw/share";
@@ -162,15 +163,9 @@
   
   # little optimizations
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
   hardware.cpu.amd.updateMicrocode = true;
-  boot.kernelParams = [ "amd_pstate=active" "tsc=reliable" "asus-wmi" "asus-nb-wmi" ]; 
+  boot.kernelParams = [ "amd_pstate=active" "tsc=reliable" "asus_wmi"]; 
   powerManagement.cpuFreqGovernor = "schedutil";
-
-  services.udev.extraRules = ''
-  ACTION=="add", SUBSYSTEM=="leds", KERNEL=="asus::kbd_backlight", \
-    TAG+="power-switch"
-  '';
 
   security.sudo.extraRules = [
     {

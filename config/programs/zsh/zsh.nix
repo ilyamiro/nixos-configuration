@@ -19,6 +19,7 @@
       edconf = "sudo -E nvim /etc/nixos/configuration.nix";
     };
 
+   
     oh-my-zsh = {
         enable = true;
         plugins = [
@@ -29,4 +30,6 @@
   };
 
 }
+
+
 

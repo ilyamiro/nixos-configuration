@@ -1,0 +1,65 @@
+[Plymouth Theme]
+Name=simple
+Description=Fedora boot animation, inspired by the Boot animation of macOS.
+ModuleName=two-step
+
+[two-step]
+Font=Cantarell 12
+TitleFont=Cantarell Light 30
+ImageDir=/usr/share/plymouth/themes/simple/resources
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.5
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.4
+HorizontalAlignment=.5
+VerticalAlignment=.5
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.98
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+ProgressBarHorizontalAlignment=.5
+ProgressBarVerticalAlignment=.6
+ProgressBarWidth=550
+ProgressBarHeight=2
+ProgressBarBackgroundColor=0x333333
+ProgressBarForegroundColor=0x51a2da
+DialogClearsFirmwareBackground=true
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=true
+UseFirmwareBackground=false
+
+[shutdown]
+UseEndAnimation=true
+UseFirmwareBackground=false
+
+[reboot]
+UseEndAnimation=true
+UseFirmwareBackground=false
+
+[updates]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Updating...
+SubTitle=Do not turn off your computer.
+
+[system-upgrade]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Upgrading...
+SubTitle=D not turn off your computer.
+
+[firmware-upgrade]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Upgrading firmware...
+SubTitle=Do not turn off your computer.
