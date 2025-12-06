@@ -106,7 +106,7 @@
 
   qt = {
     enable = true;
-    style = "adwaita";
+    style = "adwaita-dark";
     platformTheme = "gnome";
   };
 
@@ -116,7 +116,6 @@
       settings = with lib.gvariant; {
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
-          gtk-theme = "adw-gtk3-dark";
         };
       };
     }];
@@ -142,6 +141,13 @@
     obs-studio
     gnome-themes-extra
     fastfetch
+    gnome-shell-extensions
+  ];
+
+  fonts.packages = with pkgs; [
+    udev-gothic-nf
+    noto-fonts
+    liberation_ttf
   ];
 
   environment.variables.XDG_DATA_DIRS = lib.mkForce "/home/your_user/.nix-profile/share:/run/current-system/sw/share";

@@ -2,8 +2,12 @@
 
 {
   imports = [
-    ./config/programs/zsh/zsh.nix
-    ./config/programs/neovim/neovim.nix
+    # programs
+    ./config/programs/zsh/default.nix
+    ./config/programs/neovim/default.nix
+    ./config/programs/waybar/default.nix
+
+    # sessions
     ./config/sessions/hyprland/default.nix
   ]; 
 
