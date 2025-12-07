@@ -1,0 +1,359 @@
+/*Catpuccin colors*/
+@define-color base   #1E1D2E;
+@define-color mantle #181825;
+@define-color crust  #11111b;
+
+@define-color text     #cdd6f4;
+@define-color subtext0 #a6adc8;
+@define-color subtext1 #bac2de;
+
+@define-color surface0 #313244;
+@define-color surface1 #45475a;
+@define-color surface2 #585b70;
+
+@define-color overlay0 #6c7086;
+@define-color overlay1 #7f849c;
+@define-color overlay2 #9399b2;
+
+@define-color blue      #89b4fa;
+@define-color lavender  #b4befe;
+@define-color sapphire  #74c7ec;
+@define-color sky       #89dceb;
+@define-color teal      #94e2d5;
+@define-color green     #a6e3a1;
+@define-color yellow    #f9e2af;
+@define-color peach     #fab387;
+@define-color maroon    #eba0ac;
+@define-color red       #f38ba8;
+@define-color mauve     #cba6f7;
+@define-color pink      #f5c2e7;
+@define-color flamingo  #f2cdcd;
+@define-color rosewater #f5e0dc;
+
+
+@define-color first #f6c0d0;
+@define-color second #d0a5c0;
+@define-color third #8e7c93;
+@define-color forth #485665;
+@define-color back #1e3231;
+
+
+#waybar {
+    background-color: transparent;
+    color: @text;
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 16px;
+    border-radius: 2px; 
+    margin: 0px;
+    margin-top: 0px;
+    padding: 0px;
+    /*border-bottom: 1px solid @surface0; */
+}
+
+hyprland#window{
+  color: @text;
+  background-color: @text;
+}
+
+window#waybar {
+  transition-property: background-color;
+  transition-duration: 0.5s;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+/* Space first and last modules evenly */
+.modules-right:last-child { margin-right: 12px; }
+.modules-left:first-child { margin-left: 12px;}
+
+/* Make all the NF icons bigger */
+#battery,
+#sys-info,
+#pulseaudio,
+#backlight,
+#custom-power
+{
+    font-size: 14px;
+}
+
+
+#custom-power {
+	font-size: 19px;
+	margin-top: 8px;
+  margin-left: 6px;
+  margin-bottom: 8px;
+	padding-left: 10px;
+	padding-right: 5px;
+	border-radius: 4px;
+	transition: none;
+	color: #FF8225;
+	background: @first;
+}
+
+
+/* Styling workspace */
+#workspaces,
+#workspaces button{
+    /* border: 1px solid red; */
+    all: unset;
+}
+#workspaces {
+    /*background-color: @mantle; */
+    margin: 0px 6px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: #363a4f;
+}
+
+#workspaces > button { 
+    padding: 0px 15px 0px 10px; 
+    font-weight: 900;
+    border-radius: 0px;
+    color: #F8EDED;
+}
+#workspaces > button.empty {
+    color: @overlay0;
+    /* border: 1px solid red; */
+}
+#workspaces > button.visible {
+    color: @overlay0;
+    /* border: 1px solid red; */
+}
+#workspaces > button.active {
+    color: #FF8225;
+    background: alpha(@forth, 0.1);
+    border-bottom: 1px solid @overlay0; 
+}
+#workspaces > button:hover { 
+    background: alpha(#4C3BCF, 0.01);
+    color: #4C3BCF;
+}
+#workspaces > button:first-child {
+    border-radius: 8px 0px 0px 8px;
+    padding-left: 14px;
+}
+#workspaces > button:last-child {
+    border-radius: 0px 8px 8px 0px;
+    padding-right: 20px;
+}
+
+
+
+/* Styling tooltips */
+tooltip {
+    padding: 15px;
+    background-color: @base;
+    color: @overlay0;
+    font-family: Space Mono Nerd Font;
+    font-size: 12px;
+}
+
+tooltip label {
+    padding: 10px;
+    color: @foreground;
+}
+
+label:focus {
+    background-color: @background;
+}
+
+.sys-info{ 
+	font-size: 11px;
+}
+
+#temperature, 
+#memory,
+#cpu, 
+#disk{
+  padding: 8px;
+  margin-left: 4px;
+}
+
+
+#custom-separator.line{
+  color: @blue;
+}
+
+#custom-separator.dot{
+  color: @blue;
+  margin-right: 10px;
+  margin-left: 6px;
+}
+
+#pulseaudio {
+	margin-top: 8px;
+  margin-right: 6px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+	color: white;
+	background-color: @third;
+}
+
+
+@keyframes blink {
+    to {
+        background-color: #BF616A;
+        color: #B5E8E0;
+    }
+}
+
+
+#tray {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-right: 6px;
+	padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 4px;
+  transition: none; 
+  border-radius: 4px;
+  background: #363a4f;
+}
+
+#clock {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-right: 6px;
+	padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 4px;
+  transition: none; 
+  border-radius: 4px;
+  color: white;
+  background:  @third;
+}
+
+#custom-swaync{
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-right: 6px;
+  margin-left: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 4px;
+  color: white;
+  background: @second;
+}
+
+#backlight {
+	margin-top: 8px;
+  margin-right: 6px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background: @forth;
+}
+
+#custom-update{
+  margin-top: 8px;
+	padding-left: 10px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background: @first;
+}
+
+#memory {
+	margin-top: 8px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background:  #363a4f;
+}
+#cpu {
+	margin-top: 8px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background:  #363a4f;
+}
+#custom-keyboard {
+	margin-top: 8px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+  padding-left: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background:  @second;
+}
+#disk {
+	margin-top: 8px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background:  #363a4f;
+}
+#temperature {
+	margin-top: 8px;
+	margin-left: 8px;
+	padding-left: 10px;
+	margin-bottom: 8px;
+	padding-right: 10px;
+	border-radius: 4px;
+	transition: none;
+	color: white;
+	background:  #363a4f;
+}
+
+#battery {
+	margin-top: 8px;
+	padding-left: 10px;
+	padding-right: 10px;
+  margin-right: 6px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+	transition: none;
+  font-size: 14.5px;
+	color: #88D66C;
+	background-color: @back;
+}
+
+#power-profiles-daemon{
+	margin-top: 8px;
+	padding-left: 10px;
+	padding-right: 13px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+	color: white;
+	background: #babbf1;
+}
+
+#battery.charging, #battery.plugged {
+	color: #06D001;
+  background-color: @back;
+}
+
+#battery.critical:not(.charging) {
+    background-color: #C80036;
+    color: #161320;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+
+

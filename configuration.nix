@@ -142,6 +142,11 @@
     gnome-themes-extra
     fastfetch
     gnome-shell-extensions
+    grim
+    playerctl
+    eww
+    gnome-tweaks
+    pkgsCross.mingwW64.stdenv.cc
   ];
 
   fonts.packages = with pkgs; [

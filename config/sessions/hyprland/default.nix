@@ -5,6 +5,7 @@
     ./binds.nix
     ./autostart.nix
     ./animations.nix
+    ./monitors.nix
   ];
 
   wayland.windowManager.hyprland.enable = true;

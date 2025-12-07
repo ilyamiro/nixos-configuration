@@ -3,6 +3,7 @@
 {
   imports = [
     ./modules.nix
+    ./style/style.nix
   ];
   programs.waybar.enable = true;
 
@@ -18,10 +19,9 @@
 
     modules-left = [
       "battery"
-      # "clock"
-      # "custom/swaync"
-      # "hyprland/workspaces"
-      # "custom/playerctl"
+      "clock"
+      "hyprland/workspaces"
+      "custom/playerctl"
     ];
     modules-center = [
       # "hyprland/window"

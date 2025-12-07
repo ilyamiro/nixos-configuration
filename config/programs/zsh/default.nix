@@ -11,6 +11,13 @@
     history.path = "$HOME/.zsh_history";
     history.ignoreAllDups = true;
 
+    initContent = ''
+    cd() {
+      builtin cd $@ &&
+      ls
+    } 
+    '';
+
     shellAliases = {
       edit = "sudo -E nvim";
       gitavail = "ssh-add $HOME/Life/Важное/recovery_keys/GitHub/github_remote_keys/key";
@@ -18,8 +25,8 @@
       stop = "shutdown now";
       edconf = "sudo -E nvim /etc/nixos/configuration.nix";
     };
-
-   
+    
+    
     oh-my-zsh = {
         enable = true;
         plugins = [
@@ -27,7 +34,13 @@
         ];
         theme = "robbyrussell";
       };
-  };
+    };
+
+  home.sessionVariables = {
+      hypr = "/etc/nixos/config/sessions/hyprland/";  
+      programs = "/etc/nixos/config/programs";
+    };
+
 
 }
 

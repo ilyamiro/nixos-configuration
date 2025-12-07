@@ -16,15 +16,34 @@
   home.stateVersion = "25.11"; 
   
   
+  
   dconf = {
-      enable = true;
-      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    enable = true;
+    settings = {
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+      };
+    };
+  };
+  
+  gtk = {
+    gtk3 = {
+      extraConfig = {
+        gtk-application-prefer-dark-theme=1;
+      };
+  
+    };
+    gtk4 = {
+      extraConfig = {
+        gtk-application-prefer-dark-theme=1;
+      };
+  
     };
 
-  gtk = { 
+
     enable = true;
     theme = { 
-      name = "Adwaita"; 
+      name = "Adwaita-dark"; 
       package = pkgs.gnome-themes-extra;
     }; 
     iconTheme = { 
@@ -36,6 +55,7 @@
       package = pkgs.gnome-themes-extra; 
     }; 
   };
+
   home.sessionVariables = {
     QT_QPA_PLATFORMTHEME = "qt6ct";
   };

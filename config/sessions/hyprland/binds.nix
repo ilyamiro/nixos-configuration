@@ -5,7 +5,7 @@
       "$mainMod" = "SUPER";
       "$terminal" = "kitty";
       bindl = [
-         "ALT, Shift_L, exec, hyprctl switchxkblayout main prev"
+         "ALT, Shift_L, exec, hyprctl switchxkblayout main next"
          "Shift_L, ALT, exec, hyprctl switchxkblayout main next"
       ];
       bind =
