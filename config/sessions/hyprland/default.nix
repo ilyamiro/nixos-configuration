@@ -14,6 +14,8 @@
     waybar
     rofi
     pavucontrol
+    fortune
+    alsa-utils
   ];
 
   wayland.windowManager.hyprland.settings = {
@@ -45,6 +47,7 @@
       touchpad = {
         natural_scroll = true;
       };
+      accel_profile = "flat";
     };
     misc = {
       font_family = "JetBrains Mono";

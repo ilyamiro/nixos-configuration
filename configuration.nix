@@ -110,18 +110,6 @@
     platformTheme = "gnome";
   };
 
-  programs.dconf = {
-    enable = true;
-    profiles.user.databases = [{
-      settings = with lib.gvariant; {
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-        };
-      };
-    }];
-  };
-   
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
 
@@ -130,8 +118,10 @@
     git 
     neovim
     python311
+    ffmpeg
     python314
     adw-gtk3
+    telegram-desktop
     kitty
     libreoffice-qt
     hunspell
@@ -144,9 +134,11 @@
     gnome-shell-extensions
     grim
     playerctl
+    xdg-desktop-portal-gtk
     eww
     gnome-tweaks
     pkgsCross.mingwW64.stdenv.cc
+    wmctrl
   ];
 
   fonts.packages = with pkgs; [

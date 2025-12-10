@@ -1,0 +1,143 @@
+;; **
+;; ** Widgets config for EWW
+;; ** Created by : @adi1090x
+;; **
+
+;; ** Variables ***********************************************************************
+
+;; System vars
+(defpoll HOST :interval "5s" `hostname`)
+(defpoll CPU_USAGE :interval "1s" `../scripts/sys_info --cpu`)
+(defpoll MEM_USAGE :interval "1s" `../scripts/sys_info --mem`)
+(defpoll DISK_USAGE :interval "1s" `../scripts/sys_info --disk`)
+(defpoll BLIGHT :interval "1s" `../scripts/sys_info --blight`)
+(defpoll BATTERY :interval "5s" `../scripts/sys_info --bat`)
+(defpoll QUOTE :interval "5m" `../scripts/quotes`)
+
+;; ** Widgets *************************************************************************
+
+;; resources
+(defwidget resources [] 
+		(box :class "winbox"
+			(centerbox :orientation "h"
+				(box :class "res_box" :orientation "v" :valign "center" :halign "center" :spacing 15 :space-evenly "false"
+					(box :class "res_circle" :orientation "v" :valign "center" :halign "center"
+						(circular-progress :class "res_cpu" :value CPU_USAGE :thickness 5
+							(label :class "res_circle_small" :text "CPU")))
+					(label :class "res_text" :valign "end" :halign "center" :text "${CPU_USAGE}%"))
+				(box :class "res_box" :orientation "v" :valign "center" :halign "center" :spacing 15 :space-evenly "false"
+					(box :class "res_circle" :orientation "v" :valign "center" :halign "center"
+						(circular-progress :class "res_mem" :value MEM_USAGE :thickness 5
+							(label :class "res_circle_small" :text "MEMORY")))
+					(label :class "res_text" :valign "end" :halign "center" :text "${MEM_USAGE}%"))
+				(box :class "res_box" :orientation "v" :valign "center" :halign "center" :spacing 15 :space-evenly "false"
+					(box :class "res_circle" :orientation "v" :valign "center" :halign "center"
+						(circular-progress :class "res_disk" :value DISK_USAGE :thickness 5
+							(label :class "res_circle_small" :text "DISK")))
+					(label :class "res_text" :valign "end" :halign "center" :text "${DISK_USAGE}%")))))
+
+;; powermenus
+(defwidget logout [] 
+		(box :class "winbox"
+			(button :style "background-image: url('../images/icons/system/sys-exit.png');" :class "powericons" :valign "center" :halign "center" :onclick "../scripts/system --logout")))
+(defwidget suspend [] 
+		(box :class "winbox"
+			(button :style "background-image: url('../images/icons/system/sys-sleep.png');" :class "powericons" :valign "center" :halign "center" :onclick "../scripts/system --suspend")))
+(defwidget lock [] 
+		(box :class "winbox"
+			(button :style "background-image: url('../images/icons/system/sys-lock.png');" :class "powericons" :valign "center" :halign "center" :onclick "../scripts/system --lock")))
+(defwidget reboot [] 
+		(box :class "winbox"
+			(button :style "background-image: url('../images/icons/system/sys-reboot.png');" :class "powericons" :valign "center" :halign "center" :onclick "../scripts/system --reboot")))
+(defwidget shutdown [] 
+		(box :class "winbox"
+			(button :style "background-image: url('../images/icons/system/poweroff.png');" :class "powericons" :valign "center" :halign "center" :onclick "../scripts/system --shutdown")))
+
+;; quotes
+(defwidget quotes [] 
+		(box :class "winbox"
+			(box :class "quote_box" :orientation "h" :valign "center" :halign "center" :spacing 10 :space-evenly "false"
+				(box :class "powericons" :style "background-image: url('../images/icons/quotes.png');")
+				(label :class "quote_text" :valign "center" :halign "center" :text QUOTE :wrap true :limit-width 90 ))))
+
+;; ** Windows *************************************************************************
+
+;; resources
+(defwindow resources
+           :monitor 0
+           :geometry (geometry :x "1420px"
+                               :y "100px"
+                               :width "480px"
+                               :height "200px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(resources))
+
+;; powermenu
+(defwindow logout
+           :monitor 0
+           :geometry (geometry :x "1420px"
+                               :y "320px"
+                               :width "80px"
+                               :height "80px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(logout))
+
+(defwindow suspend
+           :monitor 0
+           :geometry (geometry :x "1520px"
+                               :y "320px"
+                               :width "80px"
+                               :height "80px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(suspend))
+
+(defwindow lock
+           :monitor 0
+           :geometry (geometry :x "1620px"
+                               :y "320px"
+                               :width "80px"
+                               :height "80px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(lock))
+
+(defwindow reboot
+           :monitor 0
+           :geometry (geometry :x "1720px"
+                               :y "320px"
+                               :width "80px"
+                               :height "80px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(reboot))
+
+(defwindow shutdown
+           :monitor 0
+           :geometry (geometry :x "1820px"
+                               :y "320px"
+                               :width "80px"
+                               :height "80px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(shutdown))
+
+;; quotes
+(defwindow quotes
+           :monitor 0
+           :geometry (geometry :x "1420px"
+                               :y "420px"
+                               :width "480px"
+                               :height "100px"
+                               :anchor "top left")
+           :stacking "fg"
+	   :exclusive true
+(quotes))

@@ -1,0 +1,155 @@
+/** Global *******************************************/
+*{
+	all: unset;
+	font-family: feather;
+	font-family: "JetBrains Mono";
+	color: #151515;
+}
+
+/** Bar ***********************************/
+.dockbox {
+	background-color: #F5EEE6;
+	border: 1px solid #161616;
+	border-radius: 12px;
+}
+
+/** Icons ***********************************/
+.genicon {
+    background-repeat: no-repeat;
+	background-size: 20px;
+	min-height: 20px;
+	min-width: 20px;
+}
+
+.appicon {
+    background-repeat: no-repeat;
+	background-size: 40px;
+	min-height: 40px;
+	min-width: 40px;
+}
+
+.workspace {
+	background-color: #C04364;
+	color: #ffffff;
+	border: 2px solid #161616;
+	border-radius: 16px;
+	font-size : 14px;
+	padding: 0px 6px 0px 6px;
+	margin: -2px 0px 0px 0px;
+	font-weight : bold;
+}
+
+/** Clock ********************************************/
+.clockbox {
+	margin : 0px 0px 0px 15px;
+}
+
+.time {
+	font-size : 14px;
+	font-weight : bold;
+}
+
+.date {
+	font-size : 12px;
+	font-weight : bold;
+}
+
+/** Weather ********************************************/
+.weatherbox {
+	margin : 0px 0px 0px -90px;
+}
+
+.weathericon {
+	font-family: Iosevka Nerd Font;
+	font-size : 32px;
+	font-weight : normal;
+}
+
+.weathertemp {
+	font-size : 14px;
+	font-weight : bold;
+	margin : 0px 0px 0px -5px;
+}
+
+/** Music *************************************************/
+.album_art {
+    background-repeat: no-repeat;
+	background-size: 40px;
+	min-height: 40px;
+	min-width: 40px;
+	margin: 8px;
+	border-radius: 8px;
+}
+
+.musicbox {
+	margin : 0px 0px 0px 5px;
+}
+
+.song {
+	font-size : 14px;
+	font-weight : bold;
+}
+
+.artist {
+	font-size : 12px;
+	font-weight : bold;
+}
+
+.musicbuttons {
+	margin : 0px 0px 0px -90px;
+}
+
+.playbutton {
+    background-repeat: no-repeat;
+	background-size: 24px;
+	min-height: 24px;
+	min-width: 24px;
+	margin: 0px;
+}
+
+.trackbutton {
+    background-repeat: no-repeat;
+	background-size: 18px;
+	min-height: 18px;
+	min-width: 18px;
+	margin: 3px 0px 0px 0px;
+}
+
+/** System *************************************************/
+.mails {
+	background-color: #FFC8C8;
+	border: 0px solid #161616;
+	border-radius: 16px;
+	font-size : 14px;
+	padding: 0px 5px 0px 5px;
+	margin: 10px 0px 10px 0px;
+	font-weight : bold;
+}
+
+.trayicon {
+    background-repeat: no-repeat;
+	background-size: 24px;
+	min-height: 24px;
+	min-width: 24px;
+	margin: 8px 0px 0px 0px;
+}
+
+.infotext {
+	background-color: #DCD7CD;
+	border: 0px solid #161616;
+	border-radius: 16px;
+	font-size : 14px;
+	padding: 0px 5px 0px 5px;
+	margin: 10px 0px 10px 0px;
+	font-weight : bold;
+}
+
+.face {
+	background-size: 24px;
+	min-height: 24px;
+	min-width: 24px;
+	margin: 8px 0px 8px 0px;
+	border-radius: 100%;
+}
+
+/** EOF *************************************************/

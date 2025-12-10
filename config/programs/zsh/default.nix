@@ -24,6 +24,7 @@
       update = "sudo nixos-rebuild switch";
       stop = "shutdown now";
       edconf = "sudo -E nvim /etc/nixos/configuration.nix";
+      out = "loginctl terminate-user ilyamiro";
     };
     
     

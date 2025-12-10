@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+quote="`fortune -n 90 -s | head -n 1`"
+echo "$quote"

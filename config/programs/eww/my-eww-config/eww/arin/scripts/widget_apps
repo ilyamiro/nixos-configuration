@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+if [[ "$1" == "--tr" ]]; then
+	kitty &
+
+elif [[ "$1" == "--ff" ]]; then
+	firefox &
+
+elif [[ "$1" == "--fm" ]]; then
+	nautilus ~ &
+
+elif [[ "$1" == "--ge" ]]; then
+	geany &
+
+elif [[ "$1" == "--dc" ]]; then
+	discord &
+
+elif [[ "$1" == "--tg" ]]; then
+	telegram-desktop &
+
+elif [[ "$1" == "--rd" ]]; then
+	firefox --new-tab "https://reddit.com"
+
+elif [[ "$1" == "--ml" ]]; then
+	firefox --new-tab "https://mail.google.com"
+
+elif [[ "$1" == "--pow" ]]; then
+	xfce4-power-manager-settings &
+
+elif [[ "$1" == "--nm" ]]; then
+	networkmanager_dmenu
+
+fi

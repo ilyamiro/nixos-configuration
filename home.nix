@@ -6,6 +6,7 @@
     ./config/programs/zsh/default.nix
     ./config/programs/neovim/default.nix
     ./config/programs/waybar/default.nix
+    ./config/programs/eww/default.nix
 
     # sessions
     ./config/sessions/hyprland/default.nix
@@ -39,8 +40,6 @@
       };
   
     };
-
-
     enable = true;
     theme = { 
       name = "Adwaita-dark"; 
@@ -53,7 +52,7 @@
     cursorTheme = { 
       name = "Adwaita"; 
       package = pkgs.gnome-themes-extra; 
-    }; 
+    };
   };
 
   home.sessionVariables = {
@@ -61,5 +60,17 @@
   };
   
   programs.home-manager.enable = true;
+
+
+
+  fonts.fontconfig.enable = true; 
+  
+  home.file = {
+    ".local/share/fonts/eww-fonts" = {
+      source = config/programs/eww/my-eww-config/fonts; 
+      recursive = true;
+    };
+  };
+
 }
 

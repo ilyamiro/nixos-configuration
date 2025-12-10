@@ -5,14 +5,15 @@
       "$mainMod" = "SUPER";
       "$terminal" = "kitty";
       bindl = [
-         "ALT, Shift_L, exec, hyprctl switchxkblayout main next"
-         "Shift_L, ALT, exec, hyprctl switchxkblayout main next"
+         "SHIFT_L, ALT_L, exec, hyprctl switchxkblayout main next"
+         "ALT_L, SHIFT_L, exec, hyprctl switchxkblayout main prev"
       ];
       bind =
       [
          "$mainMod, F, exec, firefox"
          "$mainMod, E, exec, nautilus"
-         "$mainMod, T, exec, flatpak run org.telegram.desktop"
+         "$mainMod, T, exec, Telegram"
+	 "$mainMod, O, exec, obsidian"
          "$mainMod, RETURN, exec, $terminal"
 
          "ALT, F4, killactive"
