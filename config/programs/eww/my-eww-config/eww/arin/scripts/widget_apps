@@ -9,9 +9,6 @@ elif [[ "$1" == "--ff" ]]; then
 elif [[ "$1" == "--fm" ]]; then
 	nautilus ~ &
 
-elif [[ "$1" == "--ge" ]]; then
-	geany &
-
 elif [[ "$1" == "--dc" ]]; then
 	discord &
 

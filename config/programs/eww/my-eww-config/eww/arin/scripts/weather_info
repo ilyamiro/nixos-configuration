@@ -3,9 +3,6 @@
 ## ** NixOS / Generic Config **
 # We use /usr/bin/env bash for portability on NixOS.
 # Ensure you have 'jq', 'curl', and 'sed' installed in your environment.
-set -a
-source .env
-set +a
 
 ## Collect data
 cache_dir="$HOME/.cache/eww/weather"
@@ -16,7 +13,7 @@ cache_weather_hex="${cache_dir}/weather-hex"
 cache_weather_icon="${cache_dir}/weather-icon"
 
 ## Weather data
-KEY=$API_KEY
+KEY="b7aa64e8dc28ccf8945c685151aed1fc"
 ID="2624652"
 UNIT="metric"
 

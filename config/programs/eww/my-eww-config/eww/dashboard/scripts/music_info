@@ -1,97 +1,157 @@
 #!/usr/bin/env bash
 
-## Get data
-STATUS="$(mpc status)"
+## Configuration
 COVER="/tmp/.music_cover.jpg"
-MUSIC_DIR="$HOME/Music"
+FALLBACK_IMG="images/music.png"
+# Max length for text output to prevent EWW widget bloat
+MAX_LENGTH=40
+
+## Helper: Limit text length for EWW stability
+limit_text() {
+    local text="$1"
+    if [ ${#text} -gt $MAX_LENGTH ]; then
+        echo "${text:0:$MAX_LENGTH}..."
+    else
+        echo "$text"
+    fi
+}
 
 ## Get status
 get_status() {
-	if [[ $STATUS == *"[playing]"* ]]; then
-		echo ""
-	else
-		echo "喇"
-	fi
+    # playerctl status returns "Playing", "Paused", or "Stopped"
+    local status=$(playerctl status 2>/dev/null)
+    
+    if [[ "$status" == "Playing" ]]; then
+        echo ""
+    else
+        echo "喇"
+    fi
 }
 
 ## Get song
 get_song() {
-	song=`mpc -f %title% current`
-	if [[ -z "$song" ]]; then
-		echo "Offline"
-	else
-		echo "$song"
-	fi	
+    local song=$(playerctl metadata --format "{{ title }}" 2>/dev/null)
+    
+    if [[ -z "$song" ]]; then
+        echo "Offline"
+    else
+        limit_text "$song"
+    fi    
 }
 
 ## Get artist
 get_artist() {
-	artist=`mpc -f %artist% current`
-	if [[ -z "$artist" ]]; then
-		echo "Offline"
-	else
-		echo "$artist"
-	fi	
+    local artist=$(playerctl metadata --format "{{ artist }}" 2>/dev/null)
+    
+    if [[ -z "$artist" ]]; then
+        echo "Offline"
+    else
+        limit_text "$artist"
+    fi    
 }
 
-## Get time
+## Get time (Percentage)
 get_time() {
-	time=`mpc status | grep "%)" | awk '{print $4}' | tr -d '(%)'`
-	if [[ -z "$time" ]]; then
-		echo "0"
-	else
-		echo "$time"
-	fi	
+    # Calculate percentage: (position / length) * 100
+    # We use python or bc for floating point math because bash can't do it natively well
+    # Check if player is active first
+    if playerctl status &> /dev/null; then
+        local pos=$(playerctl position)
+        local len=$(playerctl metadata mpris:length)
+        
+        # Convert microsecond length to seconds (len / 1000000)
+        # Avoid division by zero
+        if [[ -n "$len" && "$len" -gt 0 ]]; then
+            local len_sec=$(echo "$len / 1000000" | bc -l)
+            local percent=$(echo "($pos / $len_sec) * 100" | bc -l)
+            # Print as integer
+            printf "%.0f\n" "$percent"
+        else
+            echo "0"
+        fi
+    else
+        echo "0"
+    fi    
 }
+
+## Get Current Time (0:00)
 get_ctime() {
-	ctime=`mpc status | grep "#" | awk '{print $3}' | sed 's|/.*||g'`
-	if [[ -z "$ctime" ]]; then
-		echo "0:00"
-	else
-		echo "$ctime"
-	fi	
+    # playerctl formatting handles the mm:ss conversion automatically
+    local ctime=$(playerctl position --format "{{ duration(position) }}" 2>/dev/null)
+    
+    if [[ -z "$ctime" ]]; then
+        echo "0:00"
+    else
+        echo "$ctime"
+    fi    
 }
+
+## Get Total Time (0:00)
 get_ttime() {
-	ttime=`mpc -f %time% current`
-	if [[ -z "$ttime" ]]; then
-		echo "0:00"
-	else
-		echo "$ttime"
-	fi	
+    local ttime=$(playerctl metadata --format "{{ duration(mpris:length) }}" 2>/dev/null)
+    
+    if [[ -z "$ttime" ]]; then
+        echo "0:00"
+    else
+        echo "$ttime"
+    fi    
 }
 
 ## Get cover
 get_cover() {
-	ffmpeg -i "${MUSIC_DIR}/$(mpc current -f %file%)" "${COVER}" -y &> /dev/null
-	STATUS=$?
+    # Get the Art URL. This could be file://... or https://... (Spotify)
+    local artUrl=$(playerctl metadata mpris:artUrl 2>/dev/null)
+    
+    # Clean the file:// prefix if it exists (for local files)
+    if [[ "$artUrl" == file://* ]]; then
+        artUrl=${artUrl#file://}
+        
+        # If it's a local file, we copy it to the temp location
+        if [ -f "$artUrl" ]; then
+            cp "$artUrl" "$COVER"
+        else
+            # Sometimes local players point to the embedded file, we need ffmpeg
+            # But playerctl usually handles this logic. If cp fails, just use fallback.
+            echo "$FALLBACK_IMG"
+            return
+        fi
+    elif [[ "$artUrl" == http* ]]; then
+        # If it's a remote URL (Spotify/Soundcloud), download it
+        # We use curl with a timeout so EWW doesn't hang
+        curl -s -o "$COVER" "$artUrl" --max-time 2
+    else
+        # No art found
+        echo "$FALLBACK_IMG"
+        return
+    fi
 
-	# Check if the file has a embbeded album art
-	if [ "$STATUS" -eq 0 ];then
-		echo "$COVER"
-	else
-		echo "images/music.png"
-	fi
+    # Return the cover path if the operation succeeded
+    if [ -f "$COVER" ]; then
+        echo "$COVER"
+    else
+        echo "$FALLBACK_IMG"
+    fi
 }
 
 ## Execute accordingly
 if [[ "$1" == "--song" ]]; then
-	get_song
+    get_song
 elif [[ "$1" == "--artist" ]]; then
-	get_artist
+    get_artist
 elif [[ "$1" == "--status" ]]; then
-	get_status
+    get_status
 elif [[ "$1" == "--time" ]]; then
-	get_time
+    get_time
 elif [[ "$1" == "--ctime" ]]; then
-	get_ctime
+    get_ctime
 elif [[ "$1" == "--ttime" ]]; then
-	get_ttime
+    get_ttime
 elif [[ "$1" == "--cover" ]]; then
-	get_cover
+    get_cover
 elif [[ "$1" == "--toggle" ]]; then
-	mpc -q toggle
+    playerctl play-pause
 elif [[ "$1" == "--next" ]]; then
-	{ mpc -q next; get_cover; }
+    { playerctl next; get_cover; }
 elif [[ "$1" == "--prev" ]]; then
-	{ mpc -q prev; get_cover; }
+    { playerctl previous; get_cover; }
 fi

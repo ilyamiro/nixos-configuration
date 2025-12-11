@@ -15,7 +15,7 @@
 (defpoll HOST :interval "5s" `hostname`)
 (defpoll CPU_USAGE :interval "1s" `scripts/sys_info --cpu`)
 (defpoll MEM_USAGE :interval "1s" `scripts/sys_info --mem`)
-(defpoll BLIGHT :interval "1s" `scripts/sys_info --blight`)
+(defpoll BLIGHT :interval "0.5s" `scripts/sys_info --blight`)
 (defpoll BATTERY :interval "5s" `scripts/sys_info --bat`)
 
 ;; Time vars

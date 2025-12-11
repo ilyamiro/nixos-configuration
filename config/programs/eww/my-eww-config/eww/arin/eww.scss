@@ -11,6 +11,8 @@
 	background-color: #F5EEE6;
 	border: 1px solid #161616;
 	border-radius: 12px;
+        padding-right: 10px;
+        padding-left: 10px;
 }
 
 /** Icons ***********************************/
@@ -74,7 +76,8 @@
 /** Music *************************************************/
 .album_art {
     background-repeat: no-repeat;
-	background-size: 40px;
+    background-position: center;
+	background-size: auto 100%;
 	min-height: 40px;
 	min-width: 40px;
 	margin: 8px;
@@ -82,7 +85,7 @@
 }
 
 .musicbox {
-	margin : 0px 0px 0px 5px;
+    margin : 0px 0px 0px 5px;
 }
 
 .song {
@@ -112,7 +115,7 @@
 	background-size: 18px;
 	min-height: 18px;
 	min-width: 18px;
-	margin: 3px 0px 0px 0px;
+        margin: 3px 0px 0px 0px;
 }
 
 /** System *************************************************/

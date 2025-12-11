@@ -16,6 +16,10 @@
     pavucontrol
     fortune
     alsa-utils
+    swww
+    networkmanager_dmenu
+    wl-clipboard
+    hyprshot
   ];
 
   wayland.windowManager.hyprland.settings = {

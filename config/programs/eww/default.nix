@@ -10,5 +10,5 @@
     iw
   ];
 
-  xdg.configFile."eww".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/programs/eww/my-eww-config/eww";
+  xdg.configFile."eww".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/programs/eww/new-eww";
 }

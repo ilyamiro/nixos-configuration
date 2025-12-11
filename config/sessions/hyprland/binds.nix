@@ -6,10 +6,21 @@
       "$terminal" = "kitty";
       bindl = [
          "SHIFT_L, ALT_L, exec, hyprctl switchxkblayout main next"
-         "ALT_L, SHIFT_L, exec, hyprctl switchxkblayout main prev"
+         "ALT_L, SHIFT_L, exec, hyprctl switchxkblayout main prev" 
+	 ", xf86AudioMicMute, exec, ${./scripts/volume.sh} --toggle-mic"
+	 ", xf86audiomute, exec, ${./scripts/volume.sh} --toggle"
+	 ", XF86MonBrightnessDown, exec, ${./scripts/brightness.sh} --dec"
+  	 ", XF86MonBrightnessUp, exec, ${./scripts/brightness.sh} --inc"
+	 ", Print, exec, ${./scripts/screenshot.sh}"
+      ];
+      bindel = [
+         ", xf86audiolowervolume, exec, ${./scripts/volume.sh} --dec"
+	 ", xf86audioraisevolume, exec, ${./scripts/volume.sh} --inc"
       ];
       bind =
-      [
+      [	
+	 "$mainMod, D, exec, bash ~/.config/eww/dashboard/launch_dashboard"
+	 "$mainMod&SHIFT_L, R, exec, pkill eww && bash ~/.config/eww/arin/launch_bar"
          "$mainMod, F, exec, firefox"
          "$mainMod, E, exec, nautilus"
          "$mainMod, T, exec, Telegram"

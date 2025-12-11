@@ -56,7 +56,7 @@
   };
 
   home.sessionVariables = {
-    QT_QPA_PLATFORMTHEME = "qt6ct";
+    QT_QPA_PLATFORMTHEME = "gtk3";
   };
   
   programs.home-manager.enable = true;

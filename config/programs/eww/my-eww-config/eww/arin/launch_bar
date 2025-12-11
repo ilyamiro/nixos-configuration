@@ -2,12 +2,7 @@
 
 EWW=`which eww`
 CFG="$HOME/.config/eww/arin"
-
-## Run eww daemon if not running already
-if [[ ! `pidof eww` ]]; then
-	${EWW} daemon
-	sleep 1
-fi
+FILE="$HOME/.cache/eww_launch.bar"
 
 ## Open widgets 
 run_eww() {
@@ -15,4 +10,10 @@ run_eww() {
 }
 
 ## Launch or close widgets accordingly
-run_eww
+if [[ ! -f "$FILE" ]]; then
+	touch "$FILE"
+	run_eww
+else
+	${EWW} --config "$CFG" close bar
+	rm "$FILE"
+fi

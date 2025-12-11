@@ -107,8 +107,9 @@
   qt = {
     enable = true;
     style = "adwaita-dark";
-    platformTheme = "gnome";
+    platformTheme = "qt5ct";
   };
+ 
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -139,6 +140,8 @@
     gnome-tweaks
     pkgsCross.mingwW64.stdenv.cc
     wmctrl
+    bottles
+    qbittorrent
   ];
 
   fonts.packages = with pkgs; [
@@ -148,7 +151,6 @@
   ];
 
   environment.variables.XDG_DATA_DIRS = lib.mkForce "/home/your_user/.nix-profile/share:/run/current-system/sw/share";
-
   services.flatpak.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -11,7 +11,7 @@
 
 ;; Time vars
 (defpoll TIME :interval "1s" `date +\"%I:%M %p\"`)
-(defpoll DATE :interval "5s" `date +\"%A, %B %d\"`)
+(defpoll DATE :interval "1m" `date +\"%A, %B %d\"`)
 
 ;; Weather vars
 (defpoll ICON :interval "15m" `scripts/weather_info --icon`)
@@ -28,12 +28,12 @@
 (defpoll MAILS :interval "5m" `scripts/mails`)
 
 ;; Battery vars
-(defpoll BATICON :interval "1m" `scripts/battery --icon`)
-(defpoll BATPERC :interval "1m" `scripts/battery --perc`)
+(defpoll BATICON :interval "5s" `scripts/battery --icon`)
+(defpoll BATPERC :interval "5s" `scripts/battery --perc`)
 
 ;; Volume vars
-(defpoll VOLICON :interval "1s" `scripts/volume --icon`)
-(defpoll VOLUME :interval "1s" `scripts/volume --get`)
+(defpoll VOLICON :interval "0.2s" `scripts/volume --icon`)
+(defpoll VOLUME :interval "0.2s" `scripts/volume --get`)
 
 ;; Network
 (defpoll WIFIICON :interval "10s" `scripts/check-network --icon`)
@@ -91,11 +91,7 @@
 ;; system
 (defwidget system [] 
     (box :class "dockbox"
-        (box :orientation "h" :spacing 16 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-            (button :onclick "scripts/widget_apps --ml"
-                (box :orientation "h" :spacing 8 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-                    (box :style "background-image: url('images/icons/gmail.png');" :class "trayicon")
-                        (label :class "mails" :halign "start" :text MAILS)))
+        (box :orientation "h" :spacing 16 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false" 
             (button :onclick "scripts/widget_apps --pow"
                 (box :orientation "h" :spacing 8 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
                     (box :style "background-image: url('${BATICON}');" :class "trayicon")
@@ -125,8 +121,8 @@
     (box :orientation "h" 
          :space-evenly false 
          :halign "start"
-         :spacing 30       ;; Maintains your original ~30px gaps
-         :style "padding-left: 20px;" ;; Keeps the original left edge offset
+         :spacing 10       ;; Maintains your original ~30px gaps
+         :style "padding-left: 10px;" ;; Keeps the original left edge offset
       (search)
       (apps))
 
@@ -140,8 +136,8 @@
     (box :orientation "h" 
          :space-evenly false 
          :halign "end" 
-         :spacing 30       ;; Maintains your original ~30px gaps
-         :style "padding-right: 20px;" ;; Adds symmetry to the right edge
+         :spacing 10       ;; Maintains your original ~30px gaps
+         :style "padding-right: 10px;" ;; Adds symmetry to the right edge
       (music)
       (system))
 )

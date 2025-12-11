@@ -46,18 +46,15 @@ get_mem() {
 
 ## Get Brightness
 get_blight() {
-	CARD=`ls /sys/class/backlight | head -n 1`
+    # 1. Identify the same device the original script would have selected
+    CARD=$(ls /sys/class/backlight | head -n 1)
 
-	if [[ "$CARD" == *"intel_"* ]]; then
-		BNESS=`xbacklight -get`
-		LIGHT=${BNESS%.*}
-	else
-		BNESS=`blight -d $CARD get brightness`
-		PERC="$(($BNESS*100/255))"
-		LIGHT=${PERC%.*}
-	fi
+    # 2. Get the current and maximum brightness for that specific device
+    CURRENT=$(brightnessctl -d "$CARD" get)
+    MAX=$(brightnessctl -d "$CARD" max)
 
-	echo "$LIGHT"
+    # 3. Calculate percentage (Integer math handles the decimal stripping automatically)
+    echo $(( CURRENT * 100 / MAX ))
 }
 
 ## Get Battery 

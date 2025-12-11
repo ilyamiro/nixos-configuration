@@ -1,97 +1,156 @@
 #!/usr/bin/env bash
 
-## Get data
-STATUS="$(mpc status)"
+## Configuration
 COVER="/tmp/.music_cover.jpg"
-MUSIC_DIR="$HOME/Music"
+# MUSIC_DIR is technically not needed with playerctl as it provides absolute paths, 
+# but kept here if you have specific relative path logic later.
+MUSIC_DIR="$HOME/Music" 
+
+## Check if player is running
+# We capture this once to save overhead on every function call
+PLAYER_STATUS=$(playerctl status 2>/dev/null)
+PLAYER_EXIT=$?
 
 ## Get status
 get_status() {
-	if [[ $STATUS == *"[playing]"* ]]; then
-		echo "images/icons/music/pause-button.png"
-	else
-		echo "images/icons/music/play-button.png"
-	fi
+    if [[ "$PLAYER_STATUS" == "Playing" ]]; then
+        echo "images/icons/music/pause-button.png"
+    else
+        echo "images/icons/music/play-button.png"
+    fi
 }
 
 ## Get song
 get_song() {
-	song=`mpc -f %title% current`
-	if [[ -z "$song" ]]; then
-		echo "Offline"
-	else
-		echo "$song"
-	fi	
+    if [ "$PLAYER_EXIT" -ne 0 ]; then
+        echo "Offline"
+        return
+    fi
+    
+    song=$(playerctl metadata title 2>/dev/null)
+    if [[ -z "$song" ]]; then
+        echo "Offline"
+    else
+        echo "$song"
+    fi    
 }
 
 ## Get artist
 get_artist() {
-	artist=`mpc -f %artist% current`
-	if [[ -z "$artist" ]]; then
-		echo "Offline"
-	else
-		echo "$artist"
-	fi	
+    if [ "$PLAYER_EXIT" -ne 0 ]; then
+        echo "Offline"
+        return
+    fi
+
+    artist=$(playerctl metadata artist 2>/dev/null)
+    if [[ -z "$artist" ]]; then
+        echo "Offline"
+    else
+        echo "$artist"
+    fi    
 }
 
-## Get time
+## Get time (Percentage)
 get_time() {
-	time=`mpc status | grep "%)" | awk '{print $4}' | tr -d '(%)'`
-	if [[ -z "$time" ]]; then
-		echo "0"
-	else
-		echo "$time"
-	fi	
+    if [ "$PLAYER_EXIT" -ne 0 ]; then echo "0"; return; fi
+    
+    # Playerctl gives position in seconds, length in microseconds
+    # We use awk for floating point math to match mpc's integer percentage
+    percent=$(playerctl metadata --format '{{ (position / (mpris:length / 1000000)) * 100 }}' 2>/dev/null)
+    
+    if [[ -z "$percent" ]]; then
+        echo "0"
+    else
+        # Round to nearest integer to match mpc output
+        printf "%.0f\n" "$percent"
+    fi    
 }
+
+## Get ctime (Current Time MM:SS)
 get_ctime() {
-	ctime=`mpc status | grep "#" | awk '{print $3}' | sed 's|/.*||g'`
-	if [[ -z "$ctime" ]]; then
-		echo "0:00"
-	else
-		echo "$ctime"
-	fi	
+    if [ "$PLAYER_EXIT" -ne 0 ]; then echo "0:00"; return; fi
+
+    # Get position in seconds
+    pos=$(playerctl position 2>/dev/null)
+    
+    if [[ -z "$pos" ]]; then
+        echo "0:00"
+    else
+        # Convert seconds to MM:SS
+        printf "%d:%02d\n" "$(awk "BEGIN {print int($pos/60)}")" "$(awk "BEGIN {print int($pos%60)}")"
+    fi    
 }
+
+## Get ttime (Total Time MM:SS)
 get_ttime() {
-	ttime=`mpc -f %time% current`
-	if [[ -z "$ttime" ]]; then
-		echo "0:00"
-	else
-		echo "$ttime"
-	fi	
+    if [ "$PLAYER_EXIT" -ne 0 ]; then echo "0:00"; return; fi
+
+    # Get length in microseconds, convert to seconds
+    len=$(playerctl metadata mpris:length 2>/dev/null)
+    
+    if [[ -z "$len" ]]; then
+        echo "0:00"
+    else
+        # Convert microseconds to seconds then to MM:SS
+        seconds=$((len / 1000000))
+        printf "%d:%02d\n" $((seconds / 60)) $((seconds % 60))
+    fi    
 }
 
 ## Get cover
 get_cover() {
-	ffmpeg -i "${MUSIC_DIR}/$(mpc current -f %file%)" "${COVER}" -y &> /dev/null
-	STATUS=$?
+    if [ "$PLAYER_EXIT" -ne 0 ]; then echo "images/music.png"; return; fi
 
-	# Check if the file has a embbeded album art
-	if [ "$STATUS" -eq 0 ];then
-		echo "$COVER"
-	else
-		echo "images/music.png"
-	fi
+    # 1. Get the full file URL (e.g., file:///home/user/Music/Song.mp3)
+    fileUrl=$(playerctl metadata xesam:url 2>/dev/null)
+    
+    # 2. Clean the URL: remove 'file://' and decode %20 to spaces
+    # Python is used here for reliable URL decoding, but you can use sed/perl if Python is unavailable
+    filePath=$(echo "${fileUrl#file://}" | python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.stdin.read().strip()))")
+
+    # 3. Use ffmpeg to extract art (Same logic as original)
+    if [[ -f "$filePath" ]]; then
+        ffmpeg -i "$filePath" "${COVER}" -y &> /dev/null
+        FFMPEG_STATUS=$?
+        
+        if [ "$FFMPEG_STATUS" -eq 0 ]; then
+            echo "$COVER"
+            return
+        fi
+    fi
+
+    # Fallback if ffmpeg fails or it's a stream: check if player provides an art URL directly
+    artUrl=$(playerctl metadata mpris:artUrl 2>/dev/null)
+    if [[ "$artUrl" == file://* ]]; then
+        echo "${artUrl#file://}"
+    elif [[ -n "$artUrl" ]]; then
+        # If it's an HTTP url (Spotify etc), you might want to echo it or download it. 
+        # For now, we return default to match script strictness.
+        echo "images/music.png"
+    else
+        echo "images/music.png"
+    fi
 }
 
 ## Execute accordingly
 if [[ "$1" == "--song" ]]; then
-	get_song
+    get_song
 elif [[ "$1" == "--artist" ]]; then
-	get_artist
+    get_artist
 elif [[ "$1" == "--status" ]]; then
-	get_status
+    get_status
 elif [[ "$1" == "--time" ]]; then
-	get_time
+    get_time
 elif [[ "$1" == "--ctime" ]]; then
-	get_ctime
+    get_ctime
 elif [[ "$1" == "--ttime" ]]; then
-	get_ttime
+    get_ttime
 elif [[ "$1" == "--cover" ]]; then
-	get_cover
+    get_cover
 elif [[ "$1" == "--toggle" ]]; then
-	mpc -q toggle
+    playerctl play-pause
 elif [[ "$1" == "--next" ]]; then
-	{ mpc -q next; get_cover; }
+    { playerctl next; get_cover; }
 elif [[ "$1" == "--prev" ]]; then
-	{ mpc -q prev; get_cover; }
+    { playerctl previous; get_cover; }
 fi
