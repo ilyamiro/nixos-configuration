@@ -1,12 +1,11 @@
 {
    wayland.windowManager.hyprland.settings = {
       "exec-once" = [
-         # "waybar"
-         # "bash ~/.config/eww/dashboard/launch_dashboard"
 	 "swww-daemon"
-	 "eww daemon"
          "swww img ./images/wallpaper_catpuccin.png"
-	 "bash ~/.config/eww/arin/launch_bar"
+	 "bash ~/.config/eww/bar/launch_bar.sh"
+	 "wl-paste --type text --watch cliphist store" 
+	 "wl-paste --type image --watch cliphist store"
       ];
    };
 }

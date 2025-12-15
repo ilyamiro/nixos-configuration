@@ -1,0 +1,137 @@
+* {
+    /* Catppuccin Mocha Palette */
+    bg-col:             #1e1e2e;
+    bg-col-light:       #1e1e2e;
+    border-col:         #1e1e2e;
+    selected-col:       #1e1e2e;
+    blue:               #89b4fa;
+    fg-col:             #cdd6f4;
+    fg-col2:            #f38ba8;
+    grey:               #6c7086;
+    surface0:           #313244;
+    surface1:           #45475a;
+
+    width: 1100px; /* Wider to fit 6 columns */
+    font: "JetBrainsMono Nerd Font 12";
+}
+
+element-text, element-icon , mode-switcher {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+window {
+    height: 640px;
+    border: 3px;
+    border-color: @blue;
+    background-color: @bg-col; /* Solid Color */
+    border-radius: 4px;
+}
+
+mainbox {
+    background-color: @bg-col;
+    children: [inputbar, mode-switcher, listview];
+    padding: 20px;
+}
+
+/* --- Search Bar --- */
+inputbar {
+    children: [prompt, entry];
+    background-color: @surface0;
+    border-radius: 4px;
+    padding: 2px;
+    margin: 0px 0px 10px 0px;
+}
+
+prompt {
+    background-color: @blue;
+    padding: 10px;
+    text-color: @bg-col;
+    border-radius: 6px;
+    margin: 4px;
+}
+
+entry {
+    padding: 10px;
+    text-color: @fg-col;
+    background-color: @surface0;
+    placeholder: "Search...";
+    placeholder-color: @grey;
+    vertical-align: 0.5;
+}
+
+/* --- Mode Switcher (Tabs) --- */
+mode-switcher {
+    spacing: 10px;
+    margin: 0px 0px 15px 0px;
+    background-color: transparent;
+}
+
+button {
+    padding: 10px;
+    background-color: @surface0;
+    text-color: @grey;
+    vertical-align: 0.5; 
+    horizontal-align: 0.5;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button selected {
+    background-color: @blue;
+    text-color: @bg-col; /* Dark text on blue bg for active tab */
+}
+
+/* --- App Grid --- */
+listview {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    background-color: @bg-col;
+    
+    columns: 6; /* More columns */
+    lines: 5;   /* More rows */
+    spacing: 12px;
+}
+
+/* --- The Card --- */
+element {
+    orientation: vertical;
+    children: [ element-icon, element-text ];
+    padding: 15px;
+    background-color: @surface0;
+    border-radius: 4px;
+    text-color: @fg-col;
+    cursor: pointer;
+}
+
+element selected {
+    background-color: @surface1;
+    text-color: @blue;
+    border: 2px;
+    border-color: @blue;
+}
+
+element-icon {
+    size: 48px; /* Slightly smaller icons to fit the dense grid */
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+    margin: 0px 0px 10px 0px;
+    cursor: inherit;
+}
+
+element-text {
+    text-color: inherit;
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+    cursor: inherit;
+}
+
+/* --- Error Message --- */
+error-message {
+    background-color: @bg-col;
+    border: 2px;
+    border-color: @fg-col2;
+    border-radius: 10px;
+    padding: 20px;
+}

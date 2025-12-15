@@ -1,0 +1,47 @@
+// Catppuccin Mocha Colors
+$base:   #1e1e2e;
+$surface0: #313244;
+$surface1: #45475a;
+$text:   #cdd6f4;
+$blue:   #89b4fa;
+$red:    #f38ba8;
+
+* { all: unset; }
+
+.osd-container {
+    background-color: $base;
+    border: 2px solid $surface1;
+    border-radius: 30px; /* Pill shape */
+    padding: 0px 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.osd-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 24px;
+    color: $blue;
+    margin-right: 5px;
+}
+
+.osd-text {
+    font-family: "JetBrains Mono";
+    font-size: 16px;
+    font-weight: bold;
+    color: $text;
+    margin-left: 5px;
+}
+
+/* --- Progress Bar Styling --- */
+.osd-scale trough {
+    background-color: $surface0;
+    min-height: 8px;
+    min-width: 250px; 
+    border-radius: 10px;
+    margin-top: 26px;
+    margin-bottom: 26px;
+}
+
+.osd-scale highlight {
+    background-color: $blue;
+    border-radius: 10px;
+}

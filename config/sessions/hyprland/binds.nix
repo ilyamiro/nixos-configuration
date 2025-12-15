@@ -19,8 +19,14 @@
       ];
       bind =
       [	
-	 "$mainMod, D, exec, bash ~/.config/eww/dashboard/launch_dashboard"
-	 "$mainMod&SHIFT_L, R, exec, pkill eww && bash ~/.config/eww/arin/launch_bar"
+	 #"$mainMod, D, exec, bash ~/.config/eww/dashboard/launch_dashboard"
+	 "$mainMod&SHIFT_L, R, exec, bash ~/.config/eww/bar/launch_bar.sh"
+	 "$mainMod, D, exec, bash ${./scripts/rofi_show.sh} drun"
+	 "CTRL, TAB, exec, bash ${./scripts/rofi_show.sh} window"
+	 "$mainMod, C, exec, bash ${./scripts/rofi_clipboard.sh}"
+
+	 "$mainMod, S, exec, bash ${./scripts/search_bar.sh}"
+         "$mainMod, Q, exec, bash ~/.config/eww/bar/scripts/toggle_music.sh"
          "$mainMod, F, exec, firefox"
          "$mainMod, E, exec, nautilus"
          "$mainMod, T, exec, Telegram"

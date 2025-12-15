@@ -1,21 +1,230 @@
-*{
+$rosewater: #f5e0dc;
+$flamingo: #f2cdcd;
+$pink: #f5c2e7;
+$mauve: #cba6f7;
+$red: #f38ba8;
+$maroon: #eba0ac;
+$peach: #fab387;
+$yellow: #f9e2af;
+$green: #a6e3a1;
+$teal: #94e2d5;
+$sky: #89dceb;
+$sapphire: #74c7ec;
+$blue: #89b4fa;
+$lavender: #b4befe;
+$text: #cdd6f4;
+$subtext1: #bac2de;
+$subtext0: #a6adc8;
+$overlay2: #9399b2;
+$overlay1: #7f849c;
+$overlay0: #6c7086;
+$surface2: #585b70;
+$surface1: #45475a;
+$surface0: #313244;
+$base: #1e1e2e;
+$mantle: #181825;
+$crust: #11111b;
+
+* {
   all: unset;
-  font-family: feather;
-  font-family: "JetBrains Mono";
-  color: #9B5DE0;
+  font-family: "JetBrains Mono", "Iosevka Nerd Font", monospace;
+}
+
+.bar_class {
+  background-color: transparent;
 }
 
 .dockbox {
-  background-color: #9B5DE0;
-  border: 1px solid #161616;
-  padding-right: 10px;
-  padding-left: 10px;
-  border-radius: 4px;
+  background-color: $base;
+  border: 2px solid $surface0;
+  border-radius: 6px; 
+  
+  padding: 4px 18px; 
+  
+  margin: 0px 2px;
+  color: $text;
+
 }
 
 .genicon {
   background-repeat: no-repeat;
-  background-size: 20px;
+  background-size: 16px;
+  background-position: center;
   min-height: 20px;
   min-width: 20px;
 }
+
+.workspace {
+  color: $mauve;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 0px; 
+}
+
+.clockbox {
+  margin-right: 20px;
+}
+
+.time {
+  font-size: 16px;
+  font-weight: 800;
+  color: $blue;
+}
+
+.date {
+  font-size: 12px;
+  font-weight: bold;
+  color: $subtext0;
+  margin-top: 0px;
+}
+
+.weatherbox {
+  margin-left: 0px;
+}
+
+.weathericon {
+  font-family: "Iosevka Nerd Font";
+  font-size: 28px;
+  color: $yellow;
+}
+
+.weathertemp {
+  font-size: 18px;
+  font-weight: bold;
+  color: $peach;
+  margin: 0px;
+}
+
+.album_art {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 30px;
+  min-width: 30px;
+  border-radius: 4px;
+  background-color: $surface1; /* Fallback if no image */
+}
+
+.song_title {
+  font-weight: 800;
+  font-size: 14px;
+  color: $sapphire;
+}
+
+.song_artist {
+  font-weight: 600;
+  font-size: 11px;
+  color: $subtext0;
+}
+
+/* Media Controls */
+.media_btn, .media_btn_play {
+  font-family: "Iosevka Nerd Font";
+  font-size: 24px;
+  color: $overlay2;
+  transition: all 0.2s;
+  padding: 0px 5px;
+}
+
+.media_btn:hover {
+  color: $lavender;
+}
+
+.media_btn_play {
+  color: $text;
+  font-size: 30px;/* Play button stands out more */
+}
+
+.media_btn_play:hover {
+  color: $green;
+}
+
+/* --- MUSIC POPUP WINDOW --- */
+.music-window {
+    background-color: $base;
+    border: 2px solid $mauve; /* Made border pop more */
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.music-cover-art {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 4px;
+    background-color: $surface1;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3); /* Add shadow for depth */
+}
+
+.music-title {
+    font-weight: 900;
+    font-size: 20px; /* Much bigger */
+    color: $lavender;
+}
+
+.music-artist {
+    font-weight: 700;
+    font-size: 14px;
+    color: $pink;
+}
+
+.music-album {
+    font-size: 12px;
+    color: $subtext0;
+    font-style: italic;
+}
+
+/* Progress Bar */
+.music-progress-area {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+scale trough {
+    background-color: $surface0;
+    border-radius: 10px;
+    min-height: 8px; /* Thicker bar */
+}
+
+scale highlight {
+    background-color: $blue;
+    border-radius: 10px;
+}
+
+/* The circular grabber on the slider */
+scale slider {
+    background-color: $text;
+    min-height: 16px; /* Bigger target */
+    min-width: 16px;
+    border-radius: 50%;
+    margin-top: -4px; /* Centers it on the line */
+}
+
+.music-time {
+    font-size: 13px;
+    font-weight: bold;
+    color: $overlay2;
+    margin-top: 5px;
+}
+
+/* Controls */
+.ctrl-btn {
+    font-family: "Iosevka Nerd Font";
+    font-size: 24px;
+    color: $overlay2;
+}
+.ctrl-btn:hover { color: $text; }
+
+/* Active state for Shuffle/Loop */
+.ctrl-btn-active {
+    font-family: "Iosevka Nerd Font";
+    font-size: 24px;
+    color: $green; /* Lights up when active */
+}
+
+.play-btn-big {
+    font-family: "Iosevka Nerd Font";
+    font-size: 42px; /* Huge play button */
+    color: $mauve;
+}
+.play-btn-big:hover { color: $pink; }

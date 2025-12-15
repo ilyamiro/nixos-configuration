@@ -1,0 +1,42 @@
+;; VARIABLES
+(defvar volume_value 0)
+(defvar volume_icon "")
+
+;; WINDOW DEFINITION
+(defwindow volume_osd
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "85%"           ;; Position from top (approx bottom center)
+                      :width "250px"
+                      :height "60px"
+                      :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "volume_osd"
+  (volume_widget))
+
+;; WIDGET LAYOUT
+(defwidget volume_widget []
+  (box :class "osd-container"
+       :orientation "h"
+       :space-evenly false
+       :spacing 15
+    
+    ;; Icon Box
+    (label :class "osd-icon" 
+           :text volume_icon)
+    
+    ;; Progress Bar
+    (scale :class "osd-scale"
+           :min 0
+           :max 100
+           :value volume_value
+           :active false
+           :orientation "h")
+           
+    ;; Text Label (Optional, remove if you want just the bar)
+    (label :class "osd-text"
+           :text "${volume_value}%")
+  )
+)

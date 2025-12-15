@@ -6,6 +6,8 @@
     ./autostart.nix
     ./animations.nix
     ./monitors.nix
+
+    ./window-rules.nix
   ];
 
   wayland.windowManager.hyprland.enable = true;
@@ -20,6 +22,11 @@
     networkmanager_dmenu
     wl-clipboard
     hyprshot
+    fd 
+    ripgrep
+    gtk3
+    cava
+    cliphist
   ];
 
   wayland.windowManager.hyprland.settings = {

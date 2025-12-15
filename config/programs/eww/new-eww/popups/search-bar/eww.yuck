@@ -1,0 +1,31 @@
+;; 1. Define the variable to hold the input text
+(defvar search_input "")
+
+;; 2. Define the window
+(defwindow search_bar
+  :monitor 0
+  :geometry (geometry :y "10px"
+                      :width "400px"
+                      :height "40px"
+                      :anchor "top center")
+  :stacking "overlay"
+  :focusable true    ;; <--- CRITICAL for input fields on Wayland
+  (search_widget))
+
+;; 3. Define the widget layout
+(defwidget search_widget []
+  (box :class "search-container"
+       :orientation "h"
+       :space-evenly false
+    
+    (label :text " " :class "search-icon")
+
+    (input :class "search-input"
+           :value search_input
+           :onchange "eww update search_input='{}'"
+           :onaccept "../../bar/scripts/google_search.sh '{}'"
+           :timeout "10s" ;; Optional: timeout for the command
+    )
+  )
+)
+

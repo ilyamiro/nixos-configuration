@@ -1,17 +1,166 @@
 
-
-
-
-
 (defpoll WORKSPACE :interval "0.2s" `hyprctl activeworkspace -j | jq '.id'`)
+
+(defpoll TIME :interval "1s" `date +\"%I:%M:%S %p\"`)
+(defpoll DATE :interval "1m" `date +\"%A, %B %d\"`)
+
+(defpoll ICON :interval "5m" `bash ./scripts/weather.sh --icon`)
+(defpoll TEMP :interval "5m" `bash ./scripts/weather.sh --temp`)
+(defpoll HEX :interval "5m" `bash ./scripts/weather.sh --hex`)
+
+(defpoll MEDIA :interval "0.2s" `bash ./scripts/media.sh`)
+(defpoll MUSIC_FULL :interval "0.2s" `bash ./scripts/music_info.sh`)
 
 (defwidget search []
 	(box :class "dockbox"
-		(box :orintation "h" :spacing 20 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-			(button :style "background-image: url('images/icons/search.svg')" :class "genicon" :onclick "scripts/search-bar")
+		(box :orientation "h" :spacing 10 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
+			(button :style "background-image: url('images/icons/search.svg')" :class "genicon" :onclick "bash ../../../../sessions/hyprland/scripts/rofi_show.sh")
+			
 		)
 	)
 )
+
+(defwidget workspaces []
+	(box :class "dockbox"
+	(box :orientation "h" :spacing 0 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
+	(label :class "workspace" :halign "center":text WORKSPACE)
+	) 
+	)
+	
+)
+
+;; --- WINDOW DEFINITION ---
+(defwindow music_win
+    :monitor 0
+    :geometry (geometry :x "12px"
+                        :y "10px"
+                        :width "600px"   ;; Wider
+                        :height "240px"  ;; Taller
+                        :anchor "top left")
+    :stacking "fg"
+    :namespace "music_win"
+    (music_popup))
+
+;; --- POPUP WIDGET ---
+(defwidget music_popup []
+    (box :class "music-window" :orientation "h" :space-evenly false :spacing 25
+        
+        ;; LEFT: Big Art
+        (box :class "music-cover-art" 
+             :style "background-image: url('${MUSIC_FULL.artUrl}');"
+             :width 220 
+             :height 220
+	     :valign "center"
+	      )
+
+        ;; RIGHT: Info & Controls
+        (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 15
+            
+            ;; TEXT
+            (box :orientation "v" :spacing 5
+                (label :class "music-title" 
+                       :halign "start" 
+                       :wrap true 
+                       :limit-width 40
+                       :text "${MUSIC_FULL.title}")
+                (label :class "music-artist" 
+                       :halign "start" 
+                       :wrap true 
+                       :limit-width 40 
+                       :text "BY ${MUSIC_FULL.artist}")
+                (label :class "music-album" 
+                       :halign "start" 
+                       :limit-width 40 
+                       :text "ON ${MUSIC_FULL.album}")
+            )
+
+            ;; PROGRESS BAR
+            (box :class "music-progress-area" :orientation "v" :space-evenly false
+                (scale :class "music-progress-bar"
+                       :min 0
+                       :max 100
+                       :value {MUSIC_FULL.percent}
+                       :onchange "bash ./scripts/player_control.sh seek {}")
+                
+                (box :orientation "h" :halign "fill"
+                    (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
+                    (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
+                )
+            )
+
+            ;; CONTROLS (Only Prev, Play, Next)
+            (box :class "music-controls" :orientation "h" :halign "center" :spacing 30
+                (button :class "ctrl-btn" :onclick "playerctl previous" "")
+                (button :class "play-btn-big" 
+                        :onclick "playerctl play-pause" 
+                        {MUSIC_FULL.status == "Playing" ? "" : ""})
+                (button :class "ctrl-btn" :onclick "playerctl next" "")
+            )
+        )
+    )
+)
+
+;; --- BAR WIDGET (Modified Click Area) ---
+(defwidget media []
+  (box :class "dockbox" 
+       :visible {MEDIA.status != "Stopped"}
+       :orientation "h" 
+       :spacing 10 
+       :valign "fill" 
+       :halign "center" 
+       :space-evenly "false"
+
+    ;; THIS EVENTBOX WRAPS ONLY ART + TEXT
+    (eventbox :onclick "bash ./scripts/toggle_music.sh"
+        (box :orientation "h" :spacing 10 :space-evenly "false"
+            (box :class "album_art" 
+                 :style "background-image: url('${MEDIA.artUrl}');"
+                 :valign "center"
+                 :width 30
+                 :height 30)
+
+            (box :orientation "v" 
+                 :valign "center" 
+                 :spacing 0 
+                 :space-evenly "false"
+                 (label :class "song_title" 
+                        :halign "start" 
+                        :limit-width 20 
+                        :text {MEDIA.text})
+                 (label :class "song_artist" 
+                        :halign "start" 
+                        :limit-width 20 
+                        :text {MEDIA.artist}))
+        )
+    )
+
+    ;; BUTTONS ARE NOW OUTSIDE THE EVENTBOX
+    ;; They will function normally and NOT trigger the popup
+    (box :orientation "h" 
+         :spacing 2 
+         :valign "center"
+         :halign "center"
+         :space-evenly "false"
+         (button :class "media_btn" :onclick "playerctl previous" "󰒮")
+         (button :class "media_btn_play" 
+                 :onclick "playerctl play-pause" 
+                 {MEDIA.status == "Playing" ? "󰏤" : "󰐊"})
+         (button :class "media_btn" :onclick "playerctl next" "󰒭"))
+  )
+
+
+)
+
+(defwidget weather [] 
+    (box :class "dockbox"
+        (box :class "clockbox" :orientation "v" :spacing 0 :valign "center" :halign "start" :space-evenly "false" :vexpand "false" :hexpand "false"
+            (label :class "time" :halign "start" :wrap "true" :limit-width 25 :text TIME)
+            (label :class "date" :halign "start" :wrap "true" :limit-width 25 :text DATE))
+        (box :class "weatherbox" :orientation "h" :spacing 0 :valign "center" :halign "end" :space-evenly "false" :vexpand "false" :hexpand "false"
+            (label :class "weathericon" :style "color: ${HEX};" :text ICON)
+            (label :class "weathertemp" :text TEMP))))
+
+
 
 (defwidget bar_layout []
 	(centerbox :orintation "h"
@@ -19,14 +168,19 @@
      	(box :orintation "h"
              :space-evenly false
 	     :halign "start"
-	     :spacing 10
+	     :spacing 5
 	     :style "padding-left: 10px;"
 	(search)
+	(workspaces)
+	(media)
 	)
+
     	(box :orientation "h" 
          :space-evenly false 
          :halign "center"
+	(weather)
 	 )
+
     	(box :orientation "h" 
          :space-evenly false 
          :halign "end" 

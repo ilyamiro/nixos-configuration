@@ -1,0 +1,46 @@
+$base:   #1e1e2e;
+$text:     #cdd6f4;
+$subtext0: #a6adc8;
+$surface0: #313244;
+$blue:      #89b4fa;
+$lavender:  #b4befe;
+
+
+.search-container {
+    background-color: $base;
+    border: 2px solid $surface0; 
+    border-radius: 6px;
+    padding: 0px 5px;
+}
+
+.search-container:hover,
+.search-container:focus-within {
+    border-color: $lavender;
+    background-color: $surface0; }
+
+.search-icon {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 32px;
+    
+    color: $blue; 
+}
+
+.search-input {
+    background-color: transparent;
+    color: $text;
+    font-family: "JetBrains Mono";
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    min-width: 400px;
+    min-height: 50px;
+    caret-color: $lavender;
+}
+
+.search-input:focus {
+    box-shadow: none;
+    outline: none;
+    border: none;
+    background-image: none;
+}
+

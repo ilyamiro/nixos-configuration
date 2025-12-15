@@ -1,0 +1,16 @@
+configuration {
+    modi:                       "drun,filebrowser,window";
+    show-icons:                 true;
+    display-drun:               "";
+    display-window:             "";
+    display-filebrowser:        "";
+    drun-display-format:        "{name}";
+    window-format:              "{w} · {c} · {t}";
+    
+    hover-select:               true;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+}
+
+/* This points to your separate theme file */
+@theme "theme.rasi"

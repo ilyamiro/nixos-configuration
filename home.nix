@@ -7,6 +7,7 @@
     ./config/programs/neovim/default.nix
     ./config/programs/waybar/default.nix
     ./config/programs/eww/default.nix
+    ./config/programs/rofi/default.nix
 
     # sessions
     ./config/sessions/hyprland/default.nix
@@ -16,7 +17,9 @@
   home.homeDirectory = "/home/ilyamiro";
   home.stateVersion = "25.11"; 
   
-  
+  home.packages = with pkgs; [
+	adwaita-icon-theme
+  ]; 
   
   dconf = {
     enable = true;
@@ -42,12 +45,12 @@
     };
     enable = true;
     theme = { 
-      name = "Adwaita-dark"; 
+      name = "Adwaita"; 
       package = pkgs.gnome-themes-extra;
     }; 
     iconTheme = { 
       name = "Adwaita"; 
-      package = pkgs.gnome-themes-extra; 
+      package = pkgs.adwaita-icon-theme; 
     }; 
     cursorTheme = { 
       name = "Adwaita"; 
@@ -56,7 +59,7 @@
   };
 
   home.sessionVariables = {
-    QT_QPA_PLATFORMTHEME = "gtk3";
+    QT_QPA_PLATFORMTHEME = "qt6ct";
   };
   
   programs.home-manager.enable = true;
