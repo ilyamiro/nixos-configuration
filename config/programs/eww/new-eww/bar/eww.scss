@@ -1,50 +1,76 @@
 $rosewater: #f5e0dc;
+
 $flamingo: #f2cdcd;
+
 $pink: #f5c2e7;
+
 $mauve: #cba6f7;
+
 $red: #f38ba8;
+
 $maroon: #eba0ac;
+
 $peach: #fab387;
+
 $yellow: #f9e2af;
+
 $green: #a6e3a1;
+
 $teal: #94e2d5;
+
 $sky: #89dceb;
+
 $sapphire: #74c7ec;
+
 $blue: #89b4fa;
+
 $lavender: #b4befe;
+
 $text: #cdd6f4;
+
 $subtext1: #bac2de;
+
 $subtext0: #a6adc8;
+
 $overlay2: #9399b2;
+
 $overlay1: #7f849c;
+
 $overlay0: #6c7086;
+
 $surface2: #585b70;
+
 $surface1: #45475a;
+
 $surface0: #313244;
+
 $base: #1e1e2e;
+
 $mantle: #181825;
+
 $crust: #11111b;
+
 
 * {
   all: unset;
   font-family: "JetBrains Mono", "Iosevka Nerd Font", monospace;
 }
 
+
 .bar_class {
   background-color: transparent;
 }
 
+
 .dockbox {
   background-color: $base;
   border: 2px solid $surface0;
-  border-radius: 6px; 
-  
-  padding: 4px 18px; 
-  
+  border-radius: 4px; 
+  padding: 6px 16px; 
   margin: 0px 2px;
   color: $text;
-
 }
+
 
 .genicon {
   background-repeat: no-repeat;
@@ -54,6 +80,7 @@ $crust: #11111b;
   min-width: 20px;
 }
 
+
 .workspace {
   color: $mauve;
   font-size: 18px;
@@ -61,170 +88,486 @@ $crust: #11111b;
   padding: 0px; 
 }
 
+
 .clockbox {
+
   margin-right: 20px;
+
 }
+
 
 .time {
+
   font-size: 16px;
+
   font-weight: 800;
+
   color: $blue;
+
 }
+
 
 .date {
+
   font-size: 12px;
+
   font-weight: bold;
+
   color: $subtext0;
+
   margin-top: 0px;
+
 }
+
 
 .weatherbox {
+
   margin-left: 0px;
+
 }
+
 
 .weathericon {
+
   font-family: "Iosevka Nerd Font";
+
   font-size: 28px;
+
   color: $yellow;
+
 }
+
 
 .weathertemp {
+
   font-size: 18px;
+
   font-weight: bold;
+
   color: $peach;
+
   margin: 0px;
+
 }
+
 
 .album_art {
+
   background-position: center;
+
   background-repeat: no-repeat;
+
   background-size: cover;
+
   min-height: 30px;
+
   min-width: 30px;
+
   border-radius: 4px;
-  background-color: $surface1; /* Fallback if no image */
+
+  background-color: $surface1;
+
 }
+
 
 .song_title {
+
   font-weight: 800;
+
   font-size: 14px;
+
   color: $sapphire;
+
 }
+
 
 .song_artist {
+
   font-weight: 600;
+
   font-size: 11px;
+
   color: $subtext0;
+
 }
 
-/* Media Controls */
+
 .media_btn, .media_btn_play {
+
   font-family: "Iosevka Nerd Font";
+
   font-size: 24px;
+
   color: $overlay2;
-  transition: all 0.2s;
+
   padding: 0px 5px;
+
 }
+
 
 .media_btn:hover {
+
   color: $lavender;
+
 }
+
 
 .media_btn_play {
+
   color: $text;
-  font-size: 30px;/* Play button stands out more */
+
+  font-size: 30px;
+
 }
+
 
 .media_btn_play:hover {
+
   color: $green;
+
 }
+
 
 /* --- MUSIC POPUP WINDOW --- */
+
 .music-window {
+
     background-color: $base;
-    border: 2px solid $mauve; /* Made border pop more */
+
+    border: 2px solid $mauve;
+
     border-radius: 4px;
+
     padding: 20px;
+
 }
+
 
 .music-cover-art {
+
     background-position: center;
+
     background-repeat: no-repeat;
+
     background-size: cover;
-    border-radius: 4px;
+
+    border-radius: 8px;
+
     background-color: $surface1;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.3); /* Add shadow for depth */
+
 }
+
 
 .music-title {
+
     font-weight: 900;
-    font-size: 20px; /* Much bigger */
+
+    font-size: 20px;
+
     color: $lavender;
+
 }
+
 
 .music-artist {
+
     font-weight: 700;
+
     font-size: 14px;
+
     color: $pink;
+
 }
+
 
 .music-album {
+
     font-size: 12px;
+
     color: $subtext0;
+
     font-style: italic;
+
 }
 
-/* Progress Bar */
+
 .music-progress-area {
+
     margin-top: 10px;
+
+    margin-bottom: 5px;
+
+}
+
+
+scale trough {
+
+    background-color: $surface0;
+
+    border-radius: 10px;
+
+    min-height: 8px;
+
+}
+
+
+scale highlight {
+
+    background-color: $blue;
+
+    border-radius: 10px;
+
+}
+
+
+scale slider {
+
+    background-color: $text;
+
+    min-height: 16px;
+
+    min-width: 16px;
+
+    border-radius: 50%;
+
+    margin-left: -4px;
+
+}
+
+
+.music-time {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: $overlay2;
+
+    margin-top: 5px;
+
+}
+
+
+.ctrl-btn {
+
+    font-family: "Iosevka Nerd Font";
+
+    font-size: 24px;
+
+    color: $overlay2;
+
+}
+
+.ctrl-btn:hover { 
+
+    color: $text; 
+
+}
+
+
+.play-btn-big {
+
+    font-family: "Iosevka Nerd Font";
+
+    font-size: 42px;
+
+    color: $mauve;
+
+}
+
+.play-btn-big:hover { 
+
+    color: $pink; 
+
+}
+
+
+/* --- IMPROVED SYSTEM WIDGET ON BAR --- */
+
+.system-widget {
+  background-color: $base;
+  border: 2px solid $surface0;
+  border-radius: 4px; 
+  padding: 8px 14px; /* INCREASED HEIGHT/WIDTH PADDING */
+  margin: 0px 4px;
+  color: $text;
+  min-height: 42px;
+}
+
+/* The "Pill" container for each module */
+.sys-pill {
+  background-color: $surface0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  min-height: 24px; /* Ensures consistent height */
+}
+
+.sys-pill:hover {
+  background-color: $surface1;
+}
+
+/* Specific Pill Background Tweaks (Optional: subtle coloring) */
+.sys-wifi.active {
+  background-color: rgba(137, 180, 250, 0.1); /* Very subtle Blue tint */
+  border: 1px solid $blue;
+}
+
+.sys-bt.active {
+  background-color: rgba(180, 190, 254, 0.1); /* Very subtle Lavender tint */
+  border: 1px solid $lavender;
+}
+
+/* --- TEXT STYLING --- */
+.sys-text {
+  font-family: "JetBrains Mono";
+  font-weight: 700;
+  font-size: 13px;
+  color: $text;
+  margin-top: 1px; /* Fine-tune vertical alignment with icon */
+}
+
+/* --- ICON STYLING --- */
+/* Base icon style */
+.sys-icon-kb, .sys-icon-wifi, .sys-icon-bt, .sys-icon-vol, .sys-icon-bat {
+  font-family: "Iosevka Nerd Font";
+  font-size: 18px;
+  padding-right: 2px;
+}
+
+/* Colors */
+.sys-icon-kb { color: $mauve; }
+
+.sys-icon-wifi { color: $overlay1; transition: color 0.3s; }
+.sys-pill.sys-wifi.active .sys-icon-wifi { color: $blue; }
+
+.sys-icon-bt { color: $overlay1; transition: color 0.3s; }
+.sys-pill.sys-bt.active .sys-icon-bt { color: $lavender; }
+
+.sys-icon-vol { color: $peach; }
+.sys-icon-vol.muted { color: $overlay0; }
+
+.sys-icon-bat { color: $green; }
+.sys-icon-bat.low { 
+  color: $red; 
+  animation-name: blink; 
+  animation-duration: 2s; 
+  animation-iteration-count: infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* --- EQUALIZER STYLING --- */
+
+.music-sep-h {
+    background-color: $surface1;
+    margin: 25px 0px; /* Top/Bottom Spacing */
+    border-radius: 99px;
+}
+
+.eq-container {
+    padding: 0px 10px;
+}
+
+.eq-header {
+    font-weight: 900;
+    font-size: 16px;
+    color: $mauve;
+}
+
+.eq-preset-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: $subtext0;
+}
+
+/* EQ Sliders */
+.eq-scale trough {
+    background-color: $surface0;
+    border-radius: 99px;
+    min-width: 6px; 
+    min-height: 150px; /* Made them longer as requested */
     margin-bottom: 5px;
 }
 
-scale trough {
-    background-color: $surface0;
-    border-radius: 10px;
-    min-height: 8px; /* Thicker bar */
+.eq-scale highlight {
+    background-color: $blue; 
+    border-radius: 99px;
+    min-width: 6px;
 }
 
-scale highlight {
-    background-color: $blue;
-    border-radius: 10px;
-}
-
-/* The circular grabber on the slider */
-scale slider {
+.eq-scale slider {
     background-color: $text;
-    min-height: 16px; /* Bigger target */
-    min-width: 16px;
+    min-height: 14px;
+    min-width: 14px;
     border-radius: 50%;
-    margin-top: -4px; /* Centers it on the line */
+    /* YOUR REQUESTED ADJUSTMENT FOR VERTICAL EQ SLIDERS */
+    margin-left: 0px; 
+    margin-bottom: -4px; 
 }
 
-.music-time {
-    font-size: 13px;
+/* Frequency Labels */
+.eq-band-label {
+    font-size: 10px;
     font-weight: bold;
-    color: $overlay2;
-    margin-top: 5px;
+    color: $overlay1;
 }
 
-/* Controls */
-.ctrl-btn {
-    font-family: "Iosevka Nerd Font";
-    font-size: 24px;
-    color: $overlay2;
-}
-.ctrl-btn:hover { color: $text; }
-
-/* Active state for Shuffle/Loop */
-.ctrl-btn-active {
-    font-family: "Iosevka Nerd Font";
-    font-size: 24px;
-    color: $green; /* Lights up when active */
+/* Preset Buttons */
+.eq-preset-btn {
+    background-color: $surface0;
+    color: $subtext0;
+    padding: 8px 0px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s;
 }
 
-.play-btn-big {
-    font-family: "Iosevka Nerd Font";
-    font-size: 42px; /* Huge play button */
+.eq-preset-btn:hover {
+    background-color: $surface1;
+    color: $text;
+}
+
+.eq-preset-btn.active {
+    background-color: $mauve;
+    color: $base;
+}
+
+/* ... existing eq styles ... */
+
+.eq-apply-btn {
+    background-color: transparent;
+    color: $overlay1; /* Dimmed text when inactive */
+    font-weight: bold;
+    font-size: 11px;
+    border-radius: 4px;
+    padding: 2px 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+
+/* When changes are pending (Highlight Class) */
+.eq-apply-btn.highlight {
+    background-color: $surface0;
     color: $mauve;
+    border: 1px solid $mauve;
+    box-shadow: 0px 0px 5px rgba(203, 166, 247, 0.3); /* Subtle Mauve Glow */
 }
-.play-btn-big:hover { color: $pink; }
+
+.eq-apply-btn:hover {
+    color: $text;
+}
+
+.eq-apply-btn.highlight:hover {
+    background-color: $mauve;
+    color: $base;
+}
+
+.eq-apply-btn:active {
+    background-color: $surface1;
+}

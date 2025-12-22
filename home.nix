@@ -18,7 +18,7 @@
   home.stateVersion = "25.11"; 
   
   home.packages = with pkgs; [
-	adwaita-icon-theme
+      adwaita-icon-theme
   ]; 
   
   dconf = {
@@ -29,7 +29,8 @@
       };
     };
   };
-  
+  services.easyeffects.enable = true;  
+
   gtk = {
     gtk3 = {
       extraConfig = {

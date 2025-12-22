@@ -33,7 +33,7 @@
     general = {
       border_size = 0;
       gaps_in = 4;
-      gaps_out = 6;
+      gaps_out = 4;
       float_gaps = 6;
       resize_on_border = true;
       extend_border_grab_area = 30;

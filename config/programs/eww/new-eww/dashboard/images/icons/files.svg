@@ -1,0 +1,16 @@
+<svg width="64" height="64" version="1.1" viewBox="0 0 16.933 16.933" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="b">
+   <stop offset="0"/>
+   <stop stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="c" x1="32" x2="32" y1="13" y2="9" gradientTransform="scale(.26458)" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
+  <linearGradient id="a" x1="30" x2="57" y1="44" y2="44" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
+ </defs>
+ <circle cx="8.4665" cy="8.4665" r="6.6145" fill="#3578c7" style="paint-order:stroke markers fill"/>
+ <path transform="scale(.26458)" d="m19.398 14a22 22 0 0 0-9.3984 18 22 22 0 0 0 22 22 22 22 0 0 0 22-22 22 22 0 0 0-9.3711-18z" fill="#fff" stroke-width="3.7796" style="paint-order:stroke markers fill"/>
+ <path d="m8.4665 1.852a6.6145 6.6145 0 0 0-3.9444 1.3229h7.8976a6.6145 6.6145 0 0 0-3.9532-1.3229z" fill="url(#c)" opacity=".15" style="paint-order:stroke markers fill"/>
+ <path d="m8.466 4.2332c-0.29211 6.879e-4 -0.38134 0.27599-0.52916 0.52967l-0.30799 0.52812-5.5525 5.167e-4a7.1436 7.1436 0 0 0-0.75343 3.1749 7.1436 7.1436 0 0 0 7.1436 7.1436 7.1436 7.1436 0 0 0 7.1436-7.1436 7.1436 7.1436 0 0 0-1.3999-4.2332h-5.7432z" fill="#5294e2" style="paint-order:stroke markers fill"/>
+ <rect x="9.2599" y="4.762" width="3.969" height=".529" ry=".265" opacity=".25" style="paint-order:stroke markers fill"/>
+ <path transform="scale(.26458)" d="m59 32-27 27a27 27 0 0 0 27-27z" fill="url(#a)" opacity=".15" stroke-width="3.7796" style="paint-order:stroke markers fill"/>
+</svg>

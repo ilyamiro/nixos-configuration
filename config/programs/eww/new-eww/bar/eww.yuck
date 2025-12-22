@@ -1,194 +1,331 @@
-
+;; Workspace & Time
 (defpoll WORKSPACE :interval "0.2s" `hyprctl activeworkspace -j | jq '.id'`)
-
 (defpoll TIME :interval "1s" `date +\"%I:%M:%S %p\"`)
 (defpoll DATE :interval "1m" `date +\"%A, %B %d\"`)
 
+;; Weather
 (defpoll ICON :interval "5m" `bash ./scripts/weather.sh --icon`)
 (defpoll TEMP :interval "5m" `bash ./scripts/weather.sh --temp`)
 (defpoll HEX :interval "5m" `bash ./scripts/weather.sh --hex`)
 
+;; Media
 (defpoll MEDIA :interval "0.2s" `bash ./scripts/media.sh`)
 (defpoll MUSIC_FULL :interval "0.2s" `bash ./scripts/music_info.sh`)
+(defpoll EQ_DATA :interval "0.5s" `bash ./scripts/equalizer.sh get`)
+
+;; System Info - Redesigned
+(defpoll WIFI_STATUS :interval "2s" `bash ./scripts/sys_info.sh --wifi-status`)
+(defpoll WIFI_ICON :interval "2s" `bash ./scripts/sys_info.sh --wifi-icon`)
+(defpoll WIFI_SSID :interval "2s" `bash ./scripts/sys_info.sh --wifi-ssid`)
+
+(defpoll BT_STATUS :interval "2s" `bash ./scripts/sys_info.sh --bt-status`)
+(defpoll BT_ICON :interval "2s" `bash ./scripts/sys_info.sh --bt-icon`)
+(defpoll BT_DEVICE :interval "2s" `bash ./scripts/sys_info.sh --bt-connected`)
+
+(defpoll CURRENT_VOL :interval "0.1s" `bash ./scripts/sys_info.sh --volume`)
+(defpoll VOL_ICON :interval "0.1s" `bash ./scripts/sys_info.sh --volume-icon`)
+(defpoll IS_MUTED :interval "0.2s" `bash ./scripts/sys_info.sh --is-muted`)
+
+(defpoll BATTERY_PERCENT :interval "10s" `bash ./scripts/sys_info.sh --battery-percent`)
+(defpoll BATTERY_ICON :interval "10s" `bash ./scripts/sys_info.sh --battery-icon`)
+(defpoll BATTERY_STATUS :interval "10s" `bash ./scripts/sys_info.sh --battery-status`)
+
+(defpoll KB_LAYOUT :interval "1s" `bash ./scripts/sys_info.sh --kb-layout`)
+
+;; WIDGETS
 
 (defwidget search []
-	(box :class "dockbox"
-		(box :orientation "h" :spacing 10 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-			(button :style "background-image: url('images/icons/search.svg')" :class "genicon" :onclick "bash ../../../../sessions/hyprland/scripts/rofi_show.sh")
-			
-		)
-	)
+    (box :class "dockbox"
+        (box :orientation "h" :spacing 10 :valign "center" :halign "center" 
+             :space-evenly "false" :vexpand "false" :hexpand "false"
+            (button :style "background-image: url('images/icons/search.svg')" 
+                    :class "genicon" 
+                    :onclick "bash ../../../../sessions/hyprland/scripts/rofi_show.sh")
+        )
+    )
 )
 
 (defwidget workspaces []
-	(box :class "dockbox"
-	(box :orientation "h" :spacing 0 :valign "center" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
-	(label :class "workspace" :halign "center":text WORKSPACE)
-	) 
-	)
-	
+    (box :class "dockbox"
+        (box :orientation "h" :spacing 0 :valign "center" :halign "center" 
+             :space-evenly "false" :vexpand "false" :hexpand "false"
+            (label :class "workspace" :halign "center" :text WORKSPACE)
+        ) 
+    )
 )
 
-;; --- WINDOW DEFINITION ---
-(defwindow music_win
-    :monitor 0
-    :geometry (geometry :x "12px"
-                        :y "10px"
-                        :width "600px"   ;; Wider
-                        :height "240px"  ;; Taller
-                        :anchor "top left")
-    :stacking "fg"
-    :namespace "music_win"
-    (music_popup))
-
-;; --- POPUP WIDGET ---
-(defwidget music_popup []
-    (box :class "music-window" :orientation "h" :space-evenly false :spacing 25
+(defwidget equalizer []
+    (box :class "eq-container" :orientation "v" :space-evenly false :spacing 15
         
-        ;; LEFT: Big Art
-        (box :class "music-cover-art" 
-             :style "background-image: url('${MUSIC_FULL.artUrl}');"
-             :width 220 
-             :height 220
-	     :valign "center"
-	      )
-
-        ;; RIGHT: Info & Controls
-        (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 15
+        ;; HEADER ROW: Title + Apply Button + Preset Name
+        (box :orientation "h" :space-evenly false :valign "center"
             
-            ;; TEXT
-            (box :orientation "v" :spacing 5
-                (label :class "music-title" 
-                       :halign "start" 
-                       :wrap true 
-                       :limit-width 40
-                       :text "${MUSIC_FULL.title}")
-                (label :class "music-artist" 
-                       :halign "start" 
-                       :wrap true 
-                       :limit-width 40 
-                       :text "BY ${MUSIC_FULL.artist}")
-                (label :class "music-album" 
-                       :halign "start" 
-                       :limit-width 40 
-                       :text "ON ${MUSIC_FULL.album}")
+            ;; Left: Title
+            (label :class "eq-header" :halign "start" :hexpand true :text "Equalizer")
+            
+            ;; Center/Right: Apply Button (Only highlighted if pending)
+            (button :class "eq-apply-btn ${EQ_DATA.pending == 'true' ? 'highlight' : ''}" 
+                    :onclick "bash ./scripts/equalizer.sh apply"
+                    :visible true
+                    ;; Change text based on state for extra clarity (Optional)
+                    {EQ_DATA.pending == "true" ? "Apply" : "Saved"}
             )
 
-            ;; PROGRESS BAR
-            (box :class "music-progress-area" :orientation "v" :space-evenly false
-                (scale :class "music-progress-bar"
-                       :min 0
-                       :max 100
-                       :value {MUSIC_FULL.percent}
-                       :onchange "bash ./scripts/player_control.sh seek {}")
-                
-                (box :orientation "h" :halign "fill"
-                    (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
-                    (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
-                )
-            )
+            ;; Right: Preset Name (with some margin left to separate from button)
+            (label :class "eq-preset-name" 
+                   :halign "end" 
+                   :style "margin-left: 15px;" 
+                   :text {EQ_DATA.preset})
+        )
 
-            ;; CONTROLS (Only Prev, Play, Next)
-            (box :class "music-controls" :orientation "h" :halign "center" :spacing 30
-                (button :class "ctrl-btn" :onclick "playerctl previous" "")
-                (button :class "play-btn-big" 
-                        :onclick "playerctl play-pause" 
-                        {MUSIC_FULL.status == "Playing" ? "" : ""})
-                (button :class "ctrl-btn" :onclick "playerctl next" "")
+        ;; 10 Band Sliders
+        (box :class "eq-sliders" :orientation "h" :space-evenly true :spacing 10 :vexpand true
+            (eq_band :val {EQ_DATA.b1} :idx "1" :lbl "31")
+            (eq_band :val {EQ_DATA.b2} :idx "2" :lbl "63")
+            (eq_band :val {EQ_DATA.b3} :idx "3" :lbl "125")
+            (eq_band :val {EQ_DATA.b4} :idx "4" :lbl "250")
+            (eq_band :val {EQ_DATA.b5} :idx "5" :lbl "500")
+            (eq_band :val {EQ_DATA.b6} :idx "6" :lbl "1k")
+            (eq_band :val {EQ_DATA.b7} :idx "7" :lbl "2k")
+            (eq_band :val {EQ_DATA.b8} :idx "8" :lbl "4k")
+            (eq_band :val {EQ_DATA.b9} :idx "9" :lbl "8k")
+            (eq_band :val {EQ_DATA.b10} :idx "10" :lbl "16k")
+        )
+
+        ;; Presets Grid
+        (box :class "eq-presets" :orientation "v" :spacing 8
+            (box :orientation "h" :spacing 10 :space-evenly true
+                (preset_btn :name "Flat") (preset_btn :name "Bass") (preset_btn :name "Treble") (preset_btn :name "Vocal")
+            )
+            (box :orientation "h" :spacing 10 :space-evenly true
+                (preset_btn :name "Pop") (preset_btn :name "Rock") (preset_btn :name "Jazz") (preset_btn :name "Classic")
             )
         )
     )
 )
 
-;; --- BAR WIDGET (Modified Click Area) ---
-(defwidget media []
-  (box :class "dockbox" 
-       :visible {MEDIA.status != "Stopped"}
-       :orientation "h" 
-       :spacing 10 
-       :valign "fill" 
-       :halign "center" 
-       :space-evenly "false"
-
-    ;; THIS EVENTBOX WRAPS ONLY ART + TEXT
-    (eventbox :onclick "bash ./scripts/toggle_music.sh"
-        (box :orientation "h" :spacing 10 :space-evenly "false"
-            (box :class "album_art" 
-                 :style "background-image: url('${MEDIA.artUrl}');"
-                 :valign "center"
-                 :width 30
-                 :height 30)
-
-            (box :orientation "v" 
-                 :valign "center" 
-                 :spacing 0 
-                 :space-evenly "false"
-                 (label :class "song_title" 
-                        :halign "start" 
-                        :limit-width 20 
-                        :text {MEDIA.text})
-                 (label :class "song_artist" 
-                        :halign "start" 
-                        :limit-width 20 
-                        :text {MEDIA.artist}))
-        )
+;; Helper widget for a single frequency band
+(defwidget eq_band [val idx lbl]
+    (box :orientation "v" :space-evenly false :spacing 5
+        (scale :class "eq-scale"
+               :orientation "v"
+               :flipped true
+               ;; REDUCED SENSITIVITY (From 24 to 12)
+               :min -12 
+               :max 12
+               :value val
+               :onchange "bash ./scripts/equalizer.sh set_band ${idx} {}")
+        (label :class "eq-band-label" :text lbl)
     )
+)
 
-    ;; BUTTONS ARE NOW OUTSIDE THE EVENTBOX
-    ;; They will function normally and NOT trigger the popup
-    (box :orientation "h" 
-         :spacing 2 
+;; Helper widget for preset buttons
+(defwidget preset_btn [name]
+    (button :class "eq-preset-btn ${EQ_DATA.preset == name ? 'active' : ''}" 
+            :onclick "bash ./scripts/equalizer.sh preset ${name}" 
+            name)
+)
+
+(defwidget system []
+    (box :class "system-widget"
+         :orientation "h"
+         :spacing 8 
          :valign "center"
          :halign "center"
          :space-evenly "false"
-         (button :class "media_btn" :onclick "playerctl previous" "󰒮")
-         (button :class "media_btn_play" 
-                 :onclick "playerctl play-pause" 
-                 {MEDIA.status == "Playing" ? "󰏤" : "󰐊"})
-         (button :class "media_btn" :onclick "playerctl next" "󰒭"))
-  )
 
+         ;; 1. Keyboard Layout
+         (box :class "sys-pill sys-kb" :orientation "h" :spacing 8 :space-evenly false
+            (label :class "sys-icon-kb" :text "󰌌")
+            (label :class "sys-text" :text KB_LAYOUT)
+         )
 
+         ;; 2. WiFi
+         (eventbox :onclick "bash ./scripts/sys_info.sh --wifi-toggle"
+                   :onrightclick "nm-connection-editor &"
+                   :cursor "pointer"
+                   :tooltip {WIFI_STATUS == "enabled" ? (WIFI_SSID != "" ? "Connected to ${WIFI_SSID}" : "WiFi enabled") : "WiFi disabled"}
+             (box :class "sys-pill sys-wifi ${WIFI_STATUS == 'enabled' ? 'active' : ''}" 
+                  :orientation "h" :spacing 8 :space-evenly false
+                 (label :class "sys-icon-wifi" :text WIFI_ICON)
+                 (label :class "sys-text" 
+                        :text {WIFI_STATUS == "enabled" ? (WIFI_SSID != "" ? WIFI_SSID : "Disconnected") : "Off"}
+                        :limit-width 10)
+             )
+         )
+
+         ;; 3. Bluetooth
+         (eventbox :onclick "bash ./scripts/sys_info.sh --bt-toggle"
+                   :onrightclick "blueman-manager &"
+                   :cursor "pointer"
+                   :tooltip {BT_STATUS == "on" ? "Bluetooth On" : "Bluetooth Off"}
+             (box :class "sys-pill sys-bt ${BT_STATUS == 'on' ? 'active' : ''}" 
+                  :orientation "h" :spacing 8 :space-evenly false
+                 (label :class "sys-icon-bt" :text BT_ICON)
+                 (label :class "sys-text" 
+                        :text {BT_STATUS == "on" ? BT_DEVICE : "Off"}
+                        :limit-width 10)
+             )
+         )
+
+         ;; 4. Volume
+         (eventbox :onrightclick "bash ./scripts/sys_info.sh --toggle-mute"
+                   :onclick "pavucontrol &"
+                   :cursor "pointer"
+                   :tooltip "Volume: ${CURRENT_VOL}%"
+             (box :class "sys-pill sys-vol" :orientation "h" :spacing 8 :space-evenly false
+                 (label :class "sys-icon-vol ${IS_MUTED == 'true' ? 'muted' : ''}" 
+                        :text VOL_ICON)
+                 (label :class "sys-text" :text "${CURRENT_VOL}%")
+             )
+         )
+
+         ;; 5. Battery
+         (box :class "sys-pill sys-bat" :orientation "h" :spacing 8 :space-evenly false
+              :tooltip "${BATTERY_STATUS}: ${BATTERY_PERCENT}%"
+             (label :class "sys-icon-bat ${BATTERY_PERCENT < 20 ? 'low' : ''}" 
+                    :text BATTERY_ICON)
+             (label :class "sys-text" :text "${BATTERY_PERCENT}%")
+         )
+    )
+)
+
+(defwidget media []
+    (box :class "dockbox" 
+         :visible {MEDIA.status != "Stopped"}
+         :orientation "h" 
+         :spacing 10 
+         :valign "fill" 
+         :halign "center" 
+         :space-evenly "false"
+
+        (eventbox :onclick "bash ./scripts/toggle_music.sh"
+            (box :orientation "h" :spacing 10 :space-evenly "false"
+                (box :class "album_art" 
+                     :style "background-image: url('${MEDIA.artUrl}');"
+                     :valign "center"
+                     :width 30
+                     :height 30)
+
+                (box :orientation "v" 
+                     :valign "center" 
+                     :spacing 0 
+                     :space-evenly "false"
+                     (label :class "song_title" 
+                            :halign "start" 
+                            :limit-width 20 
+                            :text {MEDIA.text})
+                     (label :class "song_artist" 
+                            :halign "start" 
+                            :limit-width 20 
+                            :text {MEDIA.artist}))
+            )
+        )
+
+        (box :orientation "h" 
+             :spacing 2 
+             :valign "center"
+             :halign "center"
+             :space-evenly "false"
+             (button :class "media_btn" :onclick "playerctl previous" "󰒮")
+             (button :class "media_btn_play" 
+                     :onclick "playerctl play-pause" 
+                     {MEDIA.status == "Playing" ? "󰏤" : "󰐊"})
+             (button :class "media_btn" :onclick "playerctl next" "󰒭"))
+    )
 )
 
 (defwidget weather [] 
     (box :class "dockbox"
-        (box :class "clockbox" :orientation "v" :spacing 0 :valign "center" :halign "start" :space-evenly "false" :vexpand "false" :hexpand "false"
+        (box :class "clockbox" :orientation "v" :spacing 0 :valign "center" 
+             :halign "start" :space-evenly "false" :vexpand "false" :hexpand "false"
             (label :class "time" :halign "start" :wrap "true" :limit-width 25 :text TIME)
             (label :class "date" :halign "start" :wrap "true" :limit-width 25 :text DATE))
-        (box :class "weatherbox" :orientation "h" :spacing 0 :valign "center" :halign "end" :space-evenly "false" :vexpand "false" :hexpand "false"
+        (box :class "weatherbox" :orientation "h" :spacing 0 :valign "center" 
+             :halign "end" :space-evenly "false" :vexpand "false" :hexpand "false"
             (label :class "weathericon" :style "color: ${HEX};" :text ICON)
             (label :class "weathertemp" :text TEMP))))
 
-
-
 (defwidget bar_layout []
-	(centerbox :orintation "h"
-		   :class "bar_class"
-     	(box :orintation "h"
-             :space-evenly false
-	     :halign "start"
-	     :spacing 5
-	     :style "padding-left: 10px;"
-	(search)
-	(workspaces)
-	(media)
-	)
+    (centerbox :orientation "h"
+           :class "bar_class"
+         (box :orientation "h"
+              :space-evenly false
+              :halign "start"
+              :spacing 5
+              :style "padding-left: 10px;"
+            (search)
+            (workspaces)
+            (media)
+         )
 
-    	(box :orientation "h" 
-         :space-evenly false 
-         :halign "center"
-	(weather)
-	 )
+        (box :orientation "h" 
+             :space-evenly false 
+             :halign "center"
+            (weather)
+        )
 
-    	(box :orientation "h" 
-         :space-evenly false 
-         :halign "end" 
-         :spacing 10       ;; Maintains your original ~30px gaps
-         :style "padding-right: 10px;"
-    	)
+        (box :orientation "h" 
+             :space-evenly false 
+             :halign "end" 
+             :spacing 10
+             :style "padding-right: 10px;"
+             (system)
+        )
+    )
 )
+
+
+;; MUSIC POPUP
+
+(defwidget music_popup []
+    (box :class "music-window" :orientation "v" :space-evenly false :spacing 0
+        
+        ;; --- TOP: ORIGINAL PLAYER ---
+        (box :orientation "h" :space-evenly false :spacing 25 :height 220
+             
+             ;; Art
+             (box :class "music-cover-art" 
+                  :style "background-image: url('${MUSIC_FULL.artUrl}');"
+                  :width 220 :height 220 :valign "center")
+
+             ;; Info
+             (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 15
+                 ;; Text
+                 (box :orientation "v" :spacing 5
+                     (label :class "music-title" :halign "start" :wrap true :limit-width 35 :text "${MUSIC_FULL.title}")
+                     (label :class "music-artist" :halign "start" :wrap true :limit-width 30 :text "BY ${MUSIC_FULL.artist}")
+                     (label :class "music-album" :halign "start" :limit-width 30 :text "ON ${MUSIC_FULL.album}")
+                 )
+                 ;; Progress
+                 (box :class "music-progress-area" :orientation "v" :space-evenly false
+                     (scale :class "music-progress-bar" :min 0 :max 100 :value {MUSIC_FULL.percent}
+                            :onchange "bash ./scripts/player_control.sh seek {}")
+                     (box :orientation "h" :halign "fill"
+                         (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
+                         (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
+                     )
+                 )
+                 ;; Controls
+                 (box :class "music-controls" :orientation "h" :halign "center" :spacing 30
+                     (button :class "ctrl-btn" :onclick "playerctl previous" "")
+                     (button :class "play-btn-big" :onclick "playerctl play-pause" {MUSIC_FULL.status == "Playing" ? "" : ""})
+                     (button :class "ctrl-btn" :onclick "playerctl next" "")
+                 )
+             )
+        )
+
+        ;; --- MIDDLE: HORIZONTAL SEPARATOR ---
+        (box :class "music-sep-h" :height 10 :vexpand false)
+
+        ;; --- BOTTOM: EQUALIZER ---
+        (box :vexpand true
+            (equalizer)
+        )
+    )
 )
+
+;; WINDOWS
 
 (defwindow bar
     :monitor 0
@@ -198,6 +335,17 @@
                         :height "40px"
                         :anchor "top center")
     :stacking "bg"
-    :exclusive true ;; This ensures Hyprland reserves space
+    :exclusive true
     :wm-ignore false
     (bar_layout))
+
+(defwindow music_win
+    :monitor 0
+    :geometry (geometry :x "12px"
+                        :y "10px"
+                        :width "700px" 
+                        :height "550px"
+                        :anchor "top left")
+    :stacking "fg"
+    :namespace "music_win"
+    (music_popup))
