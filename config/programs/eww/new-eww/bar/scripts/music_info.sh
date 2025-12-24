@@ -22,7 +22,7 @@ if [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ]; then
     player_raw=$(playerctl status -f "{{playerName}}" | head -n 1)
     player_nice="${player_raw^}"
 
-    # --- 2. GET AUDIO DEVICE INFO (NEW) ---
+    # --- 2. GET AUDIO DEVICE INFO (UPDATED) ---
     # Get default sink name
     sink_name=$(pactl get-default-sink 2>/dev/null)
     
@@ -32,7 +32,15 @@ if [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ]; then
 
     if [[ "$sink_name" == *"bluez"* ]]; then
         dev_icon="󰂯"
-        dev_name="Bluetooth"
+        # Extract the human-readable description (Device Name)
+        # We find the sink name, look for "Description:", and clean it
+        readable_name=$(pactl list sinks | grep -A 20 "$sink_name" | grep -m 1 "Description:" | cut -d: -f2 | xargs)
+        
+        if [ -n "$readable_name" ]; then
+            dev_name="$readable_name"
+        else
+            dev_name="Bluetooth"
+        fi
     elif [[ "$sink_name" == *"usb"* ]]; then
         dev_icon="󰓃"
         dev_name="USB Audio"
@@ -57,42 +65,23 @@ if [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ]; then
         colorPath="$tmpDir/${urlHash}_grad.txt"
         textColorPath="$tmpDir/${urlHash}_text.txt"
 
-        # --- A. GENERATE FILES (Only if new song) ---
         if [ ! -f "$blurPath" ]; then
-            
-            # 1. Generate Blur
             convert "$artUrl" -blur 0x25 -brightness-contrast -30x-10 "$blurPath" &
-            
-            # 2. Extract Colors
             if [ -f "$artUrl" ]; then
-                # Get 3 dominant colors
                 colors=$(convert "$artUrl" -resize 100x100 -quantize RGB -colors 3 -depth 8 -format "%c" histogram:info: | \
                          sed -n 's/.*#\([0-9A-Fa-f]\{6\}\).*/#\1/p' | tr '\n' ' ')
-                
                 read -r -a color_array <<< "$colors"
                 c1=${color_array[0]:-#cba6f7}
                 c2=${color_array[1]:-$c1}
                 c3=${color_array[2]:-$c1}
-
                 echo "linear-gradient(45deg, $c1, $c2, $c3, $c1)" > "$colorPath"
-
-                # 3. Generate OPPOSITE (Inverted) Text Color
                 opp_raw=$(convert xc:"$c1" -negate -depth 8 -format "%[hex:u]" info: | tr -d '\n')
                 echo "#$opp_raw" > "$textColorPath"
             fi
-
-            # 4. Clean Cache
             (cd "$tmpDir" && ls -1t | tail -n +51 | xargs -r rm) &
         fi
-
-        # --- B. READ CACHE ---
-        if [ -f "$colorPath" ]; then
-            grad=$(cat "$colorPath")
-        fi
-        
-        if [ -f "$textColorPath" ]; then
-            txtColor=$(cat "$textColorPath")
-        fi
+        if [ -f "$colorPath" ]; then grad=$(cat "$colorPath"); fi
+        if [ -f "$textColorPath" ]; then txtColor=$(cat "$textColorPath"); fi
     fi
 
     # --- 4. JSON OUTPUT ---
