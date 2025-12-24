@@ -1,66 +1,41 @@
+/* --- COLORS (Catppuccin Mocha) --- */
 $rosewater: #f5e0dc;
-
 $flamingo: #f2cdcd;
-
 $pink: #f5c2e7;
-
 $mauve: #cba6f7;
-
 $red: #f38ba8;
-
 $maroon: #eba0ac;
-
 $peach: #fab387;
-
 $yellow: #f9e2af;
-
 $green: #a6e3a1;
-
 $teal: #94e2d5;
-
 $sky: #89dceb;
-
 $sapphire: #74c7ec;
-
 $blue: #89b4fa;
-
 $lavender: #b4befe;
-
 $text: #cdd6f4;
-
 $subtext1: #bac2de;
-
 $subtext0: #a6adc8;
-
 $overlay2: #9399b2;
-
 $overlay1: #7f849c;
-
 $overlay0: #6c7086;
-
 $surface2: #585b70;
-
 $surface1: #45475a;
-
 $surface0: #313244;
-
 $base: #1e1e2e;
-
 $mantle: #181825;
-
 $crust: #11111b;
 
-
+/* --- GLOBAL DEFAULTS --- */
 * {
   all: unset;
   font-family: "JetBrains Mono", "Iosevka Nerd Font", monospace;
 }
 
-
+/* --- BAR WIDGETS --- */
 .bar_class {
   background-color: transparent;
 }
-
 
 .dockbox {
   background-color: $base;
@@ -71,7 +46,6 @@ $crust: #11111b;
   color: $text;
 }
 
-
 .genicon {
   background-repeat: no-repeat;
   background-size: 16px;
@@ -80,7 +54,6 @@ $crust: #11111b;
   min-width: 20px;
 }
 
-
 .workspace {
   color: $mauve;
   font-size: 18px;
@@ -88,372 +61,309 @@ $crust: #11111b;
   padding: 0px; 
 }
 
+/* Time & Weather */
+.clockbox { margin-right: 20px; }
+.time { font-size: 16px; font-weight: 800; color: $blue; }
+.date { font-size: 12px; font-weight: bold; color: $subtext0; margin-top: 0px; }
+.weatherbox { margin-left: 0px; }
+.weathericon { font-family: "Iosevka Nerd Font"; font-size: 28px; color: $yellow; }
+.weathertemp { font-size: 18px; font-weight: bold; color: $peach; margin: 0px; }
 
-.clockbox {
-
-  margin-right: 20px;
-
-}
-
-
-.time {
-
-  font-size: 16px;
-
-  font-weight: 800;
-
-  color: $blue;
-
-}
-
-
-.date {
-
-  font-size: 12px;
-
-  font-weight: bold;
-
-  color: $subtext0;
-
-  margin-top: 0px;
-
-}
-
-
-.weatherbox {
-
-  margin-left: 0px;
-
-}
-
-
-.weathericon {
-
-  font-family: "Iosevka Nerd Font";
-
-  font-size: 28px;
-
-  color: $yellow;
-
-}
-
-
-.weathertemp {
-
-  font-size: 18px;
-
-  font-weight: bold;
-
-  color: $peach;
-
-  margin: 0px;
-
-}
-
-
+/* Bar Media Widget */
 .album_art {
-
   background-position: center;
-
   background-repeat: no-repeat;
-
   background-size: cover;
-
   min-height: 30px;
-
   min-width: 30px;
-
   border-radius: 4px;
-
   background-color: $surface1;
-
 }
-
 
 .song_title {
-
-  font-weight: 800;
-
-  font-size: 14px;
-
-  color: $sapphire;
-
+    font-weight: 800;
+    font-size: 14px;
+    color: $sapphire;
+    margin-bottom: -2px; 
 }
 
-
-.song_artist {
-
-  font-weight: 600;
-
-  font-size: 11px;
-
-  color: $subtext0;
-
+.song_time_bar {
+    font-family: "JetBrains Mono";
+    font-weight: 800;
+    font-size: 12px; 
+    color: $overlay1;
 }
 
+.song_artist { font-weight: 600; font-size: 11px; color: $subtext0; }
 
 .media_btn, .media_btn_play {
-
   font-family: "Iosevka Nerd Font";
-
   font-size: 24px;
-
   color: $overlay2;
-
   padding: 0px 5px;
-
 }
 
-
-.media_btn:hover {
-
-  color: $lavender;
-
-}
-
-
-.media_btn_play {
-
-  color: $text;
-
-  font-size: 30px;
-
-}
-
-
-.media_btn_play:hover {
-
-  color: $green;
-
-}
-
+.media_btn:hover { color: $lavender; }
+.media_btn_play { color: $text; font-size: 30px; }
+.media_btn_play:hover { color: $green; }
 
 /* --- MUSIC POPUP WINDOW --- */
 
-.music-window {
-
+/* Main Container */
+.music-window-box {
     background-color: $base;
-
-    border: 2px solid $mauve;
-
-    border-radius: 4px;
-
-    padding: 20px;
-
+    
+    /* SPLIT THE BORDER PROPERTIES */
+    
+    border-radius: 12px;
+    transition: border-color 0.5s ease; /* Smooth transition defined here */
 }
 
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-.music-cover-art {
+/* This class will be applied to the box */
+.animated-gradient-border {
+    /* Large background size is essential for the movement to be visible */
+    background-size: 300% 300%;
+    animation: gradient-move 5s ease infinite;
+    border-radius: 14px; /* Slightly larger than inner content */
+}
 
+/* Background Layer (FIXED: Now responsive) */
+.music-bg-blur {
     background-position: center;
-
     background-repeat: no-repeat;
-
     background-size: cover;
-
-    border-radius: 8px;
-
-    background-color: $surface1;
-
+    
+    /* FORCE DIMENSIONS: Matches your window geometry */
+    min-width: 700px;
+    min-height: 620px;
+    
+    opacity: 0.4; 
+    border-radius: 10px; 
 }
 
-
-.music-title {
-
-    font-weight: 900;
-
-    font-size: 20px;
-
-    color: $lavender;
-
+.music-content {
+    padding: 20px;
+    border-radius: 12px;
 }
 
-
-.music-artist {
-
-    font-weight: 700;
-
-    font-size: 14px;
-
-    color: $pink;
-
+/* Vinyl Art */
+.music-cover-art {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%; /* Circle */
+    border: 4px solid $surface1;
+    box-shadow: inset 0 0 0 20px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
 }
 
-
-.music-album {
-
-    font-size: 12px;
-
-    color: $subtext0;
-
-    font-style: italic;
-
+@keyframes vinyl_energy {
+    0%   { box-shadow: 0 0 0 0 rgba(203, 166, 247, 0); }
+    15%  { box-shadow: 0 0 20px 5px rgba(203, 166, 247, 0.4); } /* Mauve glow */
+    30%  { box-shadow: 0 0 10px 5px rgba(180, 190, 254, 0.2); }  /* Lavender dim */
+    45%  { box-shadow: 0 0 20px 10px rgba(137, 180, 250, 0.5); } /* Blue strong */
+    100% { box-shadow: 0 0 0 0 rgba(180, 190, 254, 0); }
 }
 
-
-.music-progress-area {
-
-    margin-top: 10px;
-
-    margin-bottom: 5px;
-
+.music-cover-art.playing {
+    border-color: $mauve;
+    /* Use the new animation with similar timing to the slider */
+    animation: vinyl_energy 4s ease-in-out infinite;
 }
 
-
-scale trough {
-
-    background-color: $surface0;
-
-    border-radius: 10px;
-
-    min-height: 8px;
-
+.music-cover-art.paused {
+    border-color: $overlay0;
+    opacity: 0.7;
+    animation: none; /* Ensure no glow when paused */
 }
 
+.music-title { font-weight: 900; font-size: 20px; color: $lavender; }
+.music-artist { font-weight: 700; font-size: 14px; color: $pink; }/* Removed "BY" styling, made cleaner */
 
-scale highlight {
-
-    background-color: $blue;
-
-    border-radius: 10px;
-
+/* New Metadata Pills */
+.meta-pill {
+    background-color: rgba(255, 255, 255, 0.1); /* Glassy look */
+    border-radius: 4px;
+    padding: 4px 10px;
 }
 
-
-scale slider {
-
-    background-color: $text;
-
-    min-height: 16px;
-
-    min-width: 16px;
-
-    border-radius: 50%;
-
-    margin-left: -4px;
-
-}
-
-
-.music-time {
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    color: $overlay2;
-
-    margin-top: 5px;
-
-}
-
-
-.ctrl-btn {
-
+.meta-icon {
     font-family: "Iosevka Nerd Font";
-
-    font-size: 24px;
-
-    color: $overlay2;
-
-}
-
-.ctrl-btn:hover { 
-
-    color: $text; 
-
-}
-
-
-.play-btn-big {
-
-    font-family: "Iosevka Nerd Font";
-
-    font-size: 42px;
-
     color: $mauve;
+    font-size: 14px;
+}
+
+.meta-text {
+    font-family: "JetBrains Mono";
+    font-weight: 800;
+    font-size: 12px;
+    color: $overlay2; 
+}
+
+.music-source { font-size: 12px; color: $yellow; font-weight: bold; font-style: italic; margin-top: 2px; }
+.music-album { font-size: 12px; color: $subtext0; font-style: italic; }
+
+/* Progress Bar Area */
+.music-progress-area { margin-top: 10px; margin-bottom: 5px; }
+.music-time { font-size: 13px; font-weight: bold; color: $overlay2; margin-top: 5px; }
+
+/* Main Slider Styling */
+scale trough {
+    background-color: $surface0;
+    border-radius: 10px;
+    min-height: 8px;
+}
+scale highlight {
+    background-color: $blue;
+    border-radius: 10px;
+}
+
+/* Animated Slider Bar */
+@keyframes liquid_energy {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.music-progress-bar trough {
+    all: unset;
+    background-color: rgba(17, 17, 27, 0.6); 
+    border-radius: 99px; 
+    min-height: 8px;      
+    min-width: 100px;
+    margin-bottom: 5px; 
+    
+    /* ADDED: Drop shadow to lift the bar off the background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
 }
 
-.play-btn-big:hover { 
+.music-progress-bar highlight {
+    all: unset;
+    background-image: linear-gradient(90deg, $blue, $mauve, $text, $sapphire, $blue);
+    background-size: 300% 100%;
+    animation: liquid_energy 3s linear infinite;
+    border-radius: 99px;
+    min-height: 8px; 
+    transition: all 0.5s ease;
+}
 
-    color: $pink; 
+.music-progress-bar:hover highlight {
+    animation-duration: 1.5s; 
+    opacity: 0.8;
+}
 
+/* Slider Knob */
+@keyframes complex_heartbeat {
+    0%   { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
+    15%  { box-shadow: 0px 0px 8px 2px rgba(203, 166, 247, 0.6); } 
+    30%  { box-shadow: 0px 0px 4px 1px rgba(180, 190, 254, 0.4); } 
+    45%  { box-shadow: 0px 0px 12px 4px rgba(203, 166, 247, 0.8); } 
+    100% { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
+}
+
+.music-progress-bar slider {
+    all: unset;
+    background-color: $text; 
+    min-height: 14px;
+    min-width: 14px;
+    border-radius: 50%;
+    margin-left: -7px;
+    transition: box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    box-shadow: none; /* No glow by default */
+}
+
+.music-progress-bar.playing slider {
+    animation: complex_heartbeat 4s ease-in-out infinite;
+}
+
+/* 3. Hover Effects (Override animation) */
+.music-progress-bar slider:hover {
+    animation: none;
+    box-shadow: 0px 0px 0px 3px $text, 0px 0px 15px 5px $lavender;
+}
+
+.music-progress-bar slider:active {
+    animation: none;
+    box-shadow: 0px 0px 0px 5px $text, 0px 0px 25px 8px $blue;
+}
+
+/* OPTIONAL: Stop the "Liquid Energy" bar movement when paused too */
+.music-progress-bar highlight {
+    animation-play-state: paused;
+}
+.music-progress-bar.playing highlight {
+    animation-play-state: running;
 }
 
 
-/* --- IMPROVED SYSTEM WIDGET ON BAR --- */
+/* Controls */
+.ctrl-btn { font-family: "Iosevka Nerd Font"; font-size: 24px; color: $overlay2; }
+.ctrl-btn:hover { color: $text; }
+.play-btn-big { font-family: "Iosevka Nerd Font"; font-size: 42px; color: $mauve; }
+.play-btn-big:hover { color: $pink; }
 
+/* Separator */
+.music-sep-h {
+    /* CHANGED: Subtle glass effect (10% white) to blend with the blur */
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 20px 10px; 
+    min-height: 2px;
+    border-radius: 99px;
+}
+
+/* --- SYSTEM WIDGET --- */
 .system-widget {
   background-color: $base;
   border: 2px solid $surface0;
   border-radius: 4px; 
-  padding: 8px 14px; /* INCREASED HEIGHT/WIDTH PADDING */
+  padding: 8px 14px;
   margin: 0px 4px;
   color: $text;
   min-height: 42px;
 }
 
-/* The "Pill" container for each module */
 .sys-pill {
   background-color: $surface0;
   padding: 4px 10px;
   border-radius: 4px;
   transition: all 0.3s;
-  min-height: 24px; /* Ensures consistent height */
+  min-height: 24px;
 }
 
-.sys-pill:hover {
-  background-color: $surface1;
-}
+.sys-pill:hover { background-color: $surface1; }
 
-/* Specific Pill Background Tweaks (Optional: subtle coloring) */
-.sys-wifi.active {
-  background-color: rgba(137, 180, 250, 0.1); /* Very subtle Blue tint */
-  border: 1px solid $blue;
-}
+.sys-wifi.active { background-color: rgba(137, 180, 250, 0.1); border: 1px solid $blue; }
+.sys-bt.active { background-color: rgba(180, 190, 254, 0.1); border: 1px solid $lavender; }
 
-.sys-bt.active {
-  background-color: rgba(180, 190, 254, 0.1); /* Very subtle Lavender tint */
-  border: 1px solid $lavender;
-}
-
-/* --- TEXT STYLING --- */
 .sys-text {
   font-family: "JetBrains Mono";
   font-weight: 700;
   font-size: 13px;
   color: $text;
-  margin-top: 1px; /* Fine-tune vertical alignment with icon */
+  margin-top: 1px;
 }
 
-/* --- ICON STYLING --- */
-/* Base icon style */
 .sys-icon-kb, .sys-icon-wifi, .sys-icon-bt, .sys-icon-vol, .sys-icon-bat {
   font-family: "Iosevka Nerd Font";
   font-size: 18px;
   padding-right: 2px;
 }
 
-/* Colors */
 .sys-icon-kb { color: $mauve; }
-
 .sys-icon-wifi { color: $overlay1; transition: color 0.3s; }
 .sys-pill.sys-wifi.active .sys-icon-wifi { color: $blue; }
-
 .sys-icon-bt { color: $overlay1; transition: color 0.3s; }
 .sys-pill.sys-bt.active .sys-icon-bt { color: $lavender; }
-
 .sys-icon-vol { color: $peach; }
 .sys-icon-vol.muted { color: $overlay0; }
-
 .sys-icon-bat { color: $green; }
-.sys-icon-bat.low { 
-  color: $red; 
-  animation-name: blink; 
-  animation-duration: 2s; 
-  animation-iteration-count: infinite;
-}
+.sys-icon-bat.low { color: $red; animation: blink 2s infinite; }
 
 @keyframes blink {
   0% { opacity: 1; }
@@ -462,42 +372,28 @@ scale slider {
 }
 
 /* --- EQUALIZER STYLING --- */
-
-.music-sep-h {
-    background-color: $surface1;
-    margin: 25px 0px; /* Top/Bottom Spacing */
-    border-radius: 99px;
-}
-
-.eq-container {
-    padding: 0px 10px;
-}
-
-.eq-header {
-    font-weight: 900;
-    font-size: 16px;
-    color: $mauve;
-}
-
-.eq-preset-name {
-    font-weight: bold;
-    font-size: 14px;
-    color: $subtext0;
-}
+.eq-container { padding: 0px 10px; }
+.eq-header { font-weight: 900; font-size: 16px; color: $mauve; }
+.eq-preset-name { font-weight: bold; font-size: 14px; color: $subtext0; }
 
 /* EQ Sliders */
 .eq-scale trough {
-    background-color: $surface0;
+    /* CHANGED: Match the music progress bar for consistency */
+    background-color: rgba(17, 17, 27, 0.6);
     border-radius: 99px;
     min-width: 6px; 
-    min-height: 150px; /* Made them longer as requested */
+    min-height: 150px;
     margin-bottom: 5px;
+    
+    /* CHANGED: Combined inner shadow (depth) with outer shadow (separation) */
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.4);
 }
 
 .eq-scale highlight {
     background-color: $blue; 
     border-radius: 99px;
     min-width: 6px;
+    transition: all 0.1s ease; /* Smooth slider movement */
 }
 
 .eq-scale slider {
@@ -505,69 +401,86 @@ scale slider {
     min-height: 14px;
     min-width: 14px;
     border-radius: 50%;
-    /* YOUR REQUESTED ADJUSTMENT FOR VERTICAL EQ SLIDERS */
     margin-left: 0px; 
-    margin-bottom: -4px; 
+    margin-bottom: -4px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5); 
 }
 
-/* Frequency Labels */
-.eq-band-label {
-    font-size: 10px;
-    font-weight: bold;
-    color: $overlay1;
-}
+.eq-band-label { font-size: 10px; font-weight: bold; color: $overlay1; }
 
-/* Preset Buttons */
+/* --- "ALIVE" PRESET BUTTONS --- */
 .eq-preset-btn {
-    background-color: $surface0;
+    /* CHANGED: Replaced solid surface0 with dark semi-transparent + shadow */
+    background-color: rgba(30, 30, 46, 0.75);
     color: $subtext0;
     padding: 8px 0px;
-    border-radius: 4px;
+    border-radius: 8px; /* Softer rounded corners */
     font-size: 12px;
-    font-weight: bold;
-    transition: all 0.2s;
+    font-weight: 800;
+    border: 1px solid transparent; /* Prepare for border transition */
+    
+    /* ADDED: Shadow to separate button from messy backgrounds */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    
+    /* The Magic: Smooth transition for color and shadow */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Hover State: Subtle glow and text brighten */
 .eq-preset-btn:hover {
     background-color: $surface1;
     color: $text;
+    border-color: $overlay0;
+    /* ADDED: Lift effect on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); 
 }
 
+/* Active/Selected State: bold color, strong glow */
 .eq-preset-btn.active {
     background-color: $mauve;
-    color: $base;
+    color: $base; /* Dark text on light background */
+    border-color: $mauve;
+    
+    /* "Neon" Glow effect */
+    box-shadow: 0 0 15px rgba(203, 166, 247, 0.5); 
 }
 
-/* ... existing eq styles ... */
+/* Active Hover: Even brighter to show interactivity */
+.eq-preset-btn.active:hover {
+    box-shadow: 0 0 20px rgba(203, 166, 247, 0.7);
+}
 
+/* Active Hover: Even brighter to show interactivity */
+.eq-preset-btn.active:hover {
+    box-shadow: 0 0 20px rgba(203, 166, 247, 0.7);
+}
+
+/* Apply Button (Top Right) */
 .eq-apply-btn {
     background-color: transparent;
-    color: $overlay1; /* Dimmed text when inactive */
+    color: $overlay1;
     font-weight: bold;
     font-size: 11px;
-    border-radius: 4px;
-    padding: 2px 8px;
+    border-radius: 6px;
+    padding: 2px 10px;
     border: 1px solid transparent;
     transition: all 0.3s;
 }
 
-/* When changes are pending (Highlight Class) */
 .eq-apply-btn.highlight {
-    background-color: $surface0;
-    color: $mauve;
-    border: 1px solid $mauve;
-    box-shadow: 0px 0px 5px rgba(203, 166, 247, 0.3); /* Subtle Mauve Glow */
+    background-color: rgba(243, 139, 168, 0.1); /* Red tint */
+    color: $red;
+    border: 1px solid $red;
+    box-shadow: 0 0 8px rgba(243, 139, 168, 0.2);
+    animation: pulse-red 2s infinite;
 }
 
-.eq-apply-btn:hover {
-    color: $text;
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(243, 139, 168, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0); }
 }
 
-.eq-apply-btn.highlight:hover {
-    background-color: $mauve;
-    color: $base;
-}
-
-.eq-apply-btn:active {
-    background-color: $surface1;
-}
+.eq-apply-btn:hover { color: $text; background-color: $surface0; }
+.eq-apply-btn.highlight:hover { background-color: $red; color: $base; }
+.eq-apply-btn:active { background-color: $surface1; }

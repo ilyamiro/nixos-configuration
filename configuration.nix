@@ -17,6 +17,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     wget 
+    taskwarrior3
     git 
     neovim
     python311

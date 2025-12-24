@@ -6,6 +6,8 @@
 
 ;; ** Variables ***********************************************************************
 
+(defpoll MUSIC_FULL :interval "0.25s" `bash ./scripts/music_info.sh`)
+
 ;; Profile vars
 (defvar IMAGE "images/profile.jpg")
 (defvar NAME "ILLIA")
@@ -27,15 +29,6 @@
 ;; Uptime vars
 (defpoll UPHOUR :interval "5s" `uptime -p | awk '{print $2 \" \" $3}' | sed 's/,//g'`)
 (defpoll UPMIN :interval "5s" `uptime -p | awk '{print $4 \" \" $5}'`)
-
-;; Music vars
-(defpoll SONG :interval "1s" `scripts/music_info --song`)
-(defpoll ARTIST :interval "1s" `scripts/music_info --artist`)
-(defpoll STATUS :interval "1s" `scripts/music_info --status`)
-(defpoll CURRENT :interval "1s" `scripts/music_info --time`)
-(defpoll COVER :interval "1s" `scripts/music_info --cover`)
-(defpoll CTIME :interval "1s" `scripts/music_info --ctime`)
-(defpoll TTIME :interval "1s" `scripts/music_info --ttime`)
 
 ;; Weather vars
 (defpoll ICON :interval "15m" `scripts/weather_info --icon`)
@@ -105,18 +98,76 @@
 
 ;; Music
 (defwidget music [] 
-	(box :class "genwin" :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "false" 
-		(box :class "album_art" :vexpand "false" :hexpand "false" :style "background-image: url('${COVER}');")
-		(box :orientation "v" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false" 
-			(label :halign "center" :class "song" :wrap "true" :limit-width 20 :text SONG)
-			(label :halign "center" :class "artist" :wrap "true" :limit-width 15 :text ARTIST)
-			(box :orientation "h" :spacing 20 :halign "center" :space-evenly "true" :vexpand "false" :hexpand "false" 
-				(button :class "btn_prev" :onclick "scripts/music_info --prev" "玲")
-				(button :class "btn_play" :onclick "scripts/music_info --toggle" STATUS)
-				(button :class "btn_next" :onclick "scripts/music_info --next" "怜"))
-			(box :class "music_bar" :halign "center" :vexpand "false" :hexpand "false" 
-				(scale :onscroll "mpc -q seek +1" :min 0 :active "true" :max 100 :value CURRENT)))))
+    (box :class "genwin" 
+         :orientation "h" 
+         :space-evenly "false" 
+         :vexpand "false" 
+         :hexpand "false" 
+         :style "padding: 20px;" ;; Add padding to the container
 
+        ;; LEFT: Album Art
+        (box :class "dashboard-album-art" 
+             :vexpand "false" 
+             :hexpand "false" 
+             :style "background-image: url('${MUSIC_FULL.artUrl}');"
+             :width 220
+             :height 220)
+
+        ;; RIGHT: Info & Controls
+        (box :orientation "v" 
+             :spacing 0 
+             :space-evenly "false" 
+             :vexpand "false" 
+             :hexpand "true" 
+             :valign "center"
+             :style "padding-left: 25px;" ;; Spacing between art and text
+
+            ;; 1. Text Info
+            (box :orientation "v" :spacing 5
+                (label :halign "start" 
+                       :class "dashboard-title" 
+                       :wrap "true" 
+                       :limit-width 20 
+                       :text {MUSIC_FULL.title})
+                (label :halign "start" 
+                       :class "dashboard-artist" 
+                       :wrap "true" 
+                       :limit-width 20 
+                       :text {MUSIC_FULL.artist})
+                (label :halign "start" 
+                       :class "dashboard-source" 
+                       :text "VIA ${MUSIC_FULL.source}")
+            )
+
+            ;; 2. Progress Bar
+            (box :class "dashboard-progress-area" :orientation "v" :space-evenly false :style "margin-top: 15px; margin-bottom: 15px;"
+                 (scale :class "music-progress-bar" 
+                        :min 0 
+                        :max 100 
+                        :value {MUSIC_FULL.percent}
+                        :onchange "bash ./scripts/player_control.sh seek {} ${MUSIC_FULL.length} ${MUSIC_FULL.playerName}")
+		(box :orientation "h" :halign "fill"
+                     (label :class "dashboard-time" :text {MUSIC_FULL.positionStr} :halign "start")
+                     (label :class "dashboard-time" :text {MUSIC_FULL.lengthStr} :halign "end")
+                 )
+            )
+
+            ;; 3. Controls
+            (box :orientation "h" 
+                 :spacing 20 
+                 :halign "center" 
+                 :space-evenly "true" 
+                 :vexpand "false" 
+                 :hexpand "false" 
+                (button :class "dashboard-ctrl-btn" :onclick "playerctl previous" "")
+                (button :class "dashboard-play-btn" 
+                        :onclick "playerctl play-pause" 
+                        {MUSIC_FULL.status == "Playing" ? "" : ""})
+                (button :class "dashboard-ctrl-btn" :onclick "playerctl next" "")
+            )
+        )
+    )
+)
 ;; github
 (defwidget github [] 
 	(box :class "github" :vexpand "false" :hexpand "false" 

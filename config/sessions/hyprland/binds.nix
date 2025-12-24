@@ -28,13 +28,14 @@
       bindel = [
          ", xf86audiolowervolume, exec, ${./scripts/volume.sh} --dec"
 	 ", xf86audioraisevolume, exec, ${./scripts/volume.sh} --inc"
+	 "$mainMod, L, exec, hyprlock"	
       ];
       bind =
       [	
 	 #"$mainMod, D, exec, bash ~/.config/eww/dashboard/launch_dashboard"
 	 "$mainMod&SHIFT_L, R, exec, bash ~/.config/eww/bar/launch_bar.sh"
 	 "$mainMod, D, exec, bash ${./scripts/rofi_show.sh} drun"
-	 "$mainMod&SHIFT_L, D, exec, bash ~/.config/eww/dashboard/launch_dashboard.sh"
+	 "$mainMod, S, exec, bash ~/.config/eww/dashboard/launch_dashboard.sh"
 	 "CTRL, TAB, exec, bash ${./scripts/rofi_show.sh} window"
 	 "$mainMod, C, exec, bash ${./scripts/rofi_clipboard.sh}"
 	 "$mainMod, M, exec, bash ${./scripts/monitors.sh}"

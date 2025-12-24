@@ -6,8 +6,9 @@
     ./autostart.nix
     ./animations.nix
     ./monitors.nix
-
     ./window-rules.nix
+
+    ./hyprlock/default.nix
   ];
 
   wayland.windowManager.hyprland.enable = true;
@@ -27,6 +28,7 @@
     gtk3
     cava
     cliphist
+    hyprlock
   ];
 
   wayland.windowManager.hyprland.settings = {

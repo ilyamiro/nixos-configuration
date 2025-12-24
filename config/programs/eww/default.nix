@@ -19,6 +19,7 @@
     pulseaudio
     ladspaPlugins
     ladspa-sdk
+    imagemagick
   ];
 
   xdg.configFile."eww".source = config.lib.file.mkOutOfStoreSymlink "/etc/nixos/config/programs/eww/new-eww";

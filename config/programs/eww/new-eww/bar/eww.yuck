@@ -11,7 +11,7 @@
 ;; Media
 (defpoll MEDIA :interval "0.2s" `bash ./scripts/media.sh`)
 (defpoll MUSIC_FULL :interval "0.2s" `bash ./scripts/music_info.sh`)
-(defpoll EQ_DATA :interval "0.5s" `bash ./scripts/equalizer.sh get`)
+(defpoll EQ_DATA :interval "0.2s" `bash ./scripts/equalizer.sh get`)
 
 ;; System Info - Redesigned
 (defpoll WIFI_STATUS :interval "2s" `bash ./scripts/sys_info.sh --wifi-status`)
@@ -192,7 +192,7 @@
 
 (defwidget media []
     (box :class "dockbox" 
-         :visible {MEDIA.status != "Stopped"}
+         :visible {MUSIC_FULL.status != "Stopped"}
          :orientation "h" 
          :spacing 10 
          :valign "fill" 
@@ -201,12 +201,14 @@
 
         (eventbox :onclick "bash ./scripts/toggle_music.sh"
             (box :orientation "h" :spacing 10 :space-evenly "false"
+                ;; Art
                 (box :class "album_art" 
-                     :style "background-image: url('${MEDIA.artUrl}');"
+                     :style "background-image: url('${MUSIC_FULL.artUrl}');"
                      :valign "center"
                      :width 30
                      :height 30)
 
+                ;; Text Info
                 (box :orientation "v" 
                      :valign "center" 
                      :spacing 0 
@@ -214,14 +216,16 @@
                      (label :class "song_title" 
                             :halign "start" 
                             :limit-width 20 
-                            :text {MEDIA.text})
-                     (label :class "song_artist" 
+                            :text {MUSIC_FULL.title})
+                     
+                     ;; NEW: Time String (e.g. 1:20 / 3:00)
+                     (label :class "song_time_bar" 
                             :halign "start" 
-                            :limit-width 20 
-                            :text {MEDIA.artist}))
+                            :text {MUSIC_FULL.timeStr}))
             )
         )
 
+        ;; Controls
         (box :orientation "h" 
              :spacing 2 
              :valign "center"
@@ -230,11 +234,10 @@
              (button :class "media_btn" :onclick "playerctl previous" "󰒮")
              (button :class "media_btn_play" 
                      :onclick "playerctl play-pause" 
-                     {MEDIA.status == "Playing" ? "󰏤" : "󰐊"})
+                     {MUSIC_FULL.status == "Playing" ? "󰏤" : "󰐊"})
              (button :class "media_btn" :onclick "playerctl next" "󰒭"))
     )
 )
-
 (defwidget weather [] 
     (box :class "dockbox"
         (box :class "clockbox" :orientation "v" :spacing 0 :valign "center" 
@@ -274,59 +277,99 @@
         )
     )
 )
-
-
 ;; MUSIC POPUP
-
 (defwidget music_popup []
-    (box :class "music-window" :orientation "v" :space-evenly false :spacing 0
-        
-        ;; --- TOP: ORIGINAL PLAYER ---
-        (box :orientation "h" :space-evenly false :spacing 25 :height 220
+    ;; OUTER BOX: The Animated Gradient "Border"
+    (box :class "animated-gradient-border"
+         :orientation "v"
+         :space-evenly false
+         ;; Dynamic Gradient Background + 3px padding acts as border width
+         :style "background-image: ${MUSIC_FULL.grad}; padding: 3px;"
+         
+        ;; INNER BOX: The Actual Content Window
+        (box :class "music-window-box" 
+             :orientation "v" 
+             :space-evenly false
+             :style "background-color: #1e1e2e;" 
              
-             ;; Art
-             (box :class "music-cover-art" 
-                  :style "background-image: url('${MUSIC_FULL.artUrl}');"
-                  :width 220 :height 220 :valign "center")
+            (overlay
+                ;; LAYER 1: Background Blur Image
+                (box :class "music-bg-blur" 
+                     :vexpand true 
+                     :hexpand true
+                     :style "background-image: url('${MUSIC_FULL.blur}');")
 
-             ;; Info
-             (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 15
-                 ;; Text
-                 (box :orientation "v" :spacing 5
-                     (label :class "music-title" :halign "start" :wrap true :limit-width 35 :text "${MUSIC_FULL.title}")
-                     (label :class "music-artist" :halign "start" :wrap true :limit-width 30 :text "BY ${MUSIC_FULL.artist}")
-                     (label :class "music-album" :halign "start" :limit-width 30 :text "ON ${MUSIC_FULL.album}")
-                 )
-                 ;; Progress
-                 (box :class "music-progress-area" :orientation "v" :space-evenly false
-                     (scale :class "music-progress-bar" :min 0 :max 100 :value {MUSIC_FULL.percent}
-                            :onchange "bash ./scripts/player_control.sh seek {}")
-                     (box :orientation "h" :halign "fill"
-                         (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
-                         (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
-                     )
-                 )
-                 ;; Controls
-                 (box :class "music-controls" :orientation "h" :halign "center" :spacing 30
-                     (button :class "ctrl-btn" :onclick "playerctl previous" "")
-                     (button :class "play-btn-big" :onclick "playerctl play-pause" {MUSIC_FULL.status == "Playing" ? "" : ""})
-                     (button :class "ctrl-btn" :onclick "playerctl next" "")
-                 )
-             )
-        )
+                ;; LAYER 2: UI Content
+                (box :class "music-content" :orientation "v" :space-evenly false :spacing 0
+                    
+                    ;; --- Top Info Section ---
+                    (box :orientation "h" :space-evenly false :spacing 25 :height 220
+                          
+                          ;; Vinyl Cover Art (with Glow Animation)
+                          (box :class "music-cover-art ${MUSIC_FULL.status == 'Playing' ? 'playing' : 'paused'}" 
+                               :style "background-image: url('${MUSIC_FULL.artUrl}');"
+                               :width 220 :height 220 :valign "center")
 
-        ;; --- MIDDLE: HORIZONTAL SEPARATOR ---
-        (box :class "music-sep-h" :height 10 :vexpand false)
+                          ;; Text & Controls
+                          (box :orientation "v" :space-evenly false :hexpand true :valign "center" :spacing 15
+                              (box :orientation "v" :spacing 6
+                                   ;; TITLE
+                                   (label :class "music-title" 
+                                          :halign "start" 
+                                          :wrap true 
+                                          :limit-width 35 
+                                          :style "color: ${MUSIC_FULL.textColor};"
+                                          :text "${MUSIC_FULL.title}")
+                                   
+                                   ;; ARTIST
+                                   (label :class "music-artist" 
+                                          :halign "start" 
+                                          :wrap true 
+                                          :limit-width 30 
+                                          :text "BY ${MUSIC_FULL.artist}") 
+                                   
+                                   ;; NEW: Metadata Pills (Source | Device)
+                                   (box :orientation "h" :spacing 10 :halign "start"
+                                    (box :class "meta-pill" :orientation "h" :space-evenly false :spacing 6 :valign "center" :halign "start" :hexpand false
+                                         (label :class "meta-icon" :text "${MUSIC_FULL.deviceIcon}" :valign "center")
+                                         (label :class "meta-text" :text "${MUSIC_FULL.deviceName}" :limit-width 25 :valign "center")
+                                    )
+				    (label :class "music-source" :text "VIA ${MUSIC_FULL.source}" :valign "center" :halign "start")
+                                   )
+                                                                      
+                              )                              
+                              ;; Progress Bar
+                              (box :class "music-progress-area" :orientation "v" :space-evenly false
+                                   (scale :class "music-progress-bar ${MUSIC_FULL.status == 'Playing' ? 'playing' : ''}" 
+                                          :min 0 :max 100 :value {MUSIC_FULL.percent}
+                                          :onchange "bash ./scripts/player_control.sh seek {} ${MUSIC_FULL.length} ${MUSIC_FULL.playerName}")
+                                   (box :orientation "h" :halign "fill"
+                                       (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
+                                       (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
+                                   )
+                              )
+                              
+                              ;; Media Controls
+                              (box :class "music-controls" :orientation "h" :halign "center" :spacing 30
+                                   (button :class "ctrl-btn" :onclick "playerctl previous" "")
+                                   (button :class "play-btn-big" :onclick "playerctl play-pause" {MUSIC_FULL.status == "Playing" ? "" : ""})
+                                   (button :class "ctrl-btn" :onclick "playerctl next" "")
+                              )
+                          )
+                    )
 
-        ;; --- BOTTOM: EQUALIZER ---
-        (box :vexpand true
-            (equalizer)
+                    ;; --- Separator ---
+                    (box :class "music-sep-h" :height 2 :vexpand false)
+
+                    ;; --- Equalizer ---
+                    (box :vexpand false
+                        (equalizer)
+                    )
+                )
+            )
         )
     )
 )
-
-;; WINDOWS
-
 (defwindow bar
     :monitor 0
     :geometry (geometry :x "0%"
@@ -341,11 +384,7 @@
 
 (defwindow music_win
     :monitor 0
-    :geometry (geometry :x "12px"
-                        :y "10px"
-                        :width "700px" 
-                        :height "550px"
-                        :anchor "top left")
+    :geometry (geometry :x "12px" :y "10px" :width "700px" :height "620px" :anchor "top left")
     :stacking "fg"
     :namespace "music_win"
     (music_popup))

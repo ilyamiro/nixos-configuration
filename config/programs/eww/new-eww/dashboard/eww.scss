@@ -1,3 +1,31 @@
+$rosewater: #f5e0dc;
+$flamingo: #f2cdcd;
+$pink: #f5c2e7;
+$mauve: #cba6f7;
+$red: #f38ba8;
+$maroon: #eba0ac;
+$peach: #fab387;
+$yellow: #f9e2af;
+$green: #a6e3a1;
+$teal: #94e2d5;
+$sky: #89dceb;
+$sapphire: #74c7ec;
+$blue: #89b4fa;
+$lavender: #b4befe;
+$text: #cdd6f4;
+$subtext1: #bac2de;
+$subtext0: #a6adc8;
+$overlay2: #9399b2;
+$overlay1: #7f849c;
+$overlay0: #6c7086;
+$surface2: #585b70;
+$surface1: #45475a;
+$surface0: #313244;
+$base: #1e1e2e;
+$mantle: #181825;
+$crust: #11111b;
+
+
 /** Global *******************************************/
 *{
 	all: unset;
@@ -14,8 +42,9 @@
 
 /** Generic window ***********************************/
 .genwin {
-	background-color: #2E3440;
-	border-radius: 16px;
+    background-color: $base; 
+    border-radius: 16px;
+    border: 2px solid $surface0; 
 }
 
 /** Profile ******************************************/
@@ -130,62 +159,7 @@
 	font-weight : bold;
 }
 
-/** Music ***************************************/
 
-.album_art {
-	background-size: 240px;
-	min-height: 240px;
-	min-width: 240px;
-	margin: 20px;
-	border-radius: 14px;
-}
-
-.song {
-	color: #8FBCBB;
-	font-size : 24px;
-	font-weight : bold;
-	margin : 40px 0px 0px 0px;
-}
-
-.artist {
-	color: #EBCB8B;
-	font-size : 16px;
-	font-weight : normal;
-	margin : 0px 0px 15px 0px;
-}
-
-.btn_prev, .btn_play, .btn_next {
-	font-family: Iosevka Nerd Font;
-}
-.btn_prev {
-	color: #EBCB8B;
-	font-size : 32px;
-	font-weight : normal;
-}
-.btn_play {
-	color: #A3BE8C;
-	font-size : 48px;
-	font-weight : bold;
-}
-.btn_next {
-	color: #EBCB8B;
-	font-size : 32px;
-	font-weight : normal;
-}
-
-.music_bar scale trough highlight {
-	all: unset;
-	background-color: #B48EAD;
-	border-radius: 8px;
-}
-.music_bar scale trough {
-	all: unset;
-	background-color: #3A404C;
-	border-radius: 8px;
-	min-height: 20px;
-	min-width: 310px;
-	margin : 10px 0px 0px 0px;
-}
 
 /** Weather ***************************************/
 .iconweather {
@@ -375,4 +349,115 @@
 	color: #88C0D0;
 }
 
-/** EOF *************************************************/
+.dashboard-album-art {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    background-color: $surface1;
+}
+
+.dashboard-title {
+    color: $lavender;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.dashboard-artist {
+    color: $pink;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.dashboard-source {
+    color: $yellow;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+/* Progress Bar Styling */
+scale trough {
+    all: unset;
+    background-color: $surface0;
+    border-radius: 12px;
+    min-height: 8px;
+    min-width: 100px; /* Ensures it stretches */
+}
+
+scale highlight {
+    all: unset;
+    background-color: $blue;
+    border-radius: 12px;
+}
+
+scale slider {
+    all: unset;
+    background-color: $text;
+    min-height: 14px;
+    min-width: 14px;
+    border-radius: 50%;
+    margin-left: -7px;
+    margin-top: -3px;
+}
+
+.dashboard-time {
+    color: $overlay2;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Controls */
+.dashboard-ctrl-btn {
+    font-family: "Iosevka Nerd Font";
+    font-size: 32px;
+    color: $overlay2;
+    transition: color 0.3s;
+}
+
+.dashboard-ctrl-btn:hover {
+    color: $text;
+}
+
+.dashboard-play-btn {
+    font-family: "Iosevka Nerd Font";
+    font-size: 48px;
+    color: $mauve;
+    transition: color 0.3s;
+}
+
+.dashboard-play-btn:hover {
+    color: $pink;
+}
+.music-progress-bar trough {
+    all: unset;
+    background-color: $surface0;
+    border-radius: 12px;
+    min-height: 8px;
+    min-width: 100px;
+    margin-bottom: 5px; /* Spacing for the slider handle */
+}
+
+/* 2. Highlight (The Blue "Played" part) */
+.music-progress-bar highlight {
+    all: unset;
+    background-color: $blue;
+    border-radius: 12px;
+    min-height: 8px; /* Must match trough height to appear! */
+}
+
+/* 3. Slider (The Dot) */
+.music-progress-bar slider {
+    all: unset;
+    background-color: $text;
+    min-height: 14px;
+    min-width: 14px;
+    border-radius: 50%;
+    margin-left: -7px; /* Centers the dot on the start */
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); /* Optional shadow for visibility */
+}
+
+

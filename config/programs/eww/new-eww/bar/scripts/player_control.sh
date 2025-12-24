@@ -1,43 +1,68 @@
 #!/usr/bin/env bash
 
-# 1. Get the name of the currently active player (e.g., firefox, spotify)
-PLAYER=$(playerctl status -f "{{playerName}}" 2>/dev/null | head -n 1)
+# File to store the latest seek request
+SEEK_FILE="/tmp/eww_music_seek_data"
 
-if [ -z "$PLAYER" ]; then exit 0; fi
-
+# Arg mapping
 command=$1
 arg=$2
+len_sec=$3
+player_name=$4
+
+# Fallback for player name
+if [ -z "$player_name" ]; then
+    player_name=$(playerctl status -f "{{playerName}}" 2>/dev/null | head -n 1)
+fi
+if [ -z "$player_name" ]; then exit 0; fi
 
 case $command in
     "seek")
-        # Get total length in microseconds (1 second = 1,000,000 microseconds)
-        LEN=$(playerctl -p "$PLAYER" metadata mpris:length 2>/dev/null)
+        # 1. WRITE: Save the latest target data to a file immediately.
+        #    This overwrites any previous pending request.
+        echo "$arg $len_sec $player_name" > "$SEEK_FILE"
+
+        # 2. CHECK: Is a worker already running?
+        #    We check for a specific marker we create below.
+        lock_file="/tmp/eww_music_seek_lock"
         
-        # specific check: if length is 0 or empty, we can't seek (it's a live stream or bugged)
-        if [[ -z "$LEN" ]] || [[ "$LEN" -eq 0 ]]; then exit 0; fi
-
-        # Use AWK for safe math. 
-        # Formula: (Length_Microseconds * Target_Percent) / 100 / 1,000,000 = Target_Seconds
-        # We perform the division by 100,000,000 directly.
-        TARGET_SEC=$(awk -v len="$LEN" -v perc="$arg" 'BEGIN { printf "%.2f", (len * perc) / 100000000 }')
-
-        # Send the position command explicitly to the detected player
-        playerctl -p "$PLAYER" position "$TARGET_SEC"
-        ;;
-    
-    "toggle_shuffle")
-        playerctl -p "$PLAYER" shuffle toggle
-        ;;
-    
-    "toggle_loop")
-        # Your previous loop logic, but targeting the specific player
-        current=$(playerctl -p "$PLAYER" loop)
-        if [ "$current" == "None" ]; then
-            playerctl -p "$PLAYER" loop Playlist
-        elif [ "$current" == "Playlist" ]; then
-            playerctl -p "$PLAYER" loop Track
-        else
-            playerctl -p "$PLAYER" loop None
+        # If the lock file exists, a worker is already waiting to execute.
+        # We just exit and let that worker pick up our new value from step 1.
+        if [ -f "$lock_file" ]; then
+            exit 0
         fi
+
+        # 3. WORKER: Create the lock and run in background
+        touch "$lock_file"
+        
+        (
+            # Wait a tiny bit to gather rapid updates (Debounce)
+            sleep 0.05
+            
+            # Read the LATEST value from the file (Step 1)
+            read -r final_arg final_len final_player < "$SEEK_FILE"
+            
+            # Perform the Seek Logic
+            if [ -n "$final_len" ] && [ "$final_len" != "0" ]; then
+                # Use AWK for math
+                target_sec=$(awk -v len="$final_len" -v perc="$final_arg" 'BEGIN { printf "%.2f", (len * perc) / 100 }')
+                # Execute
+                playerctl -p "$final_player" position "$target_sec"
+            fi
+            
+            # Remove lock so a new batch can start
+            rm "$lock_file"
+        ) & 
+        
+        # Exit main script immediately to free up Eww UI
+        exit 0
         ;;
+    
+    "next")
+        playerctl -p "$player_name" next ;;
+        
+    "prev")
+        playerctl -p "$player_name" previous ;;
+        
+    "play-pause")
+        playerctl -p "$player_name" play-pause ;;
 esac
