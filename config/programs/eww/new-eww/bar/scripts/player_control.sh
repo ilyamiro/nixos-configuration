@@ -3,6 +3,9 @@
 # File to store the latest seek request
 SEEK_FILE="/tmp/eww_music_seek_data"
 
+EWW=`which eww`
+CFG="$HOME/.config/eww/bar"
+
 # Arg mapping
 command=$1
 arg=$2
@@ -65,4 +68,5 @@ case $command in
         
     "play-pause")
         playerctl -p "$player_name" play-pause ;;
+        
 esac

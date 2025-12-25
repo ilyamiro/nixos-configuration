@@ -13,6 +13,8 @@
 (defpoll MUSIC_FULL :interval "0.2s" `bash ./scripts/music_info.sh`)
 (defpoll EQ_DATA :interval "0.2s" `bash ./scripts/equalizer.sh get`)
 
+(deflisten VIS_PATH :initial "" "bash ./scripts/cava_visualizer.sh")
+
 ;; System Info - Redesigned
 (defpoll WIFI_STATUS :interval "2s" `bash ./scripts/sys_info.sh --wifi-status`)
 (defpoll WIFI_ICON :interval "2s" `bash ./scripts/sys_info.sh --wifi-icon`)
@@ -388,3 +390,33 @@
     :stacking "fg"
     :namespace "music_win"
     (music_popup))
+
+(defwidget visualizer_graphic []
+    (box :class "vis-window-box" 
+         :orientation "v" 
+         :space-evenly true 
+         :valign "fill" 
+         :halign "fill"
+         
+         ;; CHANGED: Use native image widget. 
+         ;; It detects the path change from the script and reloads instantly.
+         (image :path VIS_PATH 
+                :image-width 706 
+                :image-height 200
+                :preserve-aspect-ratio true)
+    )
+)
+;; --- WINDOW: VISUALIZER (Bottom of Screen) ---
+(defwindow visualizer_win
+    :monitor 0
+    ;; Position it directly UNDER your music window.
+    ;; Music window is height 620px + 10px offset = 630px.
+    ;; We start at y=640px to leave a small gap.
+    :geometry (geometry :x "12px" 
+                        :y "640px" 
+                        :width "706px" 
+                        :height "200px" 
+                        :anchor "top left")
+    :stacking "fg" ;; Keep it behind other popups if needed
+    :namespace "vis_win"
+    (visualizer_graphic))

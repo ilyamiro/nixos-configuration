@@ -4,11 +4,10 @@
 EWW_CFG="$HOME/.config/eww/popups/volume"
 EWW_BIN=$(which eww)
 
-# We use two files:
-# 1. A timestamp file to record exactly WHEN the last volume change happened.
-# 2. A lock file to ensure only ONE background "closer" process runs at a time.
-TIMESTAMP_FILE="/tmp/eww_volume_timestamp"
-CLOSER_LOCK="/tmp/eww_volume_closer.lock"
+# We use a PID file to track the current "sleep" process.
+# This prevents overflowing processes by killing the previous sleep command
+# before starting a new one.
+TIMER_PID="/tmp/eww_volume_timer.pid"
 
 # --- HELPER FUNCTIONS ---
 
@@ -25,52 +24,32 @@ get_icon() {
     fi
 }
 
-run_closer_daemon() {
-    # This function attempts to start a background loop.
-    # 'flock -n' ensures that if a loop is ALREADY running, this new instance 
-    # just exits immediately. This prevents duplicate processes.
-    (
-        flock -n 9 || exit 0
-
-        # If we are here, we are the one true Closer Daemon.
-        while true; do
-            # Read the time of the last volume change
-            if [ -f "$TIMESTAMP_FILE" ]; then
-                LAST_TIME=$(cat "$TIMESTAMP_FILE")
-            else
-                LAST_TIME=0
-            fi
-            
-            CURRENT_TIME=$(date +%s%3N) # Milliseconds for precision
-            TIME_DIFF=$((CURRENT_TIME - LAST_TIME))
-
-            # If 2000ms (2 seconds) have passed since the last activity:
-            if [ "$TIME_DIFF" -ge 2000 ]; then
-                $EWW_BIN -c "$EWW_CFG" close volume_osd
-                exit 0
-            fi
-
-            # Wait 0.5s before checking again
-            sleep 0.5
-        done
-    ) 9>"$CLOSER_LOCK" &
-}
-
 show_osd() {
-    # 1. Get current values
+    # 1. Kill the previous sleep timer if it exists.
+    #    This "resets" the 2-second countdown.
+    if [ -f "$TIMER_PID" ]; then
+        kill "$(cat "$TIMER_PID")" 2>/dev/null
+    fi
+
+    # 2. Get current values
     VOL=$(pamixer --get-volume)
     ICON=$(get_icon)
 
-    # 2. Update the "Last Activity" timestamp (in milliseconds)
-    date +%s%3N > "$TIMESTAMP_FILE"
-    
     # 3. Update Eww variables & Open Window
-    # We update the variables first so the window doesn't flicker with old data
     $EWW_BIN -c "$EWW_CFG" update volume_value="$VOL" volume_icon="$ICON"
     $EWW_BIN -c "$EWW_CFG" open volume_osd
 
-    # 4. Ensure the background closer is running
-    run_closer_daemon
+    # 4. Start a background process that waits 2 seconds then closes the window.
+    #    We put this in the background (&) so the script doesn't freeze.
+    (
+        sleep 2
+        $EWW_BIN -c "$EWW_CFG" close volume_osd
+        rm "$TIMER_PID" 2>/dev/null
+    ) &
+
+    # 5. Save the PID of the background process we just started.
+    #    This allows step #1 to find and kill it next time.
+    echo $! > "$TIMER_PID"
 }
 
 # --- ACTIONS ---

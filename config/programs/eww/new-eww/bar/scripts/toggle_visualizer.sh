@@ -2,18 +2,19 @@
 
 EWW=`which eww`
 CFG="$HOME/.config/eww/bar"
-FILE="$HOME/.cache/eww_launch.musicbar"
+FILE="$HOME/.cache/eww_launch.music_vis_bar"
 
 run_eww() {
-	${EWW} --config "$CFG" open-many music_win visualizer_win 
+	${EWW} --config "$CFG" open visualizer_win 
 }
 
 if [[ ! -f "$FILE" ]]; then
 	touch "$FILE"
 	run_eww
 else
-	${EWW} --config "$CFG" close music_win visualizer_win
+	${EWW} --config "$CFG" close visualizer_win 
 	rm "$FILE"
 fi
+
 
 

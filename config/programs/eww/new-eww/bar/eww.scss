@@ -484,3 +484,24 @@ scale highlight {
 .eq-apply-btn:hover { color: $text; background-color: $surface0; }
 .eq-apply-btn.highlight:hover { background-color: $red; color: $base; }
 .eq-apply-btn:active { background-color: $surface1; }
+
+
+.vis-window-box {
+    background-color: $base;
+    border-radius: 12px;
+    border: 2px solid $surface0;
+    
+    /* Center the SVG content */
+    padding: 10px 20px;
+}
+
+.vis-canvas {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain; /* Keeps aspect ratio */
+    min-height: 100px;
+    
+    /* Optional: Add a subtle glow behind the bars.
+       Since the SVG handles the bar colors, we can add a box-shadow to the container
+    */
+}
