@@ -66,7 +66,7 @@ if [ "$STATUS" = "Playing" ] || [ "$STATUS" = "Paused" ]; then
         textColorPath="$tmpDir/${urlHash}_text.txt"
 
         if [ ! -f "$blurPath" ]; then
-            convert "$artUrl" -blur 0x25 -brightness-contrast -30x-10 "$blurPath" &
+            convert "$artUrl" -blur 0x20 -brightness-contrast -30x-10 "$blurPath" &
             if [ -f "$artUrl" ]; then
                 colors=$(convert "$artUrl" -resize 100x100 -quantize RGB -colors 3 -depth 8 -format "%c" histogram:info: | \
                          sed -n 's/.*#\([0-9A-Fa-f]\{6\}\).*/#\1/p' | tr '\n' ' ')

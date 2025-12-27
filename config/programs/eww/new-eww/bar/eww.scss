@@ -32,118 +32,334 @@ $crust: #11111b;
   font-family: "JetBrains Mono", "Iosevka Nerd Font", monospace;
 }
 
-/* --- BAR WIDGETS --- */
-.bar_class {
-  background-color: transparent;
-}
-
-.dockbox {
-  background-color: $base;
-  border: 2px solid $surface0;
-  border-radius: 4px; 
-  padding: 6px 16px; 
-  margin: 0px 2px;
-  color: $text;
-}
-
-.genicon {
-  background-repeat: no-repeat;
-  background-size: 16px;
-  background-position: center;
-  min-height: 20px;
-  min-width: 20px;
-}
-
-.workspace {
-  color: $mauve;
-  font-size: 18px;
-  font-weight: 800;
-  padding: 0px; 
-}
-
-/* Time & Weather */
-.clockbox { margin-right: 20px; }
-.time { font-size: 16px; font-weight: 800; color: $blue; }
-.date { font-size: 12px; font-weight: bold; color: $subtext0; margin-top: 0px; }
-.weatherbox { margin-left: 0px; }
-.weathericon { font-family: "Iosevka Nerd Font"; font-size: 28px; color: $yellow; }
-.weathertemp { font-size: 18px; font-weight: bold; color: $peach; margin: 0px; }
-
-/* Bar Media Widget */
-.album_art {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  min-height: 30px;
-  min-width: 30px;
-  border-radius: 4px;
-  background-color: $surface1;
-}
-
-.song_title {
-    font-weight: 800;
-    font-size: 14px;
-    color: $sapphire;
-    margin-bottom: -2px; 
-}
-
-.song_time_bar {
-    font-family: "JetBrains Mono";
-    font-weight: 800;
-    font-size: 12px; 
-    color: $overlay1;
-}
-
-.song_artist { font-weight: 600; font-size: 11px; color: $subtext0; }
-
-.media_btn, .media_btn_play {
-  font-family: "Iosevka Nerd Font";
-  font-size: 24px;
-  color: $overlay2;
-  padding: 0px 5px;
-}
-
-.media_btn:hover { color: $lavender; }
-.media_btn_play { color: $text; font-size: 30px; }
-.media_btn_play:hover { color: $green; }
-
-/* --- MUSIC POPUP WINDOW --- */
-
-/* Main Container */
-.music-window-box {
-    background-color: $base;
-    
-    /* SPLIT THE BORDER PROPERTIES */
-    
-    border-radius: 12px;
-    transition: border-color 0.5s ease; /* Smooth transition defined here */
-}
-
+/* --- ANIMATIONS --- */
 @keyframes gradient-move {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* This class will be applied to the box */
-.animated-gradient-border {
-    /* Large background size is essential for the movement to be visible */
-    background-size: 300% 300%;
-    animation: gradient-move 5s ease infinite;
-    border-radius: 14px; /* Slightly larger than inner content */
+@keyframes vinyl_energy {
+    0%   { box-shadow: 0 0 0 0 rgba(203, 166, 247, 0); }
+    15%  { box-shadow: 0 0 20px 5px rgba(203, 166, 247, 0.4); } 
+    30%  { box-shadow: 0 0 10px 5px rgba(180, 190, 254, 0.2); }  
+    45%  { box-shadow: 0 0 20px 10px rgba(137, 180, 250, 0.5); } 
+    100% { box-shadow: 0 0 0 0 rgba(180, 190, 254, 0); }
 }
 
-/* Background Layer (FIXED: Now responsive) */
+@keyframes liquid_energy {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+@keyframes complex_heartbeat {
+    0%   { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
+    15%  { box-shadow: 0px 0px 8px 2px rgba(203, 166, 247, 0.6); } 
+    30%  { box-shadow: 0px 0px 4px 1px rgba(180, 190, 254, 0.4); } 
+    45%  { box-shadow: 0px 0px 12px 4px rgba(203, 166, 247, 0.8); } 
+    100% { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
+}
+
+/* Subtle breathe for text */
+@keyframes breathe {
+    0% { color: $mauve; text-shadow: 0 0 0 rgba(0,0,0,0); }
+    50% { color: $pink; text-shadow: 0 0 5px rgba(203, 166, 247, 0.4); }
+    100% { color: $mauve; text-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(243, 139, 168, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0); }
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* --- BAR WIDGETS --- */
+.bar_class {
+  background-color: transparent;
+}
+
+/* The "Alive" Container Style */
+.dockbox {
+  background-color: rgba(30, 30, 46, 0.85); 
+  border: 1px solid rgba(255, 255, 255, 0.05); 
+  border-radius: 12px; 
+  padding: 4px 10px; 
+  margin: 2px 2px; /* Reduced gaps */
+  color: $text;
+  
+  /* Reduced shadow intensity for less "glow" */
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  
+  transition: all 0.2s ease;
+}
+
+.dockbox:hover {
+    background-color: $surface0;
+    /* Clean lift effect, no neon glow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-color: $overlay0;
+}
+
+/* Search Icon */
+.genicon {
+  background-repeat: no-repeat;
+  background-size: 18px;
+  background-position: center;
+  min-height: 24px;
+  min-width: 24px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+.genicon:hover {
+    background-color: $surface1;
+    /* Much subtler hover glow */
+    box-shadow: 0 0 5px rgba(205, 214, 244, 0.2); 
+}
+
+/* Workspace */
+.workspace-btn {
+    font-family: "JetBrains Mono ExtraBold";
+    font-size: 14px;
+    
+    /* Uniform pill sizing */
+    min-width: 24px;
+    min-height: 24px;
+    padding: 2px 4px;
+    margin: 0px 3px;
+    border-radius: 8px; /* Matches your other system pills */
+    
+    /* Clean transition, no "bounce" */
+    transition: all 0.2s ease-in-out;
+    
+    /* REMOVED: All borders and shadows for true minimalism */
+    border: none;
+    box-shadow: none;
+}
+
+/* 1. EMPTY State (Subtle) */
+/* Just the number, very dimmed, blending into the dockbox */
+.workspace-btn.empty {
+    color: $surface2; 
+    background-color: transparent;
+}
+
+.workspace-btn.empty:hover {
+    color: $overlay1;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 2. OCCUPIED State (Clean Pill) */
+/* Uses a flat dark background to indicate presence without shouting */
+.workspace-btn.occupied {
+    color: $blue;
+    background-color: $surface1; 
+}
+
+.workspace-btn.occupied:hover {
+    background-color: $surface2;
+    color: $sapphire;
+}
+
+/* 3. ACTIVE State (Vibrant Accent) */
+/* Solid block color, dark text for maximum contrast. No glowing borders. */
+.workspace-btn.active {
+    color: $base; /* Dark text on bright background */
+    background-color: $mauve;
+    font-weight: 900;
+}
+
+.workspace-btn.active:hover {
+    background-color: $pink; /* Simple color shift */
+}/* Time & Weather */
+.clockbox { margin-right: 15px; }
+.time { 
+    font-size: 15px; 
+    font-weight: 900; 
+    color: $blue;
+    /* Reduced text shadow */
+    text-shadow: 0 0 2px rgba(137, 180, 250, 0.3); 
+    transition: color 0.3s;
+}
+.clockbox:hover .time { color: $sky; }
+
+.date { font-size: 11px; font-weight: bold; color: $subtext0; }
+
+.weatherbox { margin-left: 0px; }
+.weathericon { 
+    font-family: "Iosevka Nerd Font"; 
+    font-size: 24px; 
+    color: $yellow; 
+    margin-right: 8px;
+    transition: color 0.3s;
+}
+.weatherbox:hover .weathericon {
+    color: $peach;
+}
+.weathertemp { font-size: 16px; font-weight: 800; color: $peach; }
+
+/* Bar Media Widget */
+.album_art {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 32px;
+  min-width: 32px;
+  border-radius: 8px;
+  background-color: $surface1;
+  border: 1px solid $surface1;
+  transition: all 0.3s;
+}
+
+/* Keep the playing glow but make it slightly cleaner */
+.bar-media-playing .album_art {
+     animation: vinyl_energy 5s ease-in-out infinite;
+     border-color: $mauve;
+}
+
+.song_title { font-weight: 800; font-size: 13px; color: $sapphire; }
+.song_time_bar { font-family: "JetBrains Mono"; font-weight: 800; font-size: 11px; color: $overlay1; }
+
+.media_btn, .media_btn_play {
+  font-family: "Iosevka Nerd Font";
+  font-size: 20px;
+  color: $overlay2;
+  padding: 0px 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.media_btn:hover { color: $lavender; background-color: $surface1; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.media_btn_play { color: $text; font-size: 24px; }
+.media_btn_play:hover { color: $green; text-shadow: 0 0 5px rgba(166, 227, 161, 0.5); }
+
+/* --- SYSTEM WIDGET (Glass & Smooth Animation) --- */
+.system-widget {
+  /* Main Container Background */
+  background-image: linear-gradient(to bottom right, rgba(30, 30, 46, 0.95), rgba(24, 24, 37, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 6px 8px; /* Slightly tighter outer padding */
+  margin: 0px 4px;
+  color: $text;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Base Pill Style - Applies to ALL (Battery, Sound, Wifi, etc.) */
+.sys-pill {
+  /* Default subtle glass background for everything */
+  background-color: rgba(255, 255, 255, 0.04);
+  padding: 6px 14px; /* Bigger padding */
+  border-radius: 18px; /* Smoother radius */
+  
+  /* Smooth animation engine */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 24px;
+  border: 1px solid transparent;
+}
+
+/* Hover Animation for ALL pills */
+.sys-pill:hover {
+  background-color: $surface1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Text Styles */
+.sys-text {
+  font-family: "JetBrains Mono";
+  font-weight: 800;
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+/* Icons Generic */
+.sys-icon-kb, .sys-icon-wifi, .sys-icon-bt, .sys-icon-vol, .sys-icon-bat {
+  font-family: "Iosevka Nerd Font";
+  font-size: 18px; /* Slightly larger icons */
+}
+
+/* --- SPECIFIC MODULE CONFIG --- */
+
+/* 1. Keyboard */
+.sys-kb { color: $overlay2; }
+.sys-kb:hover { color: $text; }
+
+/* 2. WiFi */
+.sys-wifi {
+    color: $subtext0;
+    min-width: 80px; /* Force it to be longer */
+}
+/* WiFi Active: Solid Blue Gradient Pill */
+.sys-wifi.active {
+    background-image: linear-gradient(135deg, $blue, $sapphire);
+    color: $crust;
+    box-shadow: 0 0 15px rgba(137, 180, 250, 0.3);
+    border: none;
+}
+.sys-wifi.active:hover {
+    box-shadow: 0 0 20px rgba(137, 180, 250, 0.5);
+}
+.sys-wifi.active .sys-icon-wifi { color: $crust; }
+
+/* 3. Bluetooth */
+.sys-bt {
+    color: $subtext0;
+    min-width: 80px; /* Force it to be longer */
+}
+/* Bluetooth Active: Solid Mauve Gradient Pill */
+.sys-bt.active {
+    background-image: linear-gradient(135deg, $mauve, $pink);
+    color: $crust;
+    box-shadow: 0 0 15px rgba(203, 166, 247, 0.3);
+    border: none;
+}
+.sys-bt.active:hover {
+    box-shadow: 0 0 20px rgba(203, 166, 247, 0.5);
+}
+.sys-bt.active .sys-icon-bt { color: $crust; }
+
+/* 4. Volume */
+.sys-vol { color: $peach; }
+.sys-vol:hover { color: $rosewater; }
+.sys-vol.muted {
+    color: $overlay0;
+    background-color: rgba(0,0,0,0.2); /* Darker background when muted */
+    text-decoration: line-through;
+}
+
+/* 5. Battery */
+.sys-bat { color: $green; }
+.sys-icon-bat.low {
+    color: $red;
+    animation: blink 2s infinite;
+}
+
+/* --- MUSIC POPUP WINDOW (UNTOUCHED) --- */
+.music-window-box {
+    background-color: $base;
+    border-radius: 12px;
+    transition: border-color 0.5s ease;
+}
+
+.animated-gradient-border {
+    background-size: 300% 300%;
+    animation: gradient-move 5s ease infinite;
+    border-radius: 14px;
+}
+
 .music-bg-blur {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    
-    /* FORCE DIMENSIONS: Matches your window geometry */
     min-width: 700px;
     min-height: 620px;
-    
-    opacity: 0.4; 
+    opacity: 0.6; 
     border-radius: 10px; 
 }
 
@@ -152,68 +368,42 @@ $crust: #11111b;
     border-radius: 12px;
 }
 
-/* Vinyl Art */
 .music-cover-art {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    border-radius: 50%; /* Circle */
+    border-radius: 50%;
     border: 4px solid $surface1;
     box-shadow: inset 0 0 0 20px rgba(0,0,0,0.4);
     transition: all 0.3s ease;
 }
 
-@keyframes vinyl_energy {
-    0%   { box-shadow: 0 0 0 0 rgba(203, 166, 247, 0); }
-    15%  { box-shadow: 0 0 20px 5px rgba(203, 166, 247, 0.4); } /* Mauve glow */
-    30%  { box-shadow: 0 0 10px 5px rgba(180, 190, 254, 0.2); }  /* Lavender dim */
-    45%  { box-shadow: 0 0 20px 10px rgba(137, 180, 250, 0.5); } /* Blue strong */
-    100% { box-shadow: 0 0 0 0 rgba(180, 190, 254, 0); }
-}
-
 .music-cover-art.playing {
     border-color: $mauve;
-    /* Use the new animation with similar timing to the slider */
     animation: vinyl_energy 4s ease-in-out infinite;
 }
 
 .music-cover-art.paused {
     border-color: $overlay0;
     opacity: 0.7;
-    animation: none; /* Ensure no glow when paused */
+    animation: none;
 }
 
 .music-title { font-weight: 900; font-size: 20px; color: $lavender; }
-.music-artist { font-weight: 700; font-size: 14px; color: $pink; }/* Removed "BY" styling, made cleaner */
+.music-artist { font-weight: 700; font-size: 14px; color: $pink; }
 
-/* New Metadata Pills */
 .meta-pill {
-    background-color: rgba(255, 255, 255, 0.1); /* Glassy look */
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     padding: 4px 10px;
 }
-
-.meta-icon {
-    font-family: "Iosevka Nerd Font";
-    color: $mauve;
-    font-size: 14px;
-}
-
-.meta-text {
-    font-family: "JetBrains Mono";
-    font-weight: 800;
-    font-size: 12px;
-    color: $overlay2; 
-}
-
+.meta-icon { font-family: "Iosevka Nerd Font"; color: $mauve; font-size: 14px; }
+.meta-text { font-family: "JetBrains Mono"; font-weight: 800; font-size: 12px; color: $overlay2; }
 .music-source { font-size: 12px; color: $yellow; font-weight: bold; font-style: italic; margin-top: 2px; }
-.music-album { font-size: 12px; color: $subtext0; font-style: italic; }
 
-/* Progress Bar Area */
 .music-progress-area { margin-top: 10px; margin-bottom: 5px; }
 .music-time { font-size: 13px; font-weight: bold; color: $overlay2; margin-top: 5px; }
 
-/* Main Slider Styling */
 scale trough {
     background-color: $surface0;
     border-radius: 10px;
@@ -224,12 +414,6 @@ scale highlight {
     border-radius: 10px;
 }
 
-/* Animated Slider Bar */
-@keyframes liquid_energy {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
-}
-
 .music-progress-bar trough {
     all: unset;
     background-color: rgba(17, 17, 27, 0.6); 
@@ -237,10 +421,7 @@ scale highlight {
     min-height: 8px;      
     min-width: 100px;
     margin-bottom: 5px; 
-    
-    /* ADDED: Drop shadow to lift the bar off the background */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-
 }
 
 .music-progress-bar highlight {
@@ -253,19 +434,7 @@ scale highlight {
     transition: all 0.5s ease;
 }
 
-.music-progress-bar:hover highlight {
-    animation-duration: 1.5s; 
-    opacity: 0.8;
-}
-
-/* Slider Knob */
-@keyframes complex_heartbeat {
-    0%   { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
-    15%  { box-shadow: 0px 0px 8px 2px rgba(203, 166, 247, 0.6); } 
-    30%  { box-shadow: 0px 0px 4px 1px rgba(180, 190, 254, 0.4); } 
-    45%  { box-shadow: 0px 0px 12px 4px rgba(203, 166, 247, 0.8); } 
-    100% { box-shadow: 0px 0px 0px 0px rgba(180, 190, 254, 0); }
-}
+.music-progress-bar:hover highlight { animation-duration: 1.5s; opacity: 0.8; }
 
 .music-progress-bar slider {
     all: unset;
@@ -275,100 +444,26 @@ scale highlight {
     border-radius: 50%;
     margin-left: -7px;
     transition: box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    box-shadow: none; /* No glow by default */
+    box-shadow: none;
 }
 
-.music-progress-bar.playing slider {
-    animation: complex_heartbeat 4s ease-in-out infinite;
-}
+.music-progress-bar.playing slider { animation: complex_heartbeat 4s ease-in-out infinite; }
+.music-progress-bar slider:hover { animation: none; box-shadow: 0px 0px 0px 3px $text, 0px 0px 15px 5px $lavender; }
+.music-progress-bar slider:active { animation: none; box-shadow: 0px 0px 0px 5px $text, 0px 0px 25px 8px $blue; }
 
-/* 3. Hover Effects (Override animation) */
-.music-progress-bar slider:hover {
-    animation: none;
-    box-shadow: 0px 0px 0px 3px $text, 0px 0px 15px 5px $lavender;
-}
+.music-progress-bar highlight { animation-play-state: paused; }
+.music-progress-bar.playing highlight { animation-play-state: running; }
 
-.music-progress-bar slider:active {
-    animation: none;
-    box-shadow: 0px 0px 0px 5px $text, 0px 0px 25px 8px $blue;
-}
-
-/* OPTIONAL: Stop the "Liquid Energy" bar movement when paused too */
-.music-progress-bar highlight {
-    animation-play-state: paused;
-}
-.music-progress-bar.playing highlight {
-    animation-play-state: running;
-}
-
-
-/* Controls */
 .ctrl-btn { font-family: "Iosevka Nerd Font"; font-size: 24px; color: $overlay2; }
 .ctrl-btn:hover { color: $text; }
 .play-btn-big { font-family: "Iosevka Nerd Font"; font-size: 42px; color: $mauve; }
 .play-btn-big:hover { color: $pink; }
 
-/* Separator */
 .music-sep-h {
-    /* CHANGED: Subtle glass effect (10% white) to blend with the blur */
     background-color: rgba(255, 255, 255, 0.1);
     margin: 20px 10px; 
     min-height: 2px;
     border-radius: 99px;
-}
-
-/* --- SYSTEM WIDGET --- */
-.system-widget {
-  background-color: $base;
-  border: 2px solid $surface0;
-  border-radius: 4px; 
-  padding: 8px 14px;
-  margin: 0px 4px;
-  color: $text;
-  min-height: 42px;
-}
-
-.sys-pill {
-  background-color: $surface0;
-  padding: 4px 10px;
-  border-radius: 4px;
-  transition: all 0.3s;
-  min-height: 24px;
-}
-
-.sys-pill:hover { background-color: $surface1; }
-
-.sys-wifi.active { background-color: rgba(137, 180, 250, 0.1); border: 1px solid $blue; }
-.sys-bt.active { background-color: rgba(180, 190, 254, 0.1); border: 1px solid $lavender; }
-
-.sys-text {
-  font-family: "JetBrains Mono";
-  font-weight: 700;
-  font-size: 13px;
-  color: $text;
-  margin-top: 1px;
-}
-
-.sys-icon-kb, .sys-icon-wifi, .sys-icon-bt, .sys-icon-vol, .sys-icon-bat {
-  font-family: "Iosevka Nerd Font";
-  font-size: 18px;
-  padding-right: 2px;
-}
-
-.sys-icon-kb { color: $mauve; }
-.sys-icon-wifi { color: $overlay1; transition: color 0.3s; }
-.sys-pill.sys-wifi.active .sys-icon-wifi { color: $blue; }
-.sys-icon-bt { color: $overlay1; transition: color 0.3s; }
-.sys-pill.sys-bt.active .sys-icon-bt { color: $lavender; }
-.sys-icon-vol { color: $peach; }
-.sys-icon-vol.muted { color: $overlay0; }
-.sys-icon-bat { color: $green; }
-.sys-icon-bat.low { color: $red; animation: blink 2s infinite; }
-
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
 }
 
 /* --- EQUALIZER STYLING --- */
@@ -376,16 +471,12 @@ scale highlight {
 .eq-header { font-weight: 900; font-size: 16px; color: $mauve; }
 .eq-preset-name { font-weight: bold; font-size: 14px; color: $subtext0; }
 
-/* EQ Sliders */
 .eq-scale trough {
-    /* CHANGED: Match the music progress bar for consistency */
     background-color: rgba(17, 17, 27, 0.6);
     border-radius: 99px;
     min-width: 6px; 
     min-height: 150px;
     margin-bottom: 5px;
-    
-    /* CHANGED: Combined inner shadow (depth) with outer shadow (separation) */
     box-shadow: inset 0 0 5px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.4);
 }
 
@@ -393,7 +484,7 @@ scale highlight {
     background-color: $blue; 
     border-radius: 99px;
     min-width: 6px;
-    transition: all 0.1s ease; /* Smooth slider movement */
+    transition: all 0.1s ease;
 }
 
 .eq-scale slider {
@@ -408,54 +499,34 @@ scale highlight {
 
 .eq-band-label { font-size: 10px; font-weight: bold; color: $overlay1; }
 
-/* --- "ALIVE" PRESET BUTTONS --- */
 .eq-preset-btn {
-    /* CHANGED: Replaced solid surface0 with dark semi-transparent + shadow */
     background-color: rgba(30, 30, 46, 0.75);
     color: $subtext0;
     padding: 8px 0px;
-    border-radius: 8px; /* Softer rounded corners */
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 800;
-    border: 1px solid transparent; /* Prepare for border transition */
-    
-    /* ADDED: Shadow to separate button from messy backgrounds */
+    border: 1px solid transparent; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    
-    /* The Magic: Smooth transition for color and shadow */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover State: Subtle glow and text brighten */
 .eq-preset-btn:hover {
     background-color: $surface1;
     color: $text;
     border-color: $overlay0;
-    /* ADDED: Lift effect on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); 
 }
 
-/* Active/Selected State: bold color, strong glow */
 .eq-preset-btn.active {
     background-color: $mauve;
-    color: $base; /* Dark text on light background */
+    color: $base;
     border-color: $mauve;
-    
-    /* "Neon" Glow effect */
     box-shadow: 0 0 15px rgba(203, 166, 247, 0.5); 
 }
 
-/* Active Hover: Even brighter to show interactivity */
-.eq-preset-btn.active:hover {
-    box-shadow: 0 0 20px rgba(203, 166, 247, 0.7);
-}
+.eq-preset-btn.active:hover { box-shadow: 0 0 20px rgba(203, 166, 247, 0.7); }
 
-/* Active Hover: Even brighter to show interactivity */
-.eq-preset-btn.active:hover {
-    box-shadow: 0 0 20px rgba(203, 166, 247, 0.7);
-}
-
-/* Apply Button (Top Right) */
 .eq-apply-btn {
     background-color: transparent;
     color: $overlay1;
@@ -468,40 +539,13 @@ scale highlight {
 }
 
 .eq-apply-btn.highlight {
-    background-color: rgba(243, 139, 168, 0.1); /* Red tint */
+    background-color: rgba(243, 139, 168, 0.1); 
     color: $red;
     border: 1px solid $red;
     box-shadow: 0 0 8px rgba(243, 139, 168, 0.2);
     animation: pulse-red 2s infinite;
 }
 
-@keyframes pulse-red {
-    0% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0.4); }
-    70% { box-shadow: 0 0 0 6px rgba(243, 139, 168, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(243, 139, 168, 0); }
-}
-
 .eq-apply-btn:hover { color: $text; background-color: $surface0; }
 .eq-apply-btn.highlight:hover { background-color: $red; color: $base; }
 .eq-apply-btn:active { background-color: $surface1; }
-
-
-.vis-window-box {
-    background-color: $base;
-    border-radius: 12px;
-    border: 2px solid $surface0;
-    
-    /* Center the SVG content */
-    padding: 10px 20px;
-}
-
-.vis-canvas {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain; /* Keeps aspect ratio */
-    min-height: 100px;
-    
-    /* Optional: Add a subtle glow behind the bars.
-       Since the SVG handles the bar colors, we can add a box-shadow to the container
-    */
-}

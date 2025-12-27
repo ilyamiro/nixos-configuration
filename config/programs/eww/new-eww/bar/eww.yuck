@@ -1,5 +1,6 @@
 ;; Workspace & Time
-(defpoll WORKSPACE :interval "0.2s" `hyprctl activeworkspace -j | jq '.id'`)
+(deflisten WORKSPACES :initial "[]" "bash ./scripts/workspaces.sh")
+
 (defpoll TIME :interval "1s" `date +\"%I:%M:%S %p\"`)
 (defpoll DATE :interval "1m" `date +\"%A, %B %d\"`)
 
@@ -12,8 +13,6 @@
 (defpoll MEDIA :interval "0.2s" `bash ./scripts/media.sh`)
 (defpoll MUSIC_FULL :interval "0.2s" `bash ./scripts/music_info.sh`)
 (defpoll EQ_DATA :interval "0.2s" `bash ./scripts/equalizer.sh get`)
-
-(deflisten VIS_PATH :initial "" "bash ./scripts/cava_visualizer.sh")
 
 ;; System Info - Redesigned
 (defpoll WIFI_STATUS :interval "2s" `bash ./scripts/sys_info.sh --wifi-status`)
@@ -32,7 +31,7 @@
 (defpoll BATTERY_ICON :interval "10s" `bash ./scripts/sys_info.sh --battery-icon`)
 (defpoll BATTERY_STATUS :interval "10s" `bash ./scripts/sys_info.sh --battery-status`)
 
-(defpoll KB_LAYOUT :interval "1s" `bash ./scripts/sys_info.sh --kb-layout`)
+(defpoll KB_LAYOUT :interval "0.5s" `bash ./scripts/sys_info.sh --kb-layout`)
 
 ;; WIDGETS
 
@@ -49,13 +48,21 @@
 
 (defwidget workspaces []
     (box :class "dockbox"
-        (box :orientation "h" :spacing 0 :valign "center" :halign "center" 
+        (box :orientation "h" :spacing 5 :valign "center" :halign "center" 
              :space-evenly "false" :vexpand "false" :hexpand "false"
-            (label :class "workspace" :halign "center" :text WORKSPACE)
+            
+            (for ws in WORKSPACES
+                (button :onclick "hyprctl dispatch workspace ${ws.id}"
+                        ;; Class is now dynamic: workspace-btn active/occupied/empty
+                        :class "workspace-btn ${ws.state}"
+                        ;; Tooltip shows the window name!
+                        :tooltip "Workspace ${ws.id}: ${ws.tooltip}"
+                    (label :text "${ws.id}")
+                )
+            )
         ) 
     )
 )
-
 (defwidget equalizer []
     (box :class "eq-container" :orientation "v" :space-evenly false :spacing 15
         
@@ -131,42 +138,42 @@
 (defwidget system []
     (box :class "system-widget"
          :orientation "h"
-         :spacing 8 
+         :spacing 10
          :valign "center"
          :halign "center"
          :space-evenly "false"
 
          ;; 1. Keyboard Layout
-         (box :class "sys-pill sys-kb" :orientation "h" :spacing 8 :space-evenly false
+         (box :class "sys-pill sys-kb" :orientation "h" :spacing 10 :space-evenly false
             (label :class "sys-icon-kb" :text "󰌌")
             (label :class "sys-text" :text KB_LAYOUT)
          )
 
-         ;; 2. WiFi
+         ;; 2. WiFi (Longer pill via CSS)
          (eventbox :onclick "bash ./scripts/sys_info.sh --wifi-toggle"
                    :onrightclick "nm-connection-editor &"
                    :cursor "pointer"
                    :tooltip {WIFI_STATUS == "enabled" ? (WIFI_SSID != "" ? "Connected to ${WIFI_SSID}" : "WiFi enabled") : "WiFi disabled"}
              (box :class "sys-pill sys-wifi ${WIFI_STATUS == 'enabled' ? 'active' : ''}" 
-                  :orientation "h" :spacing 8 :space-evenly false
+                  :orientation "h" :spacing 10 :space-evenly false
                  (label :class "sys-icon-wifi" :text WIFI_ICON)
                  (label :class "sys-text" 
                         :text {WIFI_STATUS == "enabled" ? (WIFI_SSID != "" ? WIFI_SSID : "Disconnected") : "Off"}
-                        :limit-width 10)
+                        :limit-width 12)
              )
          )
 
-         ;; 3. Bluetooth
+         ;; 3. Bluetooth (Longer pill via CSS)
          (eventbox :onclick "bash ./scripts/sys_info.sh --bt-toggle"
                    :onrightclick "blueman-manager &"
                    :cursor "pointer"
                    :tooltip {BT_STATUS == "on" ? "Bluetooth On" : "Bluetooth Off"}
              (box :class "sys-pill sys-bt ${BT_STATUS == 'on' ? 'active' : ''}" 
-                  :orientation "h" :spacing 8 :space-evenly false
+                  :orientation "h" :spacing 10 :space-evenly false
                  (label :class "sys-icon-bt" :text BT_ICON)
                  (label :class "sys-text" 
                         :text {BT_STATUS == "on" ? BT_DEVICE : "Off"}
-                        :limit-width 10)
+                        :limit-width 12)
              )
          )
 
@@ -175,15 +182,15 @@
                    :onclick "pavucontrol &"
                    :cursor "pointer"
                    :tooltip "Volume: ${CURRENT_VOL}%"
-             (box :class "sys-pill sys-vol" :orientation "h" :spacing 8 :space-evenly false
-                 (label :class "sys-icon-vol ${IS_MUTED == 'true' ? 'muted' : ''}" 
+             (box :class "sys-pill sys-vol ${IS_MUTED == 'true' ? 'muted' : ''}" :orientation "h" :spacing 10 :space-evenly false
+                 (label :class "sys-icon-vol" 
                         :text VOL_ICON)
                  (label :class "sys-text" :text "${CURRENT_VOL}%")
              )
          )
 
          ;; 5. Battery
-         (box :class "sys-pill sys-bat" :orientation "h" :spacing 8 :space-evenly false
+         (box :class "sys-pill sys-bat" :orientation "h" :spacing 10 :space-evenly false
               :tooltip "${BATTERY_STATUS}: ${BATTERY_PERCENT}%"
              (label :class "sys-icon-bat ${BATTERY_PERCENT < 20 ? 'low' : ''}" 
                     :text BATTERY_ICON)
@@ -191,9 +198,9 @@
          )
     )
 )
-
 (defwidget media []
-    (box :class "dockbox" 
+    ;; ADDED CLASS: bar-media-playing when status is Playing
+    (box :class "dockbox ${MUSIC_FULL.status == 'Playing' ? 'bar-media-playing' : ''}" 
          :visible {MUSIC_FULL.status != "Stopped"}
          :orientation "h" 
          :spacing 10 
@@ -257,7 +264,7 @@
          (box :orientation "h"
               :space-evenly false
               :halign "start"
-              :spacing 5
+              :spacing 2
               :style "padding-left: 10px;"
             (search)
             (workspaces)
@@ -336,7 +343,7 @@
                                          (label :class "meta-icon" :text "${MUSIC_FULL.deviceIcon}" :valign "center")
                                          (label :class "meta-text" :text "${MUSIC_FULL.deviceName}" :limit-width 25 :valign "center")
                                     )
-				    (label :class "music-source" :text "VIA ${MUSIC_FULL.source}" :valign "center" :halign "start")
+                                    (label :class "music-source" :text "VIA ${MUSIC_FULL.source}" :valign "center" :halign "start")
                                    )
                                                                       
                               )                              
@@ -346,8 +353,8 @@
                                           :min 0 :max 100 :value {MUSIC_FULL.percent}
                                           :onchange "bash ./scripts/player_control.sh seek {} ${MUSIC_FULL.length} ${MUSIC_FULL.playerName}")
                                    (box :orientation "h" :halign "fill"
-                                       (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
-                                       (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
+                                     (label :class "music-time" :text {MUSIC_FULL.positionStr} :halign "start")
+                                     (label :class "music-time" :text {MUSIC_FULL.lengthStr} :halign "end")
                                    )
                               )
                               
@@ -390,33 +397,3 @@
     :stacking "fg"
     :namespace "music_win"
     (music_popup))
-
-(defwidget visualizer_graphic []
-    (box :class "vis-window-box" 
-         :orientation "v" 
-         :space-evenly true 
-         :valign "fill" 
-         :halign "fill"
-         
-         ;; CHANGED: Use native image widget. 
-         ;; It detects the path change from the script and reloads instantly.
-         (image :path VIS_PATH 
-                :image-width 706 
-                :image-height 200
-                :preserve-aspect-ratio true)
-    )
-)
-;; --- WINDOW: VISUALIZER (Bottom of Screen) ---
-(defwindow visualizer_win
-    :monitor 0
-    ;; Position it directly UNDER your music window.
-    ;; Music window is height 620px + 10px offset = 630px.
-    ;; We start at y=640px to leave a small gap.
-    :geometry (geometry :x "12px" 
-                        :y "640px" 
-                        :width "706px" 
-                        :height "200px" 
-                        :anchor "top left")
-    :stacking "fg" ;; Keep it behind other popups if needed
-    :namespace "vis_win"
-    (visualizer_graphic))

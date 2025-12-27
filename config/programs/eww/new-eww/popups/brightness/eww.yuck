@@ -6,29 +6,31 @@
 (defwindow brightness_osd
   :monitor 0
   :geometry (geometry :x "0%"
-                      :y "85%"
-                      :width "250px"
+                      :y "85%" ;; Slightly higher up
+                      :width "320px" ;; A bit wider for the new slider style
                       :height "60px"
                       :anchor "top center")
   :stacking "overlay"
   :exclusive false
   :focusable false
-  :namespace "brightness_osd" ;; <--- IMPORTANT for Hyprland rules
+  :namespace "brightness_osd"
   (brightness_widget))
 
 ;; WIDGET LAYOUT
 (defwidget brightness_widget []
+  ;; The container itself acts as the background, no inner pills.
   (box :class "osd-container"
        :orientation "h"
        :space-evenly false
-       :spacing 15
+       :valign "center"
+       :halign "center"
     
-    ;; Icon Box (Added specific class for color styling)
-    (label :class "osd-icon brightness-icon" 
+    ;; Icon
+    (label :class "osd-icon" 
            :text brightness_icon)
     
     ;; Progress Bar
-    (scale :class "osd-scale brightness-scale"
+    (scale :class "osd-scale"
            :min 0
            :max 100
            :value brightness_value

@@ -6,8 +6,8 @@
 (defwindow volume_osd
   :monitor 0
   :geometry (geometry :x "0%"
-                      :y "85%"           ;; Position from top (approx bottom center)
-                      :width "250px"
+                      :y "85%" ;; Slightly higher up (Matched to Brightness)
+                      :width "320px" ;; A bit wider (Matched to Brightness)
                       :height "60px"
                       :anchor "top center")
   :stacking "overlay"
@@ -18,12 +18,14 @@
 
 ;; WIDGET LAYOUT
 (defwidget volume_widget []
+  ;; The container itself acts as the background, no inner pills.
   (box :class "osd-container"
        :orientation "h"
        :space-evenly false
-       :spacing 15
+       :valign "center"
+       :halign "center"
     
-    ;; Icon Box
+    ;; Icon
     (label :class "osd-icon" 
            :text volume_icon)
     
@@ -35,7 +37,7 @@
            :active false
            :orientation "h")
            
-    ;; Text Label (Optional, remove if you want just the bar)
+    ;; Text Label
     (label :class "osd-text"
            :text "${volume_value}%")
   )

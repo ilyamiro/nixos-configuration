@@ -7,112 +7,134 @@ if pgrep -x "rofi" > /dev/null; then
 fi
 
 # --- 2. Current Status ---
-# We grab the status to display in the prompt
 CURRENT=$(powerprofilesctl get)
 
-# --- 3. Big & Colorful Theme Overrides ---
-# - Width: 600px (Wide and spacious)
-# - Font: Large (Size 14)
-# - Radius: Strict 4px everywhere
-# - Spacing: Generous padding to make it feel like a HUD
-ROFI_OVERRIDE="window {
-                 width: 600px;
-                 height: 360px;
-                 border: 3px;
-                 border-color: #cba6f7; /* Mauve Border */
-                 border-radius: 4px;
-                 background-color: #1e1e2e;
-               }
-               mainbox {
-                 padding: 30px;
-                 background-color: inherit;
-               }
-               inputbar {
-                 background-color: transparent;
-                 margin: 0px 0px 20px 0px;
-                 children: [ prompt ];
-               }
-               prompt {
-                 background-color: #cba6f7; /* Mauve Header */
-                 text-color: #1e1e2e;       /* Dark Text */
-                 border-radius: 4px;
-                 padding: 12px 20px;
-                 margin: 0px;
-                 font: \"JetBrainsMono Nerd Font Bold 16\";
-               }
-               listview {
-                 columns: 1;
-                 lines: 3;
-                 spacing: 15px;
-                 margin: 0px;
-                 scrollbar: false;
-                 background-color: transparent;
-               }
-               element {
-                 orientation: horizontal;
-                 children: [ element-text ];
-                 padding: 15px 20px;
-                 border-radius: 4px;
-                 background-color: #313244; /* Surface0 */
-               }
-               element selected {
-                 background-color: #45475a; /* Surface1 */
-                 border: 2px;
-                 border-color: #cba6f7;     /* Mauve Highlight */
-                 text-color: #cdd6f4;
-               }
-               element-text {
-                 vertical-align: 0.5;
-                 horizontal-align: 0.0;
-                 font: \"JetBrainsMono Nerd Font Bold 14\";
-                 background-color: transparent;
-                 text-color: inherit;
-               }"
+# --- 3. "Alive" HUD Theme ---
+ROFI_OVERRIDE="
+    /* 1. Global Reset */
+    * {
+        font: \"JetBrainsMono Nerd Font Bold 13\";
+        background-color: transparent;
+        text-color: #cdd6f4;
+        margin: 0;
+        padding: 0;
+        spacing: 0;
+    }
 
-# --- 4. Colorful Options (Pango Markup) ---
-# We inject Catppuccin Hex codes directly into the strings.
-# Red (#f38ba8) for Performance
-# Blue (#89b4fa) for Balanced
-# Green (#a6e3a1) for Power Saver
+    /* 2. Window Container */
+    window {
+        width: 450px;
+        height: 380px;
+        background-color: #1e1e2ef2; /* Base with 95% opacity */
+        border: 2px;
+        border-color: rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        anchor: center;
+        location: center;
+    }
 
-# Note: We use hidden characters (ZWSP) or just rely on the text for the case switch later.
-# To keep the case switch simple, I will check the raw text passed back.
+    mainbox {
+        orientation: vertical;
+        children: [ inputbar, listview ];
+        padding: 30px;
+        spacing: 20px;
+    }
 
-OPT_PERF="<span color='#f38ba8'><b>PERFORMANCE</b></span>"
-OPT_BAL="<span color='#89b4fa'><b>BALANCED</b></span>"
-OPT_SAVER="<span color='#a6e3a1'><b>POWER SAVER</b></span>"
+    /* 3. Header */
+    inputbar {
+        children: [ prompt ];
+        orientation: horizontal;
+    }
 
-OPTIONS="$OPT_PERF\n$OPT_BAL\n$OPT_SAVER"
+    prompt {
+        background-image: linear-gradient(to right, #cba6f7, #89b4fa);
+        text-color: #1e1e2e;
+        padding: 12px;
+        border-radius: 12px;
+        font: \"JetBrainsMono Nerd Font ExtraBold 14\";
+        horizontal-align: 0.5;
+        width: 100%;
+        margin-bottom: 5px;
+    }
 
-# --- 5. Rofi Execution ---
-# -markup-rows enables the color coding
+    /* 4. The List */
+    listview {
+        layout: vertical;
+        lines: 3;
+        spacing: 12px;
+    }
+
+    /* 5. THE FIX: Explicit State Definitions */
+    /* This styling applies to the 'box' of the item */
+    element {
+        orientation: horizontal;
+        children: [ element-text ];
+        padding: 15px 20px;
+        border-radius: 12px;
+        border: 1px;
+        border-color: transparent;
+    }
+
+    /* Force NORMAL and ALTERNATE rows to use the dark grey surface color */
+    /* This overwrites the default yellow/white zebra striping */
+    element normal.normal, element alternate.normal {
+        background-color: rgba(49, 50, 68, 0.4); 
+        text-color: #cdd6f4;
+    }
+
+    /* Selected State */
+    element selected.normal {
+        background-image: linear-gradient(to right, #313244, #45475a); 
+        border-color: #cba6f7;
+        text-color: #cba6f7;
+    }
+
+    /* Text Alignment */
+    element-text {
+        vertical-align: 0.5;
+        horizontal-align: 0.0;
+        text-color: inherit;
+    }
+"
+
+# --- 4. Content ---
+ICO_PERF=""
+ICO_BAL=""
+ICO_SAVE=""
+
+TXT_PERF="Performance"
+TXT_BAL="Balanced"
+TXT_SAVE="Power Saver"
+
+OPT_PERF="<span font='16px' weight='bold' color='#f38ba8'>${ICO_PERF}</span>   <span weight='bold'>${TXT_PERF}</span>"
+OPT_BAL="<span font='16px' weight='bold' color='#89b4fa'>${ICO_BAL}</span>   <span weight='bold'>${TXT_BAL}</span>"
+OPT_SAVE="<span font='16px' weight='bold' color='#a6e3a1'>${ICO_SAVE}</span>   <span weight='bold'>${TXT_SAVE}</span>"
+
+OPTIONS="$OPT_PERF\n$OPT_BAL\n$OPT_SAVE"
+
+# --- 5. Launch ---
 CHOICE=$(echo -e "$OPTIONS" | rofi -dmenu \
     -markup-rows \
-    -p "Current: ${CURRENT^^}" \
-    -config ~/.config/rofi/config.rasi \
+    -p "Current: ${CURRENT^}" \
+    -config /dev/null \
     -theme-str "$ROFI_OVERRIDE")
 
 if [ -z "$CHOICE" ]; then
     exit 0
 fi
 
-# --- 6. Apply Changes ---
-# We match loosely against the text because the string now contains HTML tags.
-# We use wildcard (*) matching inside the case statement.
-
+# --- 6. Apply ---
 case "$CHOICE" in
-    *"PERFORMANCE"*)
+    *"Performance"*)
         powerprofilesctl set performance
-        notify-send "System" "Switched to Performance Mode"
+        notify-send "System Power" "Switched to Performance Mode "
         ;;
-    *"BALANCED"*)
+    *"Balanced"*)
         powerprofilesctl set balanced
-        notify-send "System" "Switched to Balanced Mode"
+        notify-send "System Power" "Switched to Balanced Mode "
         ;;
-    *"POWER SAVER"*)
+    *"Power Saver"*)
         powerprofilesctl set power-saver
-        # Optional: Disable animations on saver
-        hyprctl keyword animations:enabled 0
-        notify-send "System" "Switched to Power Saver"
+        notify-send "System Power" "Switched to Power Saver "
         ;;
 esac

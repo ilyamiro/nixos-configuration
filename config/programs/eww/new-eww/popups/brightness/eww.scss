@@ -9,53 +9,69 @@ $yellow:   #f9e2af; /* ADDED YELLOW */
 
 * { all: unset; }
 
+/* --- BRIGHTNESS OSD (Redesigned - Single Box) --- */
+
 .osd-container {
-    background-color: $base;
-    border: 2px solid $surface1;
+    /* Glassmorphism Background (Matches .system-widget in bar) */
+    background-color: rgba(30, 30, 46, 0.85);
+    background-image: linear-gradient(to bottom right, rgba(30, 30, 46, 0.9), rgba(24, 24, 37, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* Keep the rounded pill shape of the container itself */
     border-radius: 30px;
-    padding: 0px 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    padding: 0px 25px;
+    
+    /* Softer shadow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    
+    /* Ensure items align nicely horizontally */
 }
 
-/* --- Icons --- */
+/* --- Icon --- */
 .osd-icon {
-    font-family: "JetBrainsMono Nerd Font";
+    font-family: "Iosevka Nerd Font"; /* Match bar icons */
     font-size: 24px;
-    margin-right: 5px;
-    /* Default to blue (Volume) if no other class present */
-    color: $blue; 
-}
-
-/* Brightness specific icon color */
-.brightness-icon {
     color: $yellow;
+    margin-right: 15px;
+    /* Subtle glow on the icon */
+    text-shadow: 0 0 5px rgba(249, 226, 175, 0.3);
 }
 
+/* --- Text --- */
 .osd-text {
     font-family: "JetBrains Mono";
+    font-weight: 800; /* Bolder, like bar text */
     font-size: 16px;
-    font-weight: bold;
     color: $text;
-    margin-left: 5px;
+    margin-left: 15px;
 }
 
-/* --- Progress Bar Styling --- */
+/* --- Progress Bar Styling (Matches music widget style) --- */
+.osd-scale {
+    min-width: 180px; /* Occupy central space */
+}
+
+/* The background of the slider */
 .osd-scale trough {
-    background-color: $surface0;
+    all: unset;
+    background-color: rgba(17, 17, 27, 0.6); /* Darker, transparent trough */
+    border-radius: 99px;
     min-height: 8px;
-    min-width: 250px; 
-    border-radius: 10px;
-    margin-top: 26px;
+    
+    /* Crucial: Center the trough vertically within the 60px container height */
+    margin-top: 26px; 
     margin-bottom: 26px;
+    
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.4);
 }
 
+/* The filled part of the slider */
 .osd-scale highlight {
-    border-radius: 10px;
-    /* Default to blue (Volume) */
-    background-color: $blue;
-}
-
-/* Brightness specific bar color */
-.brightness-scale highlight {
+    all: unset;
     background-color: $yellow;
+    border-radius: 99px;
+    min-height: 8px;
+    /* Subtle yellow glow */
+    box-shadow: 0 0 8px rgba(249, 226, 175, 0.5);
+    transition: all 0.3s ease;
 }

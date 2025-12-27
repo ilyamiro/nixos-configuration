@@ -13,8 +13,6 @@
     ];
 
   # System packages
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     wget 
     taskwarrior3
@@ -33,6 +31,7 @@
     hunspellDicts.en_US
     obsidian
     obs-studio
+    papers
     gnome-themes-extra
     fastfetch
     gnome-shell-extensions
@@ -46,16 +45,16 @@
     bottles
     qbittorrent
     power-profiles-daemon
+    pciutils # Added for debugging GPU if needed
   ];
 
-  environment.pathsToLink = [ "/share/gsettings-schemas" ]; # <-- Add this line!
+  environment.pathsToLink = [ "/share/gsettings-schemas" ];
 
   # User accounts and security
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.ilyamiro = {
     isNormalUser = true;
     description = "ilyamiro";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "video" ]; # Added "video" group
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -88,21 +87,20 @@
 
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    remotePlay.openFirewall = true; 
+    dedicatedServer.openFirewall = true; 
   };
+  programs.gamemode.enable = true;
 
   # Home manager
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true; 
   
-  # Import your home.nix HERE instead
   home-manager.users.ilyamiro = {
     imports = [ ./home.nix ];
   };
 
   # Desktop environment, window managers and theme
-  # Enable the X11 windowing system.
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
@@ -115,7 +113,7 @@
   # XDG Portals
   xdg.portal = {
       enable = true;
-      extraPortals = with pkgs; [ xdg-desktop-portal-wlr ]; # Or xdg-desktop-portal-gtk for GNOME/KDE
+      extraPortals = with pkgs; [ xdg-desktop-portal-wlr ]; 
   };
 
   # Configure keymap in X11
@@ -142,20 +140,16 @@
   services.flatpak.enable = true;
 
   # Environment Variables
-  environment.variables.XDG_DATA_DIRS = lib.mkForce "/home/your_user/.nix-profile/share:/run/current-system/sw/share";
+  # FIX: Changed 'your_user' to 'ilyamiro' to match your actual username
+  environment.variables.XDG_DATA_DIRS = lib.mkForce "/home/ilyamiro/.nix-profile/share:/run/current-system/sw/share";
 
   # Networking and time
-  networking.hostName = "ilyamiro"; # Define your hostname.
+  networking.hostName = "ilyamiro"; 
   
-  # Enable networking
-  networking.networkmanager.enable = true;
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.networkmanager = {
+    enable = true;
+    wifi.powersave = false; 
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
@@ -176,7 +170,6 @@
   };
 
   # Audio and system services
-  # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -196,13 +189,10 @@
   services.power-profiles-daemon.enable = true; 
 
   # Nix settings and maintenance
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Experimental features
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Garbage Collection
   nix.gc = {
     automatic = true;
     dates = "daily";
@@ -217,8 +207,72 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelParams = [ "amd_pstate=active" "tsc=reliable" "asus_wmi"]; 
   hardware.cpu.amd.updateMicrocode = true;
-  powerManagement.cpuFreqGovernor = "schedutil";
+
+  boot.kernelModules = [ "tcp_bbr" ]; # FIX: Network Congestion Control (Helps with packet jitter)
+  boot.kernel.sysctl = {
+    "net.ipv4.tcp_congestion_control" = "bbr";
+    "net.core.default_qdisc" = "fq";
+    "net.core.wmem_max" = 1073741824;
+    "net.core.rmem_max" = 1073741824;
+    "net.ipv4.tcp_rmem" = "4096 87380 1073741824";
+    "net.ipv4.tcp_wmem" = "4096 87380 1073741824";
+  };
+
+  # FIX: Force CPU to run at max clock speed to prevent frame-time jitter
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # ==========================================
+  # GPU / GRAPHICS CONFIGURATION (ADDED)
+  # ==========================================
+
+  # Enable OpenGL/Vulkan (renamed to hardware.graphics in 24.11+)
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true; # Required for Steam/CS2
+  };
+
+  # Load NVIDIA Drivers
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    # Modesetting is required.
+    modesetting.enable = true;
+
+    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+    # Enable this if you have graphical corruption after suspend/wake.
+    powerManagement.enable = false;
+
+    # Fine-grained power management. Turns off GPU when not in use.
+    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    powerManagement.finegrained = true;
+
+    # Use the NVidia open source kernel module (not to be confused with the
+    # independent third-party "nouveau" open source driver).
+    # Support is limited to the Turing and later architectures.
+    # We set to false here for maximum stability on the mobile 3050.
+    open = false;
+
+    # Enable the Nvidia settings menu,
+    # accessible via `nvidia-settings`.
+    nvidiaSettings = true;
+
+    # Select the stable driver version
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+
+    # PRIME CONFIGURATION (Hybrid Graphics)
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+      
+      # Bus IDs derived from your lspci output
+      # NVIDIA: 01:00.0 -> PCI:1:0:0
+      # AMD: 04:00.0 -> PCI:4:0:0
+      nvidiaBusId = "PCI:1:0:0";
+      amdgpuBusId = "PCI:4:0:0";
+    };
+  };
 
   system.stateVersion = "25.11"; 
-
 }

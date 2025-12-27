@@ -22,7 +22,7 @@ get_weather_data() {
     weather=$(curl -sf "http://api.openweathermap.org/data/2.5/weather?APPID=${KEY}&id=${ID}&units=${UNIT}")
 
     if [ ! -z "$weather" ]; then
-        weather_temp=$(echo "$weather" | jq ".main.temp" | cut -d "." -f 1)
+	weather_temp=$(echo "$weather" | jq ".main.temp")
         weather_icon_code=$(echo "$weather" | jq -r ".weather[].icon" | head -1)
         weather_description=$(echo "$weather" | jq -r ".weather[].description" | head -1 | sed -e "s/\b\(.\)/\u\1/g")
 

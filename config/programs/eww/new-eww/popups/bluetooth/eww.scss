@@ -1,0 +1,83 @@
+// Catppuccin Mocha Colors
+$base:      #1e1e2e;
+$surface0:  #313244;
+$surface1:  #45475a;
+$text:      #cdd6f4;
+$subtext0:  #a6adc8;
+$blue:      #89b4fa;
+$green:     #a6e3a1;
+$red:       #f38ba8;
+$mauve:     #cba6f7;
+
+* { all: unset; }
+
+.bt-card {
+    /* Glassy Dark Background */
+    background-color: rgba(30, 30, 46, 0.95);
+    border: 1px solid rgba(137, 180, 250, 0.3); /* Blue border for "New" attention */
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    font-family: "JetBrains Mono", sans-serif;
+}
+
+/* Big Icon Box on Left */
+.bt-icon-box {
+    background-color: $surface0;
+    border-radius: 18px;
+    min-width: 60px;
+    min-height: 60px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+.bt-icon {
+    font-family: "Iosevka Nerd Font";
+    font-size: 32px;
+    color: $blue;
+    margin: 14px; /* Center the icon */
+}
+
+/* Text Info */
+.bt-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: $subtext0;
+    margin-bottom: 2px;
+}
+
+.bt-name {
+    font-size: 15px;
+    font-weight: 900;
+    color: $text;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* Buttons */
+.bt-btn {
+    padding: 6px 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+/* Connect (Primary) */
+.bt-btn.connect {
+    background-color: $blue;
+    color: $base;
+    box-shadow: 0 0 10px rgba(137, 180, 250, 0.4);
+}
+.bt-btn.connect:hover {
+    background-color: $mauve;
+    box-shadow: 0 0 15px rgba(203, 166, 247, 0.6);
+}
+
+/* Ignore (Secondary) */
+.bt-btn.ignore {
+    background-color: $surface1;
+    color: $subtext0;
+}
+.bt-btn.ignore:hover {
+    background-color: $surface0;
+    color: $text;
+}

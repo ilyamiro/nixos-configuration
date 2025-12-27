@@ -25,6 +25,7 @@
       stop = "shutdown now";
       edconf = "sudo -E nvim /etc/nixos/configuration.nix";
       out = "loginctl terminate-user ilyamiro";
+      edeww = "sudo -E nvim /etc/nixos/config/programs/eww/new-eww/";
     };
     
     

@@ -1,0 +1,59 @@
+;; VARIABLES (Set by the script)
+(defvar bt_found_mac "")
+(defvar bt_found_name "Unknown Device")
+(defvar bt_found_icon "󰂯")
+
+;; WINDOW DEFINITION
+(defwindow bluetooth_popup
+  :monitor 0
+  :geometry (geometry :x "15px"
+                      :y "10px" 
+		      :width "340px"
+                      :height "140px" 
+                      :anchor "top right")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "bluetooth_popup"
+  (bluetooth_card))
+
+;; WIDGET LAYOUT
+(defwidget bluetooth_card []
+  (box :class "bt-card"
+       :orientation "h"
+       :space-evenly false
+       :spacing 20
+       :valign "center"
+
+    ;; LEFT: Big Icon
+    (box :class "bt-icon-box" 
+         :valign "center"
+         (label :class "bt-icon" :text bt_found_icon)
+    )
+
+    ;; CENTER: Info & Actions
+    (box :orientation "v" 
+         :space-evenly false 
+         :hexpand true 
+         :valign "center"
+	 :spacing 10
+         
+         ;; Title
+         (label :class "bt-label" :halign "start" :text "New Device Found")
+         
+         ;; Device Name
+         (label :class "bt-name" :halign "start" :limit-width 18 :text bt_found_name)
+
+         ;; Buttons Row
+         (box :orientation "h" :spacing 10 
+              ;; Connect Button
+              (button :class "bt-btn connect" 
+        :onclick "bash /etc/nixos/config/sessions/hyprland/scripts/bluetooth_mgr.sh --connect '${bt_found_mac}'"
+        "Connect")
+              
+		(button :class "bt-btn ignore" 
+        :onclick "bash /etc/nixos/config/sessions/hyprland/scripts/bluetooth_mgr.sh --ignore '${bt_found_mac}'"
+        "Ignore")         )
+    )
+  )
+)
