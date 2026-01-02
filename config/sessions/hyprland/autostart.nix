@@ -9,7 +9,8 @@
 	 "wl-paste --type image --watch cliphist store"
 	 "rm /tmp/eww* -R"
 	 "systemctl --user enable --now easyeffects"
-	 "bash ${./scripts/bluetooth_mgr.sh} --daemon"
+	 # "bash ${./scripts/bluetooth_mgr.sh} --daemon"
+	 "bash ${./scripts/usb.sh}"
       ];
    };
 }

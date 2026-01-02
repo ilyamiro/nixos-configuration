@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Open folders in thunar
+## Open folders in nautilus
 FILE="$HOME/.cache/eww_launch.dashboard"
 CFG="$HOME/.config/eww/dashboard"
 EWW=`which eww`
@@ -13,21 +13,21 @@ close_dash() {
 }
 
 if [[ "$1" == "--dl" ]]; then
-	close_dash && thunar ~/Downloads &
+	close_dash && nautilus ~/Downloads &
 
 elif [[ "$1" == "--docs" ]]; then
-	close_dash && thunar ~/Documents &
+	close_dash && nautilus ~/Documents &
 
 elif [[ "$1" == "--music" ]]; then
-	close_dash && thunar ~/Music &
+	close_dash && nautilus ~/Music &
 
 elif [[ "$1" == "--pics" ]]; then
-	close_dash && thunar ~/Pictures &
+	close_dash && nautilus ~/Pictures &
 
 elif [[ "$1" == "--cfg" ]]; then
-	close_dash && thunar ~/.config &
+	close_dash && nautilus ~/.config &
 
 elif [[ "$1" == "--local" ]]; then
-	close_dash && thunar ~/.local/share &
+	close_dash && nautilus ~/.local/share &
 
 fi

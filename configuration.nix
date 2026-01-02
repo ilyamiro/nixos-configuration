@@ -45,7 +45,8 @@
     bottles
     qbittorrent
     power-profiles-daemon
-    pciutils # Added for debugging GPU if needed
+    jdk8
+    steam-run
   ];
 
   environment.pathsToLink = [ "/share/gsettings-schemas" ];
@@ -150,8 +151,7 @@
     enable = true;
     wifi.powersave = false; 
   };
-
-  # Set your time zone.
+   # Set your time zone.
   time.timeZone = "Europe/Copenhagen";
 
   # Select internationalisation properties.

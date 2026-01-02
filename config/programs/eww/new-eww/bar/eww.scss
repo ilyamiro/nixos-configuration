@@ -549,3 +549,163 @@ scale highlight {
 .eq-apply-btn:hover { color: $text; background-color: $surface0; }
 .eq-apply-btn.highlight:hover { background-color: $red; color: $base; }
 .eq-apply-btn:active { background-color: $surface1; }
+
+/* --- BLUETOOTH POPUP SCSS --- */
+
+.bt-window {
+    background-color: rgba(30, 30, 46, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 0;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* --- LEFT COLUMN --- */
+.bt-left-col {
+    padding: 25px;
+    background-color: rgba(0,0,0,0.2);
+    border-top-left-radius: 24px;
+    border-bottom-left-radius: 24px;
+}
+
+.bt-header-box { margin-bottom: 5px; }
+.bt-title {
+    font-family: "JetBrains Mono";
+    font-weight: 900;
+    font-size: 24px;
+    color: $mauve;
+    /* Removed letter-spacing */
+}
+
+/* ICON TOGGLE SWITCH */
+.bt-toggle-switch {
+    font-family: "Iosevka Nerd Font";
+    font-size: 28px;
+    padding: 0px; 
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    transition: all 0.3s;
+}
+
+.bt-toggle-switch.on {
+    color: $green;
+    text-shadow: 0 0 10px rgba(166, 227, 161, 0.4);
+}
+
+.bt-toggle-switch.off {
+    color: $overlay1;
+}
+.bt-toggle-switch.off:hover { color: $red; }
+
+
+.bt-status-text {
+    font-size: 11px;
+    color: $overlay1;
+    font-style: italic;
+    margin-bottom: 25px;
+}
+
+/* Connected Hero Card */
+.bt-connected-hero {
+    background-color: $surface0;
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px dashed $overlay0;
+    transition: all 0.3s;
+}
+
+.bt-connected-hero.active {
+    background-image: linear-gradient(135deg, rgba(203, 166, 247, 0.15), rgba(137, 180, 250, 0.15));
+    border: 1px solid $mauve;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.bt-hero-icon { font-size: 48px; color: $blue; margin-bottom: 5px; }
+.bt-hero-name { font-weight: 800; font-size: 16px; color: $text; }
+.bt-hero-bat  { font-weight: bold; font-size: 12px; color: $green; margin-top: 2px;}
+
+.bt-hero-disconnect {
+    background-color: rgba(243, 139, 168, 0.1);
+    color: $red;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 6px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+.bt-hero-disconnect:hover { background-color: $red; color: $base; }
+
+.bt-hero-placeholder {
+    color: $overlay0;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.bt-settings-link {
+    color: $subtext0;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+.bt-settings-link:hover { color: $text; text-decoration: underline; }
+
+/* --- SEPARATOR --- */
+.bt-separator-v {
+    background-color: $surface0;
+    margin: 25px 0;
+}
+
+/* --- RIGHT COLUMN --- */
+.bt-right-col {
+    padding: 25px;
+}
+
+.bt-list-header {
+    font-weight: 800;
+    font-size: 14px;
+    color: $subtext1;
+    margin-bottom: 15px;
+}
+
+.bt-scroll-area { }
+
+/* List Items */
+.bt-item {
+    background-color: transparent;
+    border-radius: 12px;
+    padding: 8px 10px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+.bt-item:hover {
+    background-color: $surface0;
+    border-color: rgba(255,255,255,0.05);
+}
+
+.bt-item-icon { font-size: 18px; color: $lavender; }
+.bt-item-name { font-weight: 700; font-size: 13px; color: $text; }
+.bt-item-mac  { font-family: "JetBrains Mono"; font-size: 10px; color: $overlay0; }
+
+.bt-item-btn {
+    font-weight: 800;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background-color: $surface1;
+    color: $blue;
+    transition: 0.2s;
+}
+.bt-item-btn:hover {
+    background-color: $blue;
+    color: $base;
+    box-shadow: 0 2px 8px rgba(137, 180, 250, 0.4);
+}
+
+.bt-empty-list {
+    color: $overlay0;
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 20px;
+}

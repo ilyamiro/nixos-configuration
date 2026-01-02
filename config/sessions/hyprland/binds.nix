@@ -44,6 +44,7 @@
 	 # "$mainMod, S, exec, bash ${./scripts/toggle_control_center.sh}"
 	 "$mainMod&SHIFT_L, S, exec, bash ${./scripts/search_bar.sh}"
          "$mainMod, Q, exec, bash ~/.config/eww/bar/scripts/toggle_music.sh"
+	 "$mainMod, B, exec, bash ~/.config/eww/bar/scripts/toggle_bt_popup.sh"
          "$mainMod, F, exec, firefox"
          "$mainMod, E, exec, nautilus"
          "$mainMod, T, exec, Telegram"

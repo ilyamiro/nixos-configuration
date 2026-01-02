@@ -1,0 +1,55 @@
+;; VARIABLES
+(defvar usb_title "Device Connected")
+(defvar usb_desc "Initializing...")
+(defvar usb_icon "")
+
+;; WINDOW
+(defwindow usb_popup
+  :monitor 0
+  :geometry (geometry :x "0%"
+                      :y "10px" ;; Moved down slightly to sit below your bar
+                      :width "400px" 
+                      :height "80px" 
+                      :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  :namespace "usb_popup"
+  (usb_widget)
+)
+
+;; WIDGET
+(defwidget usb_widget []
+  (box :class "usb-dockbox" ;; Matching your 'dockbox' feel
+       :orientation "h"
+       :space-evenly false
+       :valign "center"
+       :halign "center"
+       :spacing 15 ;; More breathing room
+
+    ;; ICON PILL
+    (box :class "usb-icon-pill"
+         :valign "center"
+         :halign "center"
+         :width 50
+         :height 50
+         (label :class "usb-icon" 
+                :text usb_icon))
+    
+    ;; TEXT SECTION
+    (box :orientation "v"
+         :space-evenly false
+         :valign "center"
+         :halign "start"
+         :class "usb-text-box"
+      (label :class "usb-title" 
+             :text usb_title
+             :halign "start"
+             :limit-width 50)
+      (label :class "usb-desc" 
+             :text usb_desc
+             :halign "start"
+             :wrap true
+             :limit-width 45))
+  )
+)

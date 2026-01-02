@@ -23,6 +23,8 @@
 (defpoll BT_ICON :interval "2s" `bash ./scripts/sys_info.sh --bt-icon`)
 (defpoll BT_DEVICE :interval "2s" `bash ./scripts/sys_info.sh --bt-connected`)
 
+(defpoll BLUETOOTH_DATA :interval "2s" `bash ./scripts/bluetooth_panel_logic.sh --status`)
+
 (defpoll CURRENT_VOL :interval "0.1s" `bash ./scripts/sys_info.sh --volume`)
 (defpoll VOL_ICON :interval "0.1s" `bash ./scripts/sys_info.sh --volume-icon`)
 (defpoll IS_MUTED :interval "0.2s" `bash ./scripts/sys_info.sh --is-muted`)
@@ -163,8 +165,8 @@
              )
          )
 
-         ;; 3. Bluetooth (Longer pill via CSS)
-         (eventbox :onclick "bash ./scripts/sys_info.sh --bt-toggle"
+         ;; 3. Bluetooth (UPDATED ONCLICK)
+         (eventbox :onclick "bash ./scripts/toggle_bt_popup.sh"
                    :onrightclick "blueman-manager &"
                    :cursor "pointer"
                    :tooltip {BT_STATUS == "on" ? "Bluetooth On" : "Bluetooth Off"}
@@ -198,6 +200,91 @@
          )
     )
 )
+
+(defwidget bluetooth_popup []
+    (box :class "bt-window" :orientation "h" :space-evenly false :spacing 0
+        
+        ;; --- LEFT COLUMN ---
+        (box :class "bt-left-col" :orientation "v" :space-evenly false :width 260
+             
+             ;; Title & Toggle Icon
+             (box :class "bt-header-box" :orientation "h" :space-evenly false
+                 (label :class "bt-title" :text "Bluetooth" :halign "start" :hexpand true)
+                 
+                 (button :class "bt-toggle-switch ${BLUETOOTH_DATA.power == 'on' ? 'on' : 'off'}"
+                         :onclick "bash ./scripts/bluetooth_panel_logic.sh --toggle"
+                         {BLUETOOTH_DATA.power == 'on' ? "" : ""})
+             )
+
+             (label :class "bt-status-text" 
+                    :text {BLUETOOTH_DATA.power == 'on' ? "Scanning..." : "Disabled"}
+                    :halign "start")
+
+             ;; CONNECTED DEVICE
+             (box :class "bt-connected-hero ${BLUETOOTH_DATA.connected != 'null' ? 'active' : ''}" 
+                  :orientation "v" 
+                  :space-evenly false 
+                  :visible {BLUETOOTH_DATA.power == 'on'}
+                  :vexpand true
+                  
+                  (box :orientation "v" :space-evenly false :visible {BLUETOOTH_DATA.connected != "null"} :spacing 10 :valign "center"
+                       (label :class "bt-hero-icon" :text {BLUETOOTH_DATA.connected.icon})
+                       (label :class "bt-hero-name" :text {BLUETOOTH_DATA.connected.name} :wrap true :limit-width 20)
+                       
+                       (label :class "bt-hero-bat" 
+                              :visible {BLUETOOTH_DATA.connected.battery != "0"}
+                              :text "${BLUETOOTH_DATA.connected.battery}% Battery")
+                       
+                       (button :class "bt-hero-disconnect" 
+                               :onclick "bash ./scripts/bluetooth_panel_logic.sh --disconnect ${BLUETOOTH_DATA.connected.mac}"
+                               "Disconnect")
+                  )
+
+                  ;; PLACEHOLDER (Fixed Typo)
+                  (box :orientation "v" 
+                       :visible {BLUETOOTH_DATA.connected == "null"}
+                       :valign "center" 
+                       :vexpand true
+                       :spacing 5
+                       (label :class "bt-hero-placeholder" :text "No Device")
+                       (label :class "bt-hero-placeholder" :text "Connected")
+                  )
+             )
+             
+             (button :class "bt-settings-link" :onclick "blueman-manager &" "More Settings ")
+        )
+
+        ;; --- VERTICAL SEPARATOR ---
+        (box :class "bt-separator-v" :width 2)
+
+        ;; --- RIGHT COLUMN ---
+        (box :class "bt-right-col" :orientation "v" :space-evenly false :hexpand true
+             (label :class "bt-list-header" :text "Available" :halign "start")
+             
+             (scroll :vscroll true :hscroll false :vexpand true :class "bt-scroll-area"
+                (box :orientation "v" :spacing 10 :space-evenly false
+                    (for dev in {BLUETOOTH_DATA.devices}
+                         (box :class "bt-item" :orientation "h" :space-evenly false :spacing 10
+                              (label :class "bt-item-icon" :text {dev.icon})
+                              (box :orientation "v" :hexpand true
+                                   (label :class "bt-item-name" :text {dev.name} :halign "start" :limit-width 22)
+                                   (label :class "bt-item-mac" :text {dev.mac} :halign "start")
+                              )
+                              ;; BUTTON: Uses 'dev.action' to show Pair vs Connect
+                              (button :class "bt-item-btn ${dev.action == 'Connect' ? 'connect' : 'pair'}" 
+                                      :onclick "bash ./scripts/bluetooth_panel_logic.sh --connect ${dev.mac}" 
+                                      {dev.action})
+                         )
+                    )
+                    (label :visible {arraylength(BLUETOOTH_DATA.devices) == 0 && BLUETOOTH_DATA.power == 'on'}
+                           :class "bt-empty-list" 
+                           :text "Searching...")
+                )
+             )
+        )
+    )
+)
+
 (defwidget media []
     ;; ADDED CLASS: bar-media-playing when status is Playing
     (box :class "dockbox ${MUSIC_FULL.status == 'Playing' ? 'bar-media-playing' : ''}" 
@@ -397,3 +484,14 @@
     :stacking "fg"
     :namespace "music_win"
     (music_popup))
+
+(defwindow bluetooth_win
+    :monitor 0
+    :geometry (geometry :x "10px" 
+                        :y "10px" 
+                        :width "600px" 
+                        :height "400px" 
+                        :anchor "top right")
+    :stacking "fg"
+    :exclusive false
+    (bluetooth_popup))

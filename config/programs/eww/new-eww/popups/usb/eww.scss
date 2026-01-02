@@ -1,0 +1,63 @@
+/* --- COLORS (Catppuccin Mocha) --- */
+$base:     #1e1e2e;
+$mantle:   #181825;
+$surface0: #313244;
+$surface1: #45475a;
+$text:     #cdd6f4;
+$subtext0: #a6adc8;
+$blue:     #89b4fa;
+$red:      #f38ba8;
+$green:    #a6e3a1; 
+$yellow:   #f9e2af;
+$mauve:    #cba6f7;
+$lavender: #b4befe;
+
+* { all: unset; }
+
+/* --- MAIN CONTAINER --- */
+.usb-dockbox {
+    /* Matches your 'dockbox' / 'system-widget' style */
+    background-color: $base;
+    border: 2px solid $surface1;
+    border-radius: 20px;
+    
+    /* Padding to fix the "tight" look */
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+
+    /* Shadow for the popup */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* --- ICON PILL --- */
+.usb-icon-pill {
+    /* Matches your 'sys-pill' style */
+    background-color: $surface0;
+    border-radius: 15px;
+    color: $green;
+    margin-right: 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+.usb-icon {
+    font-family: "Iosevka Nerd Font", monospace;
+    font-size: 28px;
+}
+
+/* --- TEXT --- */
+.usb-title {
+    font-family: "JetBrains Mono", sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: $mauve;
+    margin-bottom: 2px;
+}
+
+.usb-desc {
+    font-family: "JetBrains Mono", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: $subtext0;
+}
