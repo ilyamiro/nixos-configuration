@@ -119,15 +119,15 @@ handle_wallpaper_prep() {
 
     ) </dev/null >/dev/null 2>&1 &
 
-    # swww/mpvpaper detection (unchanged, fast)
+    # awww/mpvpaper detection (unchanged, fast)
     TARGET_THUMB=""
     CURRENT_SRC=""
     if pgrep -a "mpvpaper" > /dev/null; then
         CURRENT_SRC=$(pgrep -a mpvpaper | grep -o "$SRC_DIR/[^' ]*" | head -n1)
         CURRENT_SRC=$(basename "$CURRENT_SRC")
     fi
-    if [ -z "$CURRENT_SRC" ] && command -v swww >/dev/null; then
-        CURRENT_SRC=$(swww query 2>/dev/null | grep -o "$SRC_DIR/[^ ]*" | head -n1)
+    if [ -z "$CURRENT_SRC" ] && command -v awww >/dev/null; then
+        CURRENT_SRC=$(awww query 2>/dev/null | grep -o "$SRC_DIR/[^ ]*" | head -n1)
         CURRENT_SRC=$(basename "$CURRENT_SRC")
     fi
     if [ -n "$CURRENT_SRC" ]; then

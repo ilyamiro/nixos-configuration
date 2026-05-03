@@ -384,7 +384,7 @@ Item {
             }];
             let safeJson = JSON.stringify(jsonMonitorsArray).replace(/'/g, "'\\''");
             let jsonCmd = "jq '.monitors = " + safeJson + "' ~/.config/hypr/settings.json > ~/.config/hypr/settings.json.tmp && mv ~/.config/hypr/settings.json.tmp ~/.config/hypr/settings.json";
-            let postReloadCmd = "swww kill ; sleep 0.2 ; swww-daemon &";
+            let postReloadCmd = "awww kill ; sleep 0.2 ; awww-daemon &";
 
             Quickshell.execDetached(["notify-send", "Display Update", "Applied & Saved: " + m.resW + "x" + m.resH + " @ " + m.rate + "Hz"]);
             Quickshell.execDetached(["sh", "-c", "hyprctl keyword monitor " + monitorStr + " ; " + jsonCmd + " ; " + postReloadCmd]);
@@ -482,7 +482,7 @@ Item {
             let fullHyprCmd = "hyprctl --batch '" + batchCmds.join(" ; ") + "'";
             let safeJson = JSON.stringify(jsonMonitorsArray).replace(/'/g, "'\\''");
             let jsonCmd = "jq '.monitors = " + safeJson + "' ~/.config/hypr/settings.json > ~/.config/hypr/settings.json.tmp && mv ~/.config/hypr/settings.json.tmp ~/.config/hypr/settings.json";
-            let postReloadCmd = "swww kill ; sleep 0.2 ; swww-daemon &";
+            let postReloadCmd = "awww kill ; sleep 0.2 ; awww-daemon &";
 
             Quickshell.execDetached(["sh", "-c", fullHyprCmd + " ; " + jsonCmd + " ; " + postReloadCmd]);
             Quickshell.execDetached(["notify-send", "Display Update", "Applied & Saved layout for: " + summaryString]);
