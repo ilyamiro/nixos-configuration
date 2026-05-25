@@ -76,6 +76,39 @@ else
     TEMP=$TEMP_RAW
 fi
 
+# --- GPU Calculation ---
+# Prefer kernel-exposed busy percentages (works well on AMD), then fall back to nvidia-smi.
+GPU_USAGE=-1
+
+for busy_file in /sys/class/drm/card[0-9]*/device/gpu_busy_percent; do
+    [ -r "$busy_file" ] || continue
+    GPU_VAL=$(cat "$busy_file" 2>/dev/null)
+    case "$GPU_VAL" in
+        ""|*[!0-9]*)
+            continue
+            ;;
+    esac
+    if [ "$GPU_USAGE" -lt "$GPU_VAL" ]; then
+        GPU_USAGE=$GPU_VAL
+    fi
+done
+
+if [ "$GPU_USAGE" -lt 0 ] && command -v nvidia-smi >/dev/null 2>&1; then
+    NV_GPU=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | awk '
+        NF {
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1)
+            if ($1 + 0 > max || NR == 1) max = $1 + 0
+            found = 1
+        }
+        END {
+            if (found) print max
+        }
+    ')
+    if [ -n "$NV_GPU" ]; then
+        GPU_USAGE=$NV_GPU
+    fi
+fi
+
 # --- Output formatted string ---
-# Format: CPU|RAM_PCT|RAM_GB|TEMP|RX_RATE|TX_RATE
-echo "$CPU_USAGE|$RAM_PCT|$RAM_GB|$TEMP|$RX_RATE|$TX_RATE"
+# Format: CPU|RAM_PCT|RAM_GB|TEMP|RX_RATE|TX_RATE|GPU_USAGE
+echo "$CPU_USAGE|$RAM_PCT|$RAM_GB|$TEMP|$RX_RATE|$TX_RATE|$GPU_USAGE"

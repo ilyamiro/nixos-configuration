@@ -10,6 +10,7 @@ Item {
     
     // --- Centralized Properties ---
     property int cpu: 0
+    property int gpu: -1
     property int ramPercent: 0
     property real ramGb: 0.0
     property int temp: 0
@@ -65,6 +66,7 @@ Item {
                     root.temp = parseInt(p[3]);
                     root.netRx = parseFloat(p[4]);
                     root.netTx = parseFloat(p[5]);
+                    root.gpu = p.length >= 7 ? parseInt(p[6]) : -1;
                 }
             }
         }
