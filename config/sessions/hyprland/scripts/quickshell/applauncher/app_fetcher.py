@@ -25,7 +25,7 @@ def fetch_apps():
         for f in glob.glob(os.path.join(d, '**/*.desktop'), recursive=True):
             try:
                 with open(f, 'r', encoding='utf-8') as file:
-                    app = {'name': '', 'exec': '', 'icon': ''}
+                    app = {'name': '', 'exec': '', 'icon': '', 'terminal': False}
                     is_desktop = False
                     no_display = False
                     
@@ -46,6 +46,8 @@ def fetch_apps():
                                 app['icon'] = line[5:]
                             elif line.startswith('NoDisplay=true') or line.startswith('NoDisplay=1'):
                                 no_display = True
+                            elif line.startswith('Terminal=true') or line.startswith('Terminal=1'):
+                                app['terminal'] = True
                                 
                     if app['name'] and app['exec'] and not no_display:
                         apps[app['name']] = app

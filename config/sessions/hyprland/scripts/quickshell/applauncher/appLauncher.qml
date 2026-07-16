@@ -145,7 +145,12 @@ Item {
         }
     }
 
-    function launchApp(execStr) {
+    function launchApp(app) {
+        let execStr = app.exec;
+        if (app.terminal) {
+            // Wrap in your terminal emulator when the .desktop entry requires Terminal=true
+            execStr = "kitty -e " + execStr;
+        }
         Quickshell.execDetached(["hyprctl", "dispatch", "exec", "--", execStr]);
         Quickshell.execDetached(["bash", Quickshell.env("HOME") + "/.config/hypr/scripts/qs_manager.sh", "close"]);
     }
@@ -308,7 +313,7 @@ Item {
                         }
                         Keys.onReturnPressed: {
                             if (appList.currentIndex >= 0 && appList.currentIndex < appModel.count) {
-                                launchApp(appModel.get(appList.currentIndex).exec);
+                                launchApp(appModel.get(appList.currentIndex));
                             }
                             event.accepted = true;
                         }
@@ -548,7 +553,7 @@ Item {
                             hoverEnabled: true
                             onClicked: {
                                 appList.currentIndex = index;
-                                launchApp(model.exec);
+                                launchApp(model);
                             }
                         }
                     }
