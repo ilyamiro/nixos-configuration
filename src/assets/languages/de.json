@@ -125,11 +125,15 @@
       },
       "sound": {
         "title": "Benachrichtigungston",
-        "desc": "Tonsignal bei eingehender Benachrichtigung abspielen"
+        "desc": "Audiowiedergabe bei eingehender Benachrichtigung"
       },
       "sound_file": {
         "title": "Soundeffekt",
-        "desc": "Ton für eingehende Benachrichtigungen auswählen"
+        "desc": "Sound für Benachrichtigungen auswählen"
+      },
+      "empty_graphic": {
+        "title": "Animation für leere Benachrichtigungen",
+        "desc": "Zeigt die schlafende Katze im Benachrichtigungszentrum an, wenn keine vorhanden sind"
       }
     },
     "idle": {

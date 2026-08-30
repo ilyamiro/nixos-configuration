@@ -130,6 +130,10 @@
       "sound_file": {
         "title": "Sound effect",
         "desc": "Select the sound played for incoming alerts"
+      },
+      "empty_graphic": {
+        "title": "Empty center animation",
+        "desc": "Display the sleeping cat graphic in the notification center when empty"
       }
     },
     "idle": {

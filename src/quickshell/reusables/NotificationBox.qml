@@ -33,6 +33,11 @@ Item {
         return Boolean(n && n.dnd);
     }
 
+    property bool showEmptyGraphic: {
+        let n = Config.getSetting("notifications", { "showEmptyGraphic": true });
+        return n && n.showEmptyGraphic !== undefined ? Boolean(n.showEmptyGraphic) : true;
+    }
+
     property bool isClearingNotifs: false
 
     function clearAllNotifs() {
@@ -113,8 +118,9 @@ Item {
     Connections {
         target: Config
         function onSettingsLoaded() {
-            let n = Config.getSetting("notifications", { "dnd": false });
+            let n = Config.getSetting("notifications", { "dnd": false, "showEmptyGraphic": true });
             root.dndEnabled = Boolean(n && n.dnd);
+            root.showEmptyGraphic = n && n.showEmptyGraphic !== undefined ? Boolean(n.showEmptyGraphic) : true;
         }
     }
 
@@ -225,6 +231,16 @@ Item {
                     playing: true
                     fillMode: Image.PreserveAspectFit
                     interactive: false
+                    visible: root.showEmptyGraphic
+                }
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    visible: !root.showEmptyGraphic
+                    text: "󰂚"
+                    font.family: "Iosevka Nerd Font"
+                    font.pixelSize: root.s(42)
+                    color: ThemeBackend.surface2
                 }
 
                 Text {

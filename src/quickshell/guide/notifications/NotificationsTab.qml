@@ -24,7 +24,8 @@ Item {
         "dnd": false,
         "position": "top right",
         "sound": true,
-        "soundFile": ""
+        "soundFile": "",
+        "showEmptyGraphic": true
     })
 
     property var notifSettings: Config.getSetting("notifications", defaultNotificationSettings)
@@ -32,6 +33,7 @@ Item {
     property string position: notifSettings.position !== undefined ? notifSettings.position : "top right"
     property bool soundEnabled: notifSettings.sound !== undefined ? notifSettings.sound : true
     property string selectedSound: notifSettings.soundFile !== undefined ? notifSettings.soundFile : ""
+    property bool showEmptyGraphic: notifSettings.showEmptyGraphic !== undefined ? notifSettings.showEmptyGraphic : true
 
     property var soundList: []
     property var availableSounds: {
@@ -55,6 +57,7 @@ Item {
         notificationsTabRoot.position = s.position !== undefined ? s.position : "top right";
         notificationsTabRoot.soundEnabled = s.sound !== undefined ? s.sound : true;
         notificationsTabRoot.selectedSound = s.soundFile !== undefined ? s.soundFile : "";
+        notificationsTabRoot.showEmptyGraphic = s.showEmptyGraphic !== undefined ? s.showEmptyGraphic : true;
         notificationsTabRoot.notifSettings = s;
     }
 
@@ -255,6 +258,60 @@ Item {
                         onToggled: function(c) {
                             notificationsTabRoot.dnd = c;
                             notificationsTabRoot.updateNotifSetting("dnd", c);
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(ThemeBackend.surface1, 0.2)
+                Layout.topMargin: rootObj.s(5)
+                Layout.bottomMargin: rootObj.s(5)
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: rowGraphicLayout.implicitHeight + rootObj.s(18)
+                color: "transparent"
+
+                RowLayout {
+                    id: rowGraphicLayout
+                    anchors.left: parent.left
+                    anchors.leftMargin: rootObj.s(12)
+                    anchors.right: parent.right
+                    anchors.rightMargin: rootObj.s(12)
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: rootObj.s(16)
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: rootObj.s(2)
+                        Text {
+                            text: I18n.t("guide.notifications.empty_graphic.title")
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(13)
+                            color: ThemeBackend.text
+                        }
+                        Text {
+                            text: I18n.t("guide.notifications.empty_graphic.desc")
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(11)
+                            color: ThemeBackend.subtext0
+                        }
+                    }
+
+                    Toggle {
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        checked: notificationsTabRoot.showEmptyGraphic
+                        accentColor: ThemeBackend.mauve
+                        baseColor: ThemeBackend.surface1
+                        handleColor: ThemeBackend.crust
+                        handleOffColor: ThemeBackend.text
+                        onToggled: function(c) {
+                            notificationsTabRoot.showEmptyGraphic = c;
+                            notificationsTabRoot.updateNotifSetting("showEmptyGraphic", c);
                         }
                     }
                 }

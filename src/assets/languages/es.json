@@ -125,11 +125,15 @@
       },
       "sound": {
         "title": "Sonido de notificación",
-        "desc": "Reproducir un sonido cuando llegue una notificación"
+        "desc": "Reproducir aviso sonoro cuando llega una notificación"
       },
       "sound_file": {
         "title": "Efecto de sonido",
         "desc": "Selecciona el sonido para alertas entrantes"
+      },
+      "empty_graphic": {
+        "title": "Animación de centro vacío",
+        "desc": "Mostrar el gráfico del gato durmiendo en el centro de notificaciones cuando esté vacío"
       }
     },
     "idle": {
