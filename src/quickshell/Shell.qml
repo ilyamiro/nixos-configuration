@@ -18,6 +18,7 @@ ShellRoot {
 
     Launcher {}
     Clipboard {}	
+    SelectionPopup {}
 
     Polkit {}
     PopoutManager {}

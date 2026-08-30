@@ -859,6 +859,10 @@
       "name": "Systemsteuerung",
       "desc": "Leistungsüberwachung, Energie und Schnelleinstellungen"
     },
+    "translator": {
+      "name": "Übersetzer",
+      "desc": "Sofortige Text- und Auswahlübersetzung"
+    },
     "redactor": {
       "no_widgets_active": "Keine Widgets aktiv",
       "click_to_add": "Auf ein Widget-Symbol in der unteren Leiste klicken, um es hinzuzufügen",
@@ -936,7 +940,8 @@
       "monitors_detect": "Aktive Bildschirmausgänge und Bildwiederholraten abfragen",
       "location_manual": "Geografische Koordinaten und Zeitzone manuell festlegen",
       "blue_light_filter": "Farbtemperatur und Tag/Nacht-Zeitplan anpassen",
-      "autostart": "Benutzerdefinierte Autostart-Anwendungen und -Dienste ausführen"
+      "autostart": "Benutzerdefinierte Autostart-Anwendungen und -Dienste ausführen",
+      "translate": "Sofortige Text- und Auswahlübersetzung"
     }
   },
   "daemon": {
@@ -1044,7 +1049,20 @@
     "deploy": {
       "configuring_sddm": "SDDM-Display-Manager wird konfiguriert...",
       "disabling_dm": "-> Konfliktverursachender Display-Manager wird deaktiviert: {dm}",
-      "sddm_success": "-> SDDM Material You Design installiert und Dienst aktiviert [ OK ]"
+      "sddm_success": "-> SDDM Material You-Design installiert, Dienst aktiviert [ OK ]"
     }
+  },
+  "translator": {
+    "title": "Übersetzer",
+    "status_translating": "Übersetzen...",
+    "speed": "Geschwindigkeit: ",
+    "detected": "Erkannt: ",
+    "input_label": "Quelltext",
+    "placeholder": "Text eingeben, einfügen oder einsprechen...",
+    "chars": "Zeichen",
+    "translation_label": "Übersetzung",
+    "empty_prompt": "Die Übersetzung wird hier sofort angezeigt...",
+    "recent": "Zuletzt verwendet:",
+    "failed": "Keine Übersetzung verfügbar"
   }
 }

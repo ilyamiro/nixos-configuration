@@ -859,6 +859,10 @@
       "name": "System controls",
       "desc": "Performance monitor, power, and quick settings"
     },
+    "translator": {
+      "name": "Translator",
+      "desc": "Instant text and selection translator"
+    },
     "redactor": {
       "no_widgets_active": "No widgets active",
       "click_to_add": "Click a widget icon in the bottom toolbar to add it",
@@ -936,7 +940,8 @@
       "monitors_detect": "Query active display outputs and refresh rates",
       "location_manual": "Set geographic coordinates and timezone manually",
       "blue_light_filter": "Adjust color temperature and automatic day/night schedule",
-      "autostart": "Execute user-configured autostart applications and services"
+      "autostart": "Execute user-configured autostart applications and services",
+      "translate": "Instant text and selection translator"
     }
   },
   "daemon": {
@@ -1044,7 +1049,20 @@
     "deploy": {
       "configuring_sddm": "Configuring SDDM display manager...",
       "disabling_dm": "-> Disabling conflicting display manager: {dm}",
-      "sddm_success": "-> SDDM Material You theme installed and service enabled [ OK ]"
+      "sddm_success": "-> SDDM Material You theme installed, service enabled [ OK ]"
     }
+  },
+  "translator": {
+    "title": "Translator",
+    "status_translating": "Translating...",
+    "speed": "Speed: ",
+    "detected": "Detected: ",
+    "input_label": "Source Text",
+    "placeholder": "Type, paste, or speak text here...",
+    "chars": "chars",
+    "translation_label": "Translation",
+    "empty_prompt": "Translation will appear here instantly...",
+    "recent": "Recent:",
+    "failed": "No translation available"
   }
 }

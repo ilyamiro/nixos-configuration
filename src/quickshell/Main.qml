@@ -73,6 +73,13 @@ PanelWindow {
                 return;
             }
 
+            if (cmd === "translate-selection" || cmd === "selection-translate" || targetWidget === "translate-selection") {
+                let text = targetWidget === "translate-selection" ? arg : targetWidget;
+                let coords = targetWidget === "translate-selection" ? "" : arg;
+                TranslatorController.showSelection(text, coords);
+                return;
+            }
+
             let effectivelyActive = masterWindow.targetActive;
 
             if (cmd === "close") {
@@ -239,7 +246,7 @@ PanelWindow {
 
     property var widgetCache: ({})
     property var componentCache: ({})
-    property var _allWidgetNames: ["battery", "network", "volume", "guide", "calendar", "wallpaper", "music", "movies", "notifications", "system"]
+    property var _allWidgetNames: ["battery", "network", "volume", "guide", "calendar", "wallpaper", "music", "movies", "notifications", "system", "translator"]
     property int _preloadIndex: 0
 
     function widgetNameForItem(item) {

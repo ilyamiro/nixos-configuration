@@ -859,6 +859,10 @@
       "name": "Controles del sistema",
       "desc": "Monitor de rendimiento, energía y ajustes rápidos"
     },
+    "translator": {
+      "name": "Traductor",
+      "desc": "Traducción instantánea de texto y selecciones"
+    },
     "redactor": {
       "no_widgets_active": "No hay widgets activos",
       "click_to_add": "Haz clic en el icono de un widget en la barra inferior para añadirlo",
@@ -936,7 +940,8 @@
       "monitors_detect": "Consultar salidas de pantalla activas y frecuencias de actualización",
       "location_manual": "Establecer coordenadas geográficas y zona horaria manualmente",
       "blue_light_filter": "Ajustar la temperatura de color y el horario automático día/noche",
-      "autostart": "Ejecutar aplicaciones y servicios de inicio configurados por el usuario"
+      "autostart": "Ejecutar aplicaciones y servicios de inicio configurados por el usuario",
+      "translate": "Traducción instantánea de texto y selecciones"
     }
   },
   "daemon": {
@@ -1046,5 +1051,18 @@
       "disabling_dm": "-> Deshabilitando gestor de pantalla en conflicto: {dm}",
       "sddm_success": "-> Tema Material You para SDDM instalado y servicio habilitado [ OK ]"
     }
+  },
+  "translator": {
+    "title": "Traductor",
+    "status_translating": "Traduciendo...",
+    "speed": "Velocidad: ",
+    "detected": "Detectado: ",
+    "input_label": "Texto original",
+    "placeholder": "Escribe, pega o dicta texto aquí...",
+    "chars": "caracteres",
+    "translation_label": "Traducción",
+    "empty_prompt": "La traducción aparecerá aquí al instante...",
+    "recent": "Recientes:",
+    "failed": "Traducción no disponible"
   }
 }

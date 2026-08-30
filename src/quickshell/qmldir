@@ -1,5 +1,6 @@
 Clipboard 1.0 clipboard/Clipboard.qml
 Launcher 1.0 launcher/Launcher.qml
+SelectionPopup 1.0 translator/SelectionPopup.qml
 
 Dim 1.0 Dim.qml
 Main 1.0 Main.qml
@@ -31,6 +32,7 @@ singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qm
 singleton OsdController 1.0 singletons/widgetcontrols/OsdController.qml
 singleton SideMusicController 1.0 singletons/widgetcontrols/SideMusicController.qml
 singleton ClipboardController 1.0 singletons/widgetcontrols/ClipboardController.qml
+singleton TranslatorController 1.0 singletons/widgetcontrols/TranslatorController.qml
 
 PopoutManager 1.0 popouts/PopoutManager.qml
 

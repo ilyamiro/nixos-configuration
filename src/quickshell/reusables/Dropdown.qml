@@ -20,14 +20,14 @@ Item {
     property bool fuzzySearch: true
     property bool isPathSelector: false
 
-    property color accentColor: "#89b4fa"
-    property color baseColor: "#313244"
-    property color hoverColor: Qt.lighter(baseColor, 1.2)
-    property color dropdownColor: "#1e1e2e"
-    property color borderColor: "#45475a"
-    property color textColor: "#cdd6f4"
-    property color activeTextColor: "#11111b"
-    property color subTextColor: "#a6adc8"
+    property color accentColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.mauve) ? ThemeBackend.mauve : "#89b4fa"
+    property color baseColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.surface0) ? ThemeBackend.surface0 : "#313244"
+    property color hoverColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.surface1) ? ThemeBackend.surface1 : Qt.lighter(baseColor, 1.2)
+    property color dropdownColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.surface0) ? ThemeBackend.surface0 : "#1e1e2e"
+    property color borderColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.surface1) ? ThemeBackend.surface1 : "#45475a"
+    property color textColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.text) ? ThemeBackend.text : "#cdd6f4"
+    property color activeTextColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.crust) ? ThemeBackend.crust : "#11111b"
+    property color subTextColor: (typeof ThemeBackend !== "undefined" && ThemeBackend.subtext0) ? ThemeBackend.subtext0 : "#a6adc8"
 
     property real cornerRadius: ThemeBackend.clampedBorderRadius
     property int fontPixelSize: 11
@@ -344,7 +344,9 @@ Item {
                     font.pixelSize: root.fontPixelSize
                     color: root.textColor
                     elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
+                    layoutDirection: Qt.LeftToRight
                 }
 
                 Item {
@@ -746,7 +748,9 @@ Item {
                     font.pixelSize: root.fontPixelSize
                     color: root.currentIndex === realIndex ? root.activeTextColor : root.textColor
                     elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
+                    layoutDirection: Qt.LeftToRight
                     Behavior on color { ColorAnimation { duration: 150 } }
                 }
 

@@ -66,6 +66,13 @@ function getWidgetLauncherEntries(i18n) {
             description: tr("widgets.system.desc", "Performance monitor, power, and quick settings"),
             icon: "preferences-system",
             fontIcon: "󰒓"
+        },
+        {
+            id: "translator",
+            name: tr("widgets.translator.name", "Translator"),
+            description: tr("widgets.translator.desc", "Instant multi-language translation"),
+            icon: "preferences-desktop-locale",
+            fontIcon: "󰗊"
         }
     ];
 }
@@ -145,6 +152,15 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
                 "bottom": { anchor: "right" }, 
                 "left": { anchor: "right" }, 
                 "right": { anchor: "left" } 
+            } 
+        },
+        "translator": { 
+            w: 860, h: 560, comp: "translator/TranslatorPopup.qml", 
+            pos: { 
+                "top": { anchor: "center" }, 
+                "bottom": { anchor: "center" }, 
+                "left": { anchor: "center" }, 
+                "right": { anchor: "center" } 
             } 
         },
         "hidden": { 

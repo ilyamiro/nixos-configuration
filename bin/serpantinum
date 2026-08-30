@@ -59,6 +59,7 @@ show_help() {
     echo "  location_manual              $(t "cli.scripts.location_manual")"
     echo "  blue_light_filter            $(t "cli.scripts.blue_light_filter")"
     echo "  autostart                    $(t "cli.scripts.autostart")"
+    echo "  translate                    $(t "cli.scripts.translate")"
     echo ""
     echo "$(t "cli.options")"
     echo "  -v, --verbose                $(t "cli.verbose_desc")"
@@ -266,6 +267,7 @@ ALLOWED_SCRIPTS=(
     "location_manual"
     "blue_light_filter"
     "autostart"
+    "translate"
 )
 
 COMMAND="$1"
