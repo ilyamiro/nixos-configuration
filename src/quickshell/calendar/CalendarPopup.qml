@@ -217,6 +217,16 @@ Item {
         return window.mauve;
     }
 
+    readonly property string weatherUnitSym:
+        window.weatherData && window.weatherData.unit_sym
+            ? window.weatherData.unit_sym
+            : Weather.unitSym
+
+    readonly property string weatherWindUnit:
+        window.weatherData && window.weatherData.unit === "imperial"
+            ? "mph"
+            : "km/h"
+
     property int targetWeatherView: 0
     property real weatherContentOpacity: 1.0
     property real weatherContentOffset: 0.0
@@ -313,7 +323,7 @@ Item {
 
     Process {
         id: weatherPoller
-        command: ["bash", Caching.serpantinumDir + "/scripts/weather.sh", "--json"]
+        command: ["bash", Caching.serpantinumDir + "/scripts/weather.sh", "--json", "--unit", Weather.unit]
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
@@ -742,7 +752,7 @@ Item {
 
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter
-                                        text: modelData ? (modelData.temp + "°") : ""
+                                        text: modelData ? (modelData.temp + window.weatherUnitSym) : ""
                                         font.family: ThemeBackend.fontFamily
                                         font.weight: Font.Black
                                         font.pixelSize: window.s(12.5)
@@ -951,7 +961,7 @@ Item {
 
                         Text {
                             Layout.alignment: Qt.AlignRight
-                            text: Math.round(window.displayedTemp) + "°C"
+                            text: Math.round(window.displayedTemp) + window.weatherUnitSym
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Black
                             font.pixelSize: window.s(72)
@@ -1015,10 +1025,10 @@ Item {
 
                                 buttonIcon: index === 0 ? "" : index === 1 ? "" : index === 2 ? "" : ""
                                 buttonText: forecast ? (
-                                    index === 0 ? forecast.wind + "m/s" :
+                                    index === 0 ? forecast.wind + window.weatherWindUnit :
                                     index === 1 ? forecast.humidity + "%" :
                                     index === 2 ? forecast.pop + "%" :
-                                    forecast.feels_like + "°"
+                                    forecast.feels_like + window.weatherUnitSym
                                 ) : ""
                                 subText: index === 0 ? I18n.t("calendar.weather.wind") : index === 1 ? I18n.t("calendar.weather.humid") : index === 2 ? I18n.t("calendar.weather.rain") : I18n.t("calendar.weather.feels")
 
