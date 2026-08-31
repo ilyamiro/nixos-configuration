@@ -6,7 +6,7 @@
       "unknown": "Sconosciuto",
       "version_by": "v{version} • di {author}",
       "hardware": {
-        "device_name": "Nome Dispositivo",
+        "device_name": "Nome del dispositivo",
         "processor": "Processore",
         "graphics": "Grafica",
         "memory": "Memoria",
@@ -14,7 +14,7 @@
         "integrated_graphics": "Grafica integrata"
       },
       "system": {
-        "os_name": "Nome Sistema Operativo",
+        "os_name": "Nome sistema operativo",
         "kernel_version": "Versione del Kernel",
         "desktop": "Desktop",
         "shell": "Shell",
@@ -40,22 +40,22 @@
     "launcher": {
       "position": {
         "title": "Posizione su schermo",
-        "desc": "Seleziona il bordo dello schermo sulla quale l'avviatore si aprirà",
+        "desc": "Seleziona il bordo dello schermo sul quale l'avviatore si aprirà",
         "top": "Superiore",
         "bottom": "Inferiore",
         "left": "Sinistro",
         "right": "Destro"
       },
       "width": {
-        "title": "Larghezza Avviatore",
+        "title": "Larghezza avviatore",
         "desc": "La larghezza totale della finestra dell'avviatore in pixel"
       },
       "items": {
-        "title": "Oggetti Visibili",
+        "title": "Oggetti visibili",
         "desc": "Numero dei risultati di ricerca visibili contemporaneamente"
       },
       "terminal": {
-        "title": "Comando del Terminale",
+        "title": "Comando del terminale",
         "desc": "Prefisso comando usato per le > esecuzioni (es. kitty -e, alacritty -e, foot -e)"
       },
       "smart_ranking": {
@@ -66,18 +66,18 @@
     },
     "notifications": {
       "dnd": {
-        "title": "Non Disturbare",
+        "title": "Non disturbare",
         "desc": "Silenzia le notifiche popup ad eccezione degli avvisi critici"
       },
       "position": {
-        "title": "Posizone popup",
+        "title": "Posizione popup",
         "desc": "Scegli su quale parte dello schermo far apparire il popup delle notifiche",
-        "top_right": "In Alto a Destra",
-        "top_left": "In Alto a Sinistra",
-        "bottom_right": "In Basso a Destra",
-        "bottom_left": "In Basso a Sinistra",
-        "top_center": "In Alto al Centro",
-        "bottom_center": "In Basso al Centro"
+        "top_right": "In alto a destra",
+        "top_left": "In alto a sinistra",
+        "bottom_right": "In basso a destra",
+        "bottom_left": "In basso a sinistra",
+        "top_center": "In alto al centro",
+        "bottom_center": "In basso al centro"
       },
       "sound": {
         "title": "Suono delle notifiche",
@@ -103,7 +103,7 @@
       },
       "mpris_inhibit": {
         "title": "Disattiva sospensione durante la riproduzione di media",
-        "desc": "Previene che il sistema di sospenda durante la riproduzione di un contenuto audiovisivo"
+        "desc": "Previene che il sistema si sospenda durante la riproduzione di un contenuto audiovisivo"
       },
       "respect_inhibitors": {
         "title": "Rispetta il blocco attività delle app",
@@ -113,14 +113,14 @@
       "order_violation": "Escluso",
       "actions_header": {
         "title": "Timeout inattività oggetti",
-        "desc": "Configura i timeouts, azionatori (trigger) integrati, e comandi personalizzati"
+        "desc": "Configura i timeouts, azionatori (trigger) integrati e comandi personalizzati"
       },
-      "action_name_placeholder": "Nome Azione",
+      "action_name_placeholder": "Nome azione",
       "command_placeholder": "Comando da eseguire",
       "custom_action_default": "Azione di inattività personalizzata",
       "custom_action_fallback": "Azione di inattività",
       "warning_command": {
-        "title": "Comando Preavviso",
+        "title": "Comando preavviso",
         "desc": "Tempo di anticipo e comando da eseguire prima di avviare l'azione",
         "placeholder": "es. invio-notifica 'avviso'"
       },
@@ -144,14 +144,14 @@
       },
       "lock": {
         "title": "Blocca sessione",
-        "desc": "Tempo prima di richiedere la Password"
+        "desc": "Tempo prima di richiedere la password"
       },
       "suspend": {
         "title": "Sospensione sistema",
         "desc": "Tempo prima di sospendere il dispositivo"
       },
       "hooks": {
-        "title": "Azioni Automatiche (comandi shell)"
+        "title": "Azioni automatiche (comandi shell)"
       }
     },
     "welcome": {
@@ -172,11 +172,11 @@
       },
       "uiscale": {
         "title": "Scala UI",
-        "desc": "Seleziona il valore di grandezza di scala per l'UI"
+        "desc": "Seleziona il fattore di scala dell'interfaccia"
       },
       "avatar": {
-        "title": "Foto Profilo",
-        "desc": "Scegli Foto Profilo",
+        "title": "Foto profilo",
+        "desc": "Scegli una foto del profilo",
         "select": "Seleziona",
         "select_image_path": "Seleziona un percorso..."
       },
@@ -189,7 +189,7 @@
         "desc": "Non influisce sul volume generale del sistema"
       },
       "quickactions": {
-        "title": "Azioni Rapide",
+        "title": "Azioni rapide",
         "desc": "Attiva il pannello fluttuante per le azioni rapide"
       },
       "location": {
@@ -220,7 +220,7 @@
     },
     "display": {
       "bluelight": {
-        "title": "Filtro Luce Blu",
+        "title": "Filtro luce blu",
         "desc": "Attiva/disattiva la luce calda dello schermo"
       },
       "enable": {
@@ -228,11 +228,11 @@
         "desc": "Disabilitarlo disabiliterebbe questo monitor"
       },
       "schedule": {
-        "title": "Programmazione Automatizzata",
+        "title": "Programmazione automatizzata",
         "desc": "Regola automaticamente la temperatura del colore in base al tramonto e all'alba"
       },
       "temperature": {
-        "title": "Temperatura Colore",
+        "title": "Temperatura colore",
         "desc": "Modifica la temperatura del colore"
       },
       "uiscale": {
@@ -240,7 +240,7 @@
         "desc": "Imposta il fattore di scala del display per questo monitor"
       },
       "widgets": {
-        "title": "Widget Desktop",
+        "title": "Widget desktop",
         "desc": "Piazza e configura i Widget per questo monitor",
         "open": "Apri Configurazione"
       }
@@ -264,15 +264,15 @@
         "weather": "Meteo"
       },
       "position": {
-        "title": "Posizione Barra",
+        "title": "Posizione barra",
         "desc": "Posizione della barra sullo schermo",
-        "top": "In Alto",
-        "bottom": "In Basso",
-        "left": "A Sinistra",
-        "right": "A Destra"
+        "top": "In alto",
+        "bottom": "In basso",
+        "left": "A sinistra",
+        "right": "A destra"
       },
       "width": {
-        "title": "Largezza Barra",
+        "title": "Larghezza barra",
         "desc": "Imposta come percentuale la larghezza della barra"
       },
       "workspaces": {
@@ -280,26 +280,26 @@
         "disc": "Nota: questo non modifica il numero reale di workspace nel compositor"
       },
       "opacity": {
-        "title": "Opacità Barra",
+        "title": "Opacità barra",
         "desc": "Imposta la percentuale di opacità della barra"
       },
       "style": {
-        "title": "Stile Barra",
+        "title": "Stile barra",
         "desc": "Scegli tra modulare, solida o una barra piena",
         "modular": "Modulare",
         "solid": "Solida",
         "fill": "Piena"
       },
       "time": {
-        "title": "Formato Ora",
+        "title": "Formato ora",
         "desc": "Formato stringa (es. HH:mm:ss o hh:mm AP)"
       },
       "guide_button": {
-        "title": "Bottone Guida",
+        "title": "Bottone guida",
         "desc": "Mostra il bottone per il popup della guida sullo schermo"
       },
       "autohide": {
-        "title": "Nascondi Automaticamente",
+        "title": "Nascondi automaticamente",
         "desc": "Nascondi la barra quando il mouse non ci passa sopra"
       },
       "timeout": {
@@ -323,32 +323,32 @@
         "select": "Seleziona..."
       },
       "radius": {
-        "title": "Raggio Bordi",
+        "title": "Raggio dei bordi",
         "desc": "Raggio degli angoli per gli elementi dell'interfaccia"
       },
       "colors": {
-        "title": "Temi colori",
+        "title": "Palette colori",
         "desc": "Scegli una combinazione di colori predefinita o crea un tema personalizzato.",
-        "search": "Cerca Temi..."
+        "search": "Cerca palette..."
       },
       "delete_theme": "Elimina",
       "wallpaper": {
-        "title": "Cartella Sfondi",
+        "title": "Cartella sfondi",
         "desc": "Cartella in cui cercare gli sfondi",
-        "select_dir": "Seleziona Cartella...",
-        "select_wallpaper": "Seleziona Sfondo",
+        "select_dir": "Seleziona cartella...",
+        "select_wallpaper": "Seleziona sfondo",
         "no_wallpaper_selected": "Nessuno sfondo selezionato"
       }
     },
     "file_picker": {
       "title": "Scegli immagine",
       "input_placeholder": "Cerca...",
-      "not_found": "Nessun File Trovato",
-      "no_file_selected": "Nessun File selezionato",
+      "not_found": "Nessun file Trovato",
+      "no_file_selected": "Nessun file selezionato",
       "root": "Root",
       "places": {
         "home": "Home",
-        "downloads": "Scaricati",
+        "downloads": "Download",
         "pictures": "Immagini"
       }
     },
@@ -357,7 +357,7 @@
       "input_placeholder": "Cerca...",
       "not_found": "Nessun risultato",
       "places": {
-        "user_fonts": "Font Utente",
+        "user_fonts": "Font dell'Utente",
         "system_fonts": "Font di Sistema"
       }
     },
@@ -412,11 +412,11 @@
       "pm": "PM",
       "today": "Oggi",
       "week_overview": "Panoramica della settimana",
-      "daily_average": "Media Giornaliera",
-      "no_data": "Nessun Dato",
-      "same_time": "Stessa Ora",
-      "daily_usage": "Uso Giornaliero",
-      "peak_hours": "Ore di Picco",
+      "daily_average": "Media giornaliera",
+      "no_data": "Nessun dato",
+      "same_time": "Stessa ora",
+      "daily_usage": "Uso giornaliero",
+      "peak_hours": "Ore di picco",
       "time_hm": "{h}h {m}m",
       "time_m": "{m}m",
       "months": {
@@ -448,16 +448,16 @@
         "off": "Off",
         "app_limits": "Limiti utilizzo app",
         "app_limits_desc": "Imposta il tempo di utilizzo massimo per applicazione",
-        "excluded_apps": "App Escluse",
+        "excluded_apps": "App escluse",
         "excluded_apps_desc": "Escludi le app dal tracciamento complessivo da ora in poi"
       }
     },
-    "update_available": "Aggiornamento Disponibile"
+    "update_available": "Aggiornamento disponibile"
   },
   "sysnotif": {
     "battery": {
       "app_name": "Sistema",
-      "full_title": "Batteria Carica",
+      "full_title": "Batteria completamente carica",
       "full_body": "La batteria è completamente carica (100%).",
       "low_title": "Batteria scarica",
       "low_body": "La batteria è al {pct}%. Si prega di caricare il dispositivo.",
@@ -470,13 +470,13 @@
       "app_name": "Aggiorna",
       "action_open_guide": "Apri Guida",
       "update_available_title": "Aggiornamento Disponibile: v{remote}",
-      "update_available_body": "Versone corrente: v{local}. Clicca per vedere cosa è cambiato e per aggiornare."
+      "update_available_body": "Versione corrente: v{local}. Clicca per vedere cosa è cambiato e per aggiornare."
     }
   },
   "polkit": {
     "title": "Autenticazione Richiesta",
     "default_message": "Un'Applicazione sta chiedendo i permessi di amministratore.",
-    "default_description": "Autenticazione necessaria per eseguere quest'app come superuser.",
+    "default_description": "Autenticazione necessaria per eseguire quest'app come superuser.",
     "password_placeholder": "Password",
     "error_failed": "Autenticazione Fallita. Si prega di Riprovare."
   },
@@ -491,7 +491,7 @@
     "open_web": "Apri il web",
     "weather": {
       "wind": "Vento",
-      "humid": "Umido",
+      "humid": "Umidità",
       "rain": "Pioggia",
       "feels": "Percepita"
     },
@@ -515,7 +515,7 @@
   },
   "lock": {
     "status": {
-      "locked": "Bloccsto",
+      "locked": "Bloccato",
       "access_denied": "Accesso Negato",
       "authenticating": "Autenticazione...",
       "enter_pin": "Inserisci PIN"
@@ -532,9 +532,9 @@
     "nothing_playing": "Nessuna riproduzione in corso",
     "loading": "Caricamento...",
     "by_artist": "Di {artist}",
-    "unknown_artist": "Artista Sconosciuto",
-    "speaker": "Speaker",
-    "via_source": "Via {source}",
+    "unknown_artist": "Artista sconosciuto",
+    "speaker": "Altoparlante",
+    "via_source": "Tramite {source}",
     "offline": "Offline",
     "equalizer": "Equalizzatore",
     "eq": {
@@ -633,7 +633,7 @@
         "timer_finished_title": "Timer finito",
         "timer_finished_body": "Il tuo timer di {time} è terminato.",
         "focus_complete_title": "Studio completato",
-        "focus_complete_body": "Ottimo Lavoro! È ora di prendersi una bella pausa meritata!.",
+        "focus_complete_body": "Ottimo Lavoro! È ora di prendersi una bella pausa meritata.",
         "break_over_title": "Pausa Terminata",
         "break_over_body": "La Pausa è finita. Riprendiamo la concentrazione!",
         "pomo_skipped_title": "Pomodoro saltato",
@@ -660,7 +660,7 @@
       "recording_error_title": "Errore",
       "recording_error_body": "Impossibile salvare il file video.",
       "recording_started_title": "Registrazione iniziata",
-      "recording_started_body": "Premi di nuovo la scorciatoia dello screenshot per interrompere..",
+      "recording_started_body": "Premi di nuovo la scorciatoia dello screenshot per interrompere.",
       "screenshot_saved_title": "Screenshot salvato",
       "screenshot_saved_body": "File: {file}\nCartella: {folder}"
     }
@@ -670,14 +670,14 @@
     "made_by": "Fatto da @{author}",
     "welcome": "Benvenuto",
     "tagline": "Una shell desktop creata per",
-    "you": "Voi",
+    "you": "Te",
     "start_preview": "Avvia Anteprima"
   },
   "syspanel": {
     "user": {
       "default_name": "Utente",
       "default_os": "Linux",
-      "logout": "Chiudi Sessione"
+      "logout": "Chiudi sessione"
     },
     "notifications": {
       "title": "Notifiche",
@@ -692,10 +692,10 @@
       "power_saver": "Risparmio energia"
     },
     "battery": {
-      "fully_charged": "Completamente Carico",
-      "charging": "In Carica",
-      "charging_time": "In Carica • {hours}h {mins}m",
-      "discharging": "In Scaricamento",
+      "fully_charged": "Completamente carico",
+      "charging": "In carica",
+      "charging_time": "In carica • {hours}h {mins}m",
+      "discharging": "In scaricamento",
       "left_time": "{hours}h {mins}m rimasti",
       "until_full": "alla carica completa",
       "remaining": "rimanenti"
@@ -714,7 +714,7 @@
     "active_default": "Predefinito attivo",
     "tabs": {
       "outputs": "Uscite",
-      "inputs": "Entrate",
+      "inputs": "Ingressi",
       "streams": "Flussi"
     }
   },
@@ -724,7 +724,7 @@
       "type_to_search": "Scrivi qualcosa da cercare...",
       "search_paused": "Ricerca messa in pausa",
       "searching_ddg": "Ricerca sfondi...",
-      "generating_thumbnails": "Generando Miniature...",
+      "generating_thumbnails": "Generazione miniature...",
       "no_wallpapers_found": "Nessuno sfondo trovato",
       "videos": "Video",
       "history": "Applicati di recente"
@@ -792,7 +792,7 @@
       "desc": "Sfoglia e seleziona uno sfondo"
     },
     "network": {
-      "name": "Impostazioni Rete",
+      "name": "Impostazioni rete",
       "desc": "Gestisci il WiFi, ethernet, e le connessioni di rete"
     },
     "volume": {
@@ -805,10 +805,10 @@
     },
     "calendar": {
       "name": "Calendario e Orologio",
-      "desc": "Vedi la data, l'ora, e gli eventi"
+      "desc": "Visualizza la data, l'ora e gli eventi"
     },
     "music": {
-      "name": "Lettore Multimediale",
+      "name": "Lettore multimediale",
       "desc": "Controlla la riproduzione multimediale"
     },
     "notifications": {
@@ -820,7 +820,7 @@
       "desc": "Monitor di prestazioni, alimentazione e impostazioni rapide"
     },
     "redactor": {
-      "no_widgets_active": "Nesun widget attivo",
+      "no_widgets_active": "Nessun widget attivo",
       "click_to_add": "Clicca un widget nella barra in basso per aggiungerlo",
       "done": "Fatto"
     },
@@ -861,7 +861,7 @@
     "launch_usage": "Uso: serpantinum launch <start|widgetredactor> [argomenti...]",
     "error_qml_not_found": "Errore: impossibile trovare {NAME}.qml in {DIR}",
     "error_shell_qml_not_found": "Errore: impossibile trovare il percorso di shell.qml in {DIR}",
-    "error_unknown_command": "Erroe: comando sconosciuto '{CMD}'.",
+    "error_unknown_command": "Errore: comando sconosciuto '{CMD}'.",
     "error_unknown_target": "Errore: target sconosciuto '{TARGET}'.",
     "launch_help": {
       "usage": "Uso: serpantinum launch <start|widgetredactor> [argomenti...]",
