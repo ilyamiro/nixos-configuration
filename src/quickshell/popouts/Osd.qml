@@ -140,18 +140,26 @@ PanelWindow {
         property int targetPct: -1
         onTriggered: {
             if (targetPct >= 0) {
-                if (osdWindow.kind === "volume") {
-                    if (targetPct > 0 && osdWindow.isMuted) {
-                        if (Audio.defaultSink && Audio.defaultSink.audio && Audio.defaultSink.audio.muted) {
-                            Audio.toggleMute(Audio.defaultSink);
-                        }
+                if (targetPct > 0 && osdWindow.isMuted) {
+                    if (Audio.defaultSink && Audio.defaultSink.audio && Audio.defaultSink.audio.muted) {
+                        Audio.toggleMute(Audio.defaultSink);
                     }
-                    if (Audio.defaultSink) {
-                        Audio.setVolume(Audio.defaultSink, targetPct);
-                    }
-                } else {
-                    Quickshell.execDetached(["brightnessctl", "set", targetPct + "%"]);
                 }
+                if (Audio.defaultSink) {
+                    Audio.setVolume(Audio.defaultSink, targetPct);
+                }
+                targetPct = -1;
+            }
+        }
+    }
+
+    Timer {
+        id: briCmdThrottle
+        interval: 400
+        property int targetPct: -1
+        onTriggered: {
+            if (targetPct >= 0) {
+                Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", targetPct.toString()]);
                 targetPct = -1;
             }
         }
@@ -535,9 +543,11 @@ PanelWindow {
                                 Audio.toggleMute(Audio.defaultSink);
                             }
                         } else {
+                            briCmdThrottle.stop();
+                            briCmdThrottle.targetPct = -1;
                             let target = osdWindow.briVal > 0 ? 0 : 100;
                             OsdController.briVal = target;
-                            Quickshell.execDetached(["brightnessctl", "set", target + "%"]);
+                            Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", target.toString()]);
                         }
                     }
                 }
@@ -568,15 +578,27 @@ PanelWindow {
                     handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
 
                     onDragStarted: OsdController.cancelHide()
-                    onDragFinished: OsdController.restartTimer()
+                    onDragFinished: {
+                        OsdController.restartTimer();
+                        if (osdWindow.kind !== "volume" && briCmdThrottle.targetPct >= 0) {
+                            briCmdThrottle.stop();
+                            Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", briCmdThrottle.targetPct.toString()]);
+                            briCmdThrottle.targetPct = -1;
+                        }
+                    }
                     onMoved: val => {
                         OsdController.restartTimer();
                         let pct = Math.max(0, Math.min(100, Math.round(val)));
                         if (osdWindow.kind !== "volume") {
                             OsdController.briVal = pct;
                         }
-                        cmdThrottle.targetPct = pct;
-                        if (!cmdThrottle.running) cmdThrottle.start();
+                        if (osdWindow.kind === "volume") {
+                            cmdThrottle.targetPct = pct;
+                            if (!cmdThrottle.running) cmdThrottle.start();
+                        } else {
+                            briCmdThrottle.targetPct = pct;
+                            if (!verticalSlider.isDragging) briCmdThrottle.restart();
+                        }
                     }
                 }
             }
@@ -620,15 +642,18 @@ PanelWindow {
                                     Audio.toggleMute(Audio.defaultSink);
                                 }
                             } else {
+                                briCmdThrottle.stop();
+                                briCmdThrottle.targetPct = -1;
                                 let target = osdWindow.briVal > 0 ? 0 : 100;
                                 OsdController.briVal = target;
-                                Quickshell.execDetached(["brightnessctl", "set", target + "%"]);
+                                Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", target.toString()]);
                             }
                         }
                     }
                 }
 
                 Draggable {
+                    id: horizontalSlider
                     width: Math.max(0, osdContainer.width - osdWindow.s(80))
                     height: osdWindow.s(18)
                     anchors.left: parent.left
@@ -657,15 +682,27 @@ PanelWindow {
                     handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
 
                     onDragStarted: OsdController.cancelHide()
-                    onDragFinished: OsdController.restartTimer()
+                    onDragFinished: {
+                        OsdController.restartTimer();
+                        if (osdWindow.kind !== "volume" && briCmdThrottle.targetPct >= 0) {
+                            briCmdThrottle.stop();
+                            Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", briCmdThrottle.targetPct.toString()]);
+                            briCmdThrottle.targetPct = -1;
+                        }
+                    }
                     onMoved: val => {
                         OsdController.restartTimer();
                         let pct = Math.max(0, Math.min(100, Math.round(val)));
                         if (osdWindow.kind !== "volume") {
                             OsdController.briVal = pct;
                         }
-                        cmdThrottle.targetPct = pct;
-                        if (!cmdThrottle.running) cmdThrottle.start();
+                        if (osdWindow.kind === "volume") {
+                            cmdThrottle.targetPct = pct;
+                            if (!cmdThrottle.running) cmdThrottle.start();
+                        } else {
+                            briCmdThrottle.targetPct = pct;
+                            if (!horizontalSlider.isDragging) briCmdThrottle.restart();
+                        }
                     }
                 }
             }

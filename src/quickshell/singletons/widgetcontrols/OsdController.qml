@@ -23,6 +23,7 @@ Item {
     property real lastVolume: -1
     property bool lastMuted: false
     property int lastBrightness: -1
+    property bool brightnessInitialized: false
     property bool isInitialized: false
 
     Timer {
@@ -76,7 +77,7 @@ Item {
     Process {
         id: briWatcher
         running: true
-        command: ["sh", "-c", "inotifywait -m -e modify /sys/class/backlight/*/brightness 2>/dev/null"]
+        command: ["bash", Caching.qsDir + "/../scripts/brightness.sh", "watch"]
         stdout: SplitParser {
             onRead: data => {
                 briFetchDebounce.restart();
@@ -97,13 +98,17 @@ Item {
     Process {
         id: briFetcher
         running: true
-        command: ["bash", "-c", "brightnessctl -m 2>/dev/null | awk -F, '{print substr($4, 1, length($4)-1)}'"]
+        command: ["bash", Caching.qsDir + "/../scripts/brightness.sh", "get"]
         stdout: StdioCollector {
             onStreamFinished: {
                 let out = this.text.trim();
                 if (out !== "") {
                     let val = parseInt(out);
                     if (!isNaN(val)) {
+                        if (!controller.brightnessInitialized) {
+                            controller.lastBrightness = val;
+                            controller.brightnessInitialized = true;
+                        }
                         controller.sysBrightness = val;
                         controller.briVal = val;
                     }

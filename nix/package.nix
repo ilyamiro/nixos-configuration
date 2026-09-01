@@ -10,6 +10,7 @@
 , bc
 , bluez
 , brightnessctl
+, ddcutil
 , cava
 , cliphist
 , easyeffects
@@ -39,6 +40,7 @@
 , satty
 , slurp
 , socat
+, util-linux
 , wf-recorder
 , wget
 , wireplumber
@@ -62,6 +64,7 @@ let
     bc
     bluez
     brightnessctl
+    ddcutil
     cava
     cliphist
     easyeffects
@@ -92,6 +95,7 @@ let
     satty
     slurp
     socat
+    util-linux
     wf-recorder
     wget
     wireplumber
