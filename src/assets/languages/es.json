@@ -244,6 +244,10 @@
         "title": "Widgets de escritorio",
         "desc": "Configurar y ubicar widgets en este monitor",
         "open": "Abrir editor"
+      },
+      "startup": {
+        "title": "Iniciar al iniciar sesión",
+        "desc": "Iniciar el filtro de luz azul automáticamente al iniciar sesión"
       }
     },
     "bar": {

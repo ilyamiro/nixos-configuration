@@ -60,8 +60,8 @@
         "desc": "Befehlspräfix für > ausführungen (z. B. kitty -e, alacritty -e, foot -e)"
       },
       "smart_ranking": {
-        "title": "Intelligente sortierung von elementen im launcher",
-        "desc": "Apps basierend auf ihrer nutzungshäufigkeit und der darin verbrachten zeit sortieren"
+        "title": "Intelligente Sortierung von Elementen im Launcher",
+        "desc": "Apps basierend auf ihrer Nutzungshäufigkeit und der darin verbrachten Zeit sortieren"
       },
       "test": "Starter öffnen"
     },
@@ -244,6 +244,10 @@
         "title": "Desktop-widgets",
         "desc": "Widgets für diesen monitor konfigurieren und platzieren",
         "open": "Editor öffnen"
+      },
+      "startup": {
+        "title": "Beim Anmelden starten",
+        "desc": "Blaulichtfilter beim Anmelden automatisch starten"
       }
     },
     "bar": {

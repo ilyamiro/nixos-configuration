@@ -17,7 +17,7 @@
     "opacity": 100,
     "style": "fill", 
     "time": {
-      "format": "HH:mm:ss"
+      "format": "hh:mm:ss AP"
     },
     "autohide": false,
     "autohideTimeout": 1000,

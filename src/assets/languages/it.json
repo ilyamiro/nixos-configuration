@@ -288,6 +288,10 @@
         "title": "Widget del desktop",
         "desc": "Configura e posiziona i widget per questo monitor",
         "open": "Apri redattore"
+      },
+      "startup": {
+        "title": "Avvia all'accesso",
+        "desc": "Avvia automaticamente il filtro luce blu all'accesso"
       }
     },
     "bar": {

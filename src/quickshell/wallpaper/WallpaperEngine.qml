@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
 import QtMultimedia
+import QtQuick.Effects
 import "../"
 
 ShellRoot {
@@ -52,11 +53,14 @@ ShellRoot {
         model: Quickshell.screens
 
         delegate: Component {
-            PanelWindow {
-                id: barWindow
-
+            Item {
+                id: delegateRoot
                 required property var modelData
-                screen: modelData
+
+                PanelWindow {
+                    id: barWindow
+
+                    screen: delegateRoot.modelData
 
                 WlrLayershell.namespace: "wallpaper-bg"
                 WlrLayershell.layer: WlrLayer.Background
@@ -401,6 +405,44 @@ ShellRoot {
                         }
                     }
                 }
+            }
+
+            PanelWindow {
+                id: backdropWindow
+
+                screen: delegateRoot.modelData
+
+                WlrLayershell.namespace: "wallpaper-backdrop"
+                WlrLayershell.layer: WlrLayer.Background
+
+                focusable: false
+                exclusionMode: ExclusionMode.Ignore
+                mask: Region {}
+                color: "transparent"
+
+                anchors { top: true; bottom: true; left: true; right: true }
+
+                property string sourcePath: barWindow.currentWallpaperPath
+
+                Image {
+                    id: backdropImage
+                    anchors.fill: parent
+                    source: backdropWindow.sourcePath && !barWindow.isVideo(backdropWindow.sourcePath)
+                        ? "file://" + backdropWindow.sourcePath : ""
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                    visible: source !== ""
+                }
+
+                MultiEffect {
+                    id: backdropBlur
+                    anchors.fill: parent
+                    source: backdropImage
+                    blurEnabled: true
+                    blurMax: 24
+                    blur: 1.0
+                }
+            }
             }
         }
     }

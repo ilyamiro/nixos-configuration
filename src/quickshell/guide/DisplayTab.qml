@@ -217,6 +217,17 @@ Item {
         displayTabRoot.manageWarmProcess(monName, isEn, temp, isAu);
     }
 
+    function setStartAtBootSetting(monName, value) {
+        if (!monName) return;
+        let current = Config.getSetting("display", defaultDisplaySettings);
+        if (!current.monitors) current.monitors = {};
+        if (!current.monitors[monName]) current.monitors[monName] = {};
+
+        current.monitors[monName]["startAtBoot"] = value;
+        Config.setSetting("display", current);
+        displayTabRoot.displaySettings = JSON.parse(JSON.stringify(current));
+    }
+
     function applyMonitorPower(monName, enabled) {
         if (!monName) return;
         if (displayTabRoot.compositor === "niri") {
@@ -406,6 +417,7 @@ Item {
                     property bool monitorPowered: monSettings.powerEnabled !== undefined ? monSettings.powerEnabled : (modelData.active !== undefined ? modelData.active : true)
                     property bool filterEnabled: monSettings.enabled !== undefined ? monSettings.enabled : false
                     property bool filterAuto: monSettings.auto !== undefined ? monSettings.auto : false
+                    property bool filterStartAtBoot: monSettings.startAtBoot !== undefined ? monSettings.startAtBoot : true
                     property real currentTemp: monSettings.temperature !== undefined ? monSettings.temperature : 50
                     property real currentScale: modelData.scale !== undefined ? modelData.scale : 1.0
 
@@ -446,6 +458,7 @@ Item {
                         }
                         filterEnabled = monSettings.enabled !== undefined ? monSettings.enabled : false;
                         filterAuto = monSettings.auto !== undefined ? monSettings.auto : false;
+                        filterStartAtBoot = monSettings.startAtBoot !== undefined ? monSettings.startAtBoot : false;
                         if (displayTabRoot.pendingMonName !== monName) {
                             currentTemp = monSettings.temperature !== undefined ? monSettings.temperature : 50;
                         }
@@ -801,10 +814,65 @@ Item {
                             Layout.bottomMargin: rootObj.s(5)
                         }
 
-                        Rectangle {
-                            Layout.fillWidth: true
-                            implicitHeight: rowScaleLayout.implicitHeight + rootObj.s(18)
-                            color: "transparent"
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    implicitHeight: rowStartupLayout.implicitHeight + rootObj.s(18)
+                                    color: "transparent"
+
+                                    RowLayout {
+                                        id: rowStartupLayout
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: rootObj.s(12)
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: rootObj.s(12)
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        spacing: rootObj.s(16)
+
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            spacing: rootObj.s(2)
+
+                                            Text {
+                                                text: I18n.t("guide.display.startup.title")
+                                                font.family: ThemeBackend.fontFamily
+                                                font.pixelSize: rootObj.s(13)
+                                                color: ThemeBackend.text
+                                            }
+
+                                            Text {
+                                                text: I18n.t("guide.display.startup.desc")
+                                                font.family: ThemeBackend.fontFamily
+                                                font.pixelSize: rootObj.s(11)
+                                                color: ThemeBackend.subtext0
+                                            }
+                                        }
+
+                                        Toggle {
+                                            id: startupToggle
+                                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                            checked: monDelegate.filterStartAtBoot
+                                            accentColor: ThemeBackend.mauve
+                                            baseColor: ThemeBackend.surface1
+                                            handleColor: ThemeBackend.crust
+                                            handleOffColor: ThemeBackend.text
+                                            onToggled: function(c) {
+                                                monDelegate.filterStartAtBoot = c;
+                                                displayTabRoot.setStartAtBootSetting(monDelegate.monName, c);
+                                            }
+
+                                            Binding {
+                                                target: startupToggle
+                                                property: "checked"
+                                                value: monDelegate.filterStartAtBoot
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    implicitHeight: rowScaleLayout.implicitHeight + rootObj.s(18)
+                                    color: "transparent"
 
                             RowLayout {
                                 id: rowScaleLayout
