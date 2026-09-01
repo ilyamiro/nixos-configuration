@@ -17,4 +17,10 @@ case $ACTION in
     mic-toggle)
         wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
         ;;
+    mic-raise)
+        wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SOURCE@ 5%+
+        ;;
+    mic-lower)
+        wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%-
+        ;;
 esac
