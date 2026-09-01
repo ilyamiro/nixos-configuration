@@ -243,6 +243,10 @@
         "title": "Desktop widgets",
         "desc": "Configure and place widgets for this monitor",
         "open": "Open redactor"
+      },
+      "startup": {
+        "title": "Start at login",
+        "desc": "Start the blue light filter automatically on login"
       }
     },
     "bar": {

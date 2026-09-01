@@ -16,6 +16,8 @@ ShellRoot {
     Bar {}
     Lock {}
 
+    BlueLightStartup {}
+
     Launcher {}
     Clipboard {}	
 

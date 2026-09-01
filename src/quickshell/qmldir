@@ -3,6 +3,7 @@ Launcher 1.0 launcher/Launcher.qml
 
 Dim 1.0 Dim.qml
 Main 1.0 Main.qml
+BlueLightStartup 1.0 BlueLightStartup.qml
 
 TrayBase 1.0 popouts/TrayBase.qml
 Osd 1.0 popouts/Osd.qml

@@ -1227,8 +1227,20 @@ Item {
 
     Shortcut { sequence: "Left"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
     Shortcut { sequence: "Right"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
+    Shortcut { sequence: "h"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(-1) }
+    Shortcut { sequence: "l"; enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying; onActivated: window.stepToNextValidIndex(1) }
     Shortcut {
         sequence: "Return"
+        enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
+        onActivated: {
+            if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
+                let item = displayModel.get(view.currentIndex);
+                if (item && item.fileName) window.applyWallpaper(String(item.fileName), !!item.isVideo);
+            }
+        }
+    }
+    Shortcut {
+        sequence: "o"
         enabled: window.visible && !searchInput.hasFocus && !window.isScrollingBlocked && !window.isApplying
         onActivated: {
             if (view.currentIndex >= 0 && view.currentIndex < displayModel.count) {
