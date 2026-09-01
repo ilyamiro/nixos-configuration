@@ -15,15 +15,29 @@ Item {
     opacity: visible ? 1.0 : 0.0
     property real slideY: visible ? 0 : rootObj.s(10)
 
-    Behavior on slideY { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
-    transform: Translate { y: slideY }
-    Behavior on opacity { NumberAnimation { duration: 250 } }
+    Behavior on slideY {
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.OutQuart
+        }
+    }
+    transform: Translate {
+        y: slideY
+    }
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 250
+        }
+    }
 
     onVisibleChanged: {
         if (!visible) {
-            if (langDropdown.isOpen) langDropdown.closePopup();
-            if (avatarDropdown.isOpen) avatarDropdown.closePopup();
-            if (weatherUnitDropdown.isOpen) weatherUnitDropdown.closePopup();
+            if (langDropdown.isOpen)
+                langDropdown.closePopup();
+            if (avatarDropdown.isOpen)
+                avatarDropdown.closePopup();
+            if (weatherUnitDropdown.isOpen)
+                weatherUnitDropdown.closePopup();
             locationPopup.close();
             isLocEditOpen = false;
         }
@@ -69,8 +83,8 @@ Item {
         return path;
     }
 
-    property var languageCodes: ["en", "ru", "de", "es", "it", "hy"]
-    property var languageNames: ["English", "Русский", "Deutsch", "Español", "Italiano", "Հայերեն"]
+    property var languageCodes: ["en", "ru", "de", "es", "it", "hy", "vi"]
+    property var languageNames: ["English", "Русский", "Deutsch", "Español", "Italiano", "Հայերեն", "Tiếng Việt"]
 
     property var weatherUnitCodes: ["metric", "imperial", "standard"]
     property var weatherUnitNames: ["Celsius", "Fahrenheit", "Kelvin"]
@@ -119,7 +133,7 @@ Item {
     ImagePicker {
         id: imagePicker
         rootObj: generalTabRoot.rootObj
-        onImageSelected: function(filePath, fileName) {
+        onImageSelected: function (filePath, fileName) {
             let gs = Object.assign({}, generalTabRoot.generalSettings);
             gs.avatarPath = filePath;
             generalTabRoot.generalSettings = gs;
@@ -220,13 +234,13 @@ Item {
                                 activeTextColor: ThemeBackend.crust
                                 cornerRadius: ThemeBackend.borderRadius
                                 fontPixelSize: rootObj.s(11)
-                                onValueChanged: function(index, value) {
+                                onValueChanged: function (index, value) {
                                     let gs = Object.assign({}, generalTabRoot.generalSettings);
                                     gs.avatarPath = value;
                                     generalTabRoot.generalSettings = gs;
                                     generalTabRoot.updateGeneralSettings();
                                 }
-                                onSelected: function(index, value) {
+                                onSelected: function (index, value) {
                                     let gs = Object.assign({}, generalTabRoot.generalSettings);
                                     gs.avatarPath = value;
                                     generalTabRoot.generalSettings = gs;
@@ -262,9 +276,15 @@ Item {
 
                                 Connections {
                                     target: ThemeBackend
-                                    function onSurface2Changed() { personaCanvas.requestPaint(); }
-                                    function onSubtext0Changed() { personaCanvas.requestPaint(); }
-                                    function onTextChanged() { personaCanvas.requestPaint(); }
+                                    function onSurface2Changed() {
+                                        personaCanvas.requestPaint();
+                                    }
+                                    function onSubtext0Changed() {
+                                        personaCanvas.requestPaint();
+                                    }
+                                    function onTextChanged() {
+                                        personaCanvas.requestPaint();
+                                    }
                                 }
 
                                 onPaint: {
@@ -370,7 +390,7 @@ Item {
                         activeTextColor: ThemeBackend.crust
                         cornerRadius: ThemeBackend.borderRadius
                         fontPixelSize: rootObj.s(11)
-                        onValueChanged: function(index, value) {
+                        onValueChanged: function (index, value) {
                             generalTabRoot.currentLanguage = generalTabRoot.languageCodes[index];
                             generalTabRoot.updateGeneralSettings();
                         }
@@ -422,7 +442,7 @@ Item {
                         baseColor: ThemeBackend.surface1
                         handleColor: ThemeBackend.crust
                         handleOffColor: ThemeBackend.text
-                        onToggled: function(c) {
+                        onToggled: function (c) {
                             generalTabRoot.quickactions = c;
                             generalTabRoot.updateGeneralSettings();
                         }
@@ -474,10 +494,12 @@ Item {
                         baseColor: ThemeBackend.surface1
                         handleColor: ThemeBackend.crust
                         handleOffColor: ThemeBackend.text
-                        onToggled: function(c) {
+                        onToggled: function (c) {
                             generalTabRoot.muteSfx = c;
                             if (typeof Sounds !== "undefined") {
-                                Sounds.generalSettings = Object.assign({}, Sounds.generalSettings || {}, { "muteSfx": c });
+                                Sounds.generalSettings = Object.assign({}, Sounds.generalSettings || {}, {
+                                    "muteSfx": c
+                                });
                             }
                             generalTabRoot.updateGeneralSettings();
                         }
@@ -533,18 +555,22 @@ Item {
                         stepSize: 1
                         defaultValue: 100
                         showValueBubble: true
-                        valueFormatter: function(v) { return Math.round(v) + "%" }
+                        valueFormatter: function (v) {
+                            return Math.round(v) + "%";
+                        }
                         value: generalTabRoot.sfxVolume
                         backgroundColor: ThemeBackend.surface0
                         accentColor: ThemeBackend.mauve
                         handleColor: ThemeBackend.text
                         handleBorderColor: ThemeBackend.mantle
-                        onMoved: function(val) {
+                        onMoved: function (val) {
                             let rounded = Math.round(val);
                             if (generalTabRoot.sfxVolume !== rounded) {
                                 generalTabRoot.sfxVolume = rounded;
                                 if (typeof Sounds !== "undefined") {
-                                    Sounds.generalSettings = Object.assign({}, Sounds.generalSettings || {}, { "sfxVolume": rounded });
+                                    Sounds.generalSettings = Object.assign({}, Sounds.generalSettings || {}, {
+                                        "sfxVolume": rounded
+                                    });
                                 }
                                 sfxVolumeDebounceTimer.restart();
                             }
@@ -670,8 +696,18 @@ Item {
                         visible: implicitHeight > 0 || opacity > 0
                         clip: true
 
-                        Behavior on implicitHeight { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                        Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                        Behavior on implicitHeight {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutCubic
+                            }
+                        }
 
                         ColumnLayout {
                             id: locEditCol
@@ -861,7 +897,7 @@ Item {
                         activeTextColor: ThemeBackend.crust
                         cornerRadius: ThemeBackend.borderRadius
                         fontPixelSize: rootObj.s(11)
-                        onValueChanged: function(index, value) {
+                        onValueChanged: function (index, value) {
                             generalTabRoot.weatherUnit = generalTabRoot.weatherUnitCodes[index];
                             generalTabRoot.updateGeneralSettings();
                             if (typeof Weather !== "undefined") {

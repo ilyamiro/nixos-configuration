@@ -1,0 +1,979 @@
+{
+    "guide": {
+        "about": {
+            "title": "Serpantinum",
+            "loading": "Đang tải...",
+            "unknown": "Không xác định",
+            "version_by": "v{version} • bởi {author}",
+            "hardware": {
+                "device_name": "Tên thiết bị",
+                "processor": "CPU",
+                "graphics": "GPU",
+                "memory": "RAM",
+                "disk_capacity": "Dung lượng ổ đĩa",
+                "integrated_graphics": "Card đồ họa tích hợp"
+            },
+            "system": {
+                "os_name": "Hệ điều hành",
+                "kernel_version": "Phiên bản Kernel",
+                "desktop": "Môi trường máy tính",
+                "shell": "Shell",
+                "uptime": "Thời gian hoạt động",
+                "default_os": "Linux"
+            },
+            "github_repo": "ilyamiro/serpantinum",
+            "check_updates": "Kiểm tra cập nhật",
+            "update_now": "Cập nhật ngay"
+        },
+        "tabs": {
+            "welcome": "Chào mừng",
+            "general": "Cài đặt chung",
+            "display": "Màn hình",
+            "bar": "Thanh Bar",
+            "launcher": "Trình khởi chạy",
+            "theme": "Giao diện & Màu",
+            "notifications": "Thông báo",
+            "idle": "Nghỉ ngơi & Nguồn",
+            "wellbeing": "Sức khỏe kỹ thuật số",
+            "tutorial": "Hướng dẫn",
+            "update": "Cập nhật",
+            "about": "Thông tin"
+        },
+        "launcher": {
+            "position": {
+                "title": "Vị trí hiển thị",
+                "desc": "Chọn cạnh màn hình để ghim trình khởi chạy",
+                "top": "Trên",
+                "bottom": "Dưới",
+                "left": "Trái",
+                "right": "Phải"
+            },
+            "width": {
+                "title": "Chiều rộng",
+                "desc": "Độ rộng tổng thể của cửa sổ launcher (pixel)"
+            },
+            "items": {
+                "title": "Số lượng mục",
+                "desc": "Số lượng kết quả tìm kiếm hiển thị đồng thời"
+            },
+            "terminal": {
+                "title": "Lệnh mở Terminal",
+                "desc": "Tiền tố lệnh dùng cho thực thi > (ví dụ: kitty -e, alacritty -e, foot -e)"
+            },
+            "smart_ranking": {
+                "title": "Sắp xếp thông minh",
+                "desc": "Sắp xếp ứng dụng dựa trên tần suất sử dụng và thời gian mở"
+            },
+            "test": "Mở thử Launcher"
+        },
+        "notifications": {
+            "dnd": {
+                "title": "Không làm phiền",
+                "desc": "Tắt âm thanh và thông báo nổi, ngoại trừ cảnh báo quan trọng"
+            },
+            "position": {
+                "title": "Vị trí",
+                "desc": "Chọn vị trí hiển thị thông báo trên màn hình",
+                "top_right": "Góc trên phải",
+                "top_left": "Góc trên trái",
+                "bottom_right": "Góc dưới phải",
+                "bottom_left": "Góc dưới trái",
+                "top_center": "Trên ở giữa",
+                "bottom_center": "Dưới ở giữa"
+            },
+            "sound": {
+                "title": "Âm thanh",
+                "desc": "Phát âm thanh khi nhận được thông báo"
+            },
+            "sound_file": {
+                "title": "Tệp âm thanh",
+                "desc": "Chọn tệp âm thanh phát khi có thông báo"
+            }
+        },
+        "idle": {
+            "enabled": {
+                "title": "Bật quản lý trạng thái nghỉ",
+                "desc": "Kích hoạt quản lý nguồn điện, làm mờ và tự động khóa màn hình"
+            },
+            "manual_inhibit": {
+                "title": "Giữ hệ thống luôn thức",
+                "desc": "Thủ công ngăn hệ thống rơi vào trạng thái nghỉ hoặc tắt màn hình"
+            },
+            "mpris_inhibit": {
+                "title": "Chống ngủ khi phát media",
+                "desc": "Tự động ngăn tắt/khóa màn hình khi đang phát âm thanh hoặc video"
+            },
+            "respect_inhibitors": {
+                "title": "Tôn trọng yêu cầu từ ứng dụng",
+                "desc": "Tuân theo các khóa ngăn nghỉ (idle inhibitor) từ các ứng dụng Wayland"
+            },
+            "pipeline_notice": "Thứ tự: Giảm độ sáng < Khóa phiên < Tắt màn hình < Tạm dừng (Suspend). Các hành động vi phạm thứ tự này sẽ bị bỏ qua.",
+            "order_violation": "Bị loại trừ",
+            "actions_header": {
+                "title": "Thời gian chờ & Hành động",
+                "desc": "Tùy chỉnh thời gian chờ, các trigger tích hợp và lệnh tùy chỉnh"
+            },
+            "action_name_placeholder": "Tên hành động",
+            "command_placeholder": "Lệnh cần thực thi",
+            "custom_action_default": "Hành động nghỉ tùy chỉnh",
+            "custom_action_fallback": "Hành động khi nghỉ",
+            "warning_command": {
+                "title": "Lệnh cảnh báo",
+                "desc": "Thời gian đệm và lệnh thực thi trước khi hành động diễn ra",
+                "placeholder": "vd: notify-send 'Cảnh báo'"
+            },
+            "before_command": {
+                "title": "Lệnh trước khi thực thi",
+                "desc": "Thực thi ngay trước khi hành động kích hoạt",
+                "placeholder": "vd: playerctl pause"
+            },
+            "resume_command": {
+                "title": "Lệnh khi hoạt động lại",
+                "desc": "Thực thi khi người dùng tương tác trở lại",
+                "placeholder": "vd: notify-send 'Đã hoạt động trở lại'"
+            },
+            "dim": {
+                "title": "Giảm độ sáng",
+                "desc": "Thời gian chờ trước khi giảm độ sáng màn hình"
+            },
+            "dpms": {
+                "title": "Tắt màn hình",
+                "desc": "Thời gian chờ trước khi tắt màn hình hoàn toàn"
+            },
+            "lock": {
+                "title": "Khóa phiên làm việc",
+                "desc": "Thời gian chờ trước khi yêu cầu mật khẩu để mở khóa"
+            },
+            "suspend": {
+                "title": "Tạm dừng hệ thống",
+                "desc": "Thời gian chờ trước khi đưa máy vào chế độ ngủ"
+            },
+            "hooks": {
+                "title": "Hooks (Lệnh Shell)"
+            }
+        },
+        "welcome": {
+            "by_author": "bởi @{author}",
+            "about": "Thông tin",
+            "hold_for_tutorial": "Nhấn giữ để xem hướng dẫn",
+            "start_tutorial": "Bắt đầu hướng dẫn"
+        },
+        "tutorial": {
+            "section_title": "Hướng dẫn {section}",
+            "default_desc": "Nhấn để bắt đầu hướng dẫn",
+            "start": "Bắt đầu"
+        },
+        "general": {
+            "language": {
+                "title": "Ngôn ngữ",
+                "desc": "Chọn ngôn ngữ hiển thị cho giao diện"
+            },
+            "uiscale": {
+                "title": "Tỷ lệ thu phóng",
+                "desc": "Đặt tỷ lệ thu phóng tổng thể cho giao diện người dùng"
+            },
+            "avatar": {
+                "title": "Ảnh đại diện",
+                "desc": "Chọn ảnh đại diện",
+                "select": "Chọn ảnh",
+                "select_image_path": "Chọn đường dẫn hình ảnh..."
+            },
+            "mutesfx": {
+                "title": "Tắt âm thanh hiệu ứng",
+                "desc": "Tắt toàn bộ hiệu ứng âm thanh giao diện"
+            },
+            "sfxvolume": {
+                "title": "Âm lượng hiệu ứng",
+                "desc": "Điều chỉnh âm lượng hiệu ứng UI (không ảnh hưởng đến âm thanh ứng dụng)"
+            },
+            "quickactions": {
+                "title": "Nút tác vụ nổi",
+                "desc": "Bật các nút tác vụ nổi nhanh trên màn hình"
+            },
+            "location": {
+                "title": "Vị trí",
+                "desc": "Cấu hình vị trí để tự động tính chu kỳ mặt trời và thời tiết",
+                "popup_title": "Chi tiết vị trí",
+                "autodetect": "Tự động nhận diện",
+                "latitude": "Vĩ độ",
+                "longitude": "Kinh độ",
+                "apply": "Áp dụng"
+            },
+            "weatherinterval": {
+                "title": "Chu kỳ cập nhật thời tiết",
+                "desc": "Khoảng thời gian tự động làm mới dữ liệu thời tiết (phút)"
+            },
+            "weatherunit": {
+                "title": "Đơn vị nhiệt độ",
+                "desc": "Thang đo nhiệt độ hiển thị trên toàn hệ thống",
+                "celsius": "Độ C (°C)",
+                "fahrenheit": "Độ F (°F)",
+                "kelvin": "Độ K (Kelvin)"
+            },
+            "copysettings": {
+                "title": "Sao chép cài đặt",
+                "desc": "Sao chép nội dung cấu hình JSON vào bộ nhớ tạm",
+                "button": "Sao chép cài đặt"
+            }
+        },
+        "display": {
+            "bluelight": {
+                "title": "Lọc ánh sáng xanh",
+                "desc": "Bật/tắt chế độ ánh sáng ấm cho màn hình"
+            },
+            "enable": {
+                "title": "Kích hoạt màn hình này",
+                "desc": "Tắt tùy chọn này sẽ vô hiệu hóa màn hình tương ứng"
+            },
+            "schedule": {
+                "title": "Lịch trình tự động",
+                "desc": "Tự động điều chỉnh nhiệt độ màu theo thời gian mặt trời mọc/lặn"
+            },
+            "temperature": {
+                "title": "Nhiệt độ màu (Độ ấm)",
+                "desc": "Điều chỉnh cường độ ấm của ánh sáng màn hình"
+            },
+            "uiscale": {
+                "title": "Tỷ lệ UI",
+                "desc": "Đặt tỷ lệ thu phóng giao diện cho màn hình này"
+            },
+            "widgets": {
+                "title": "Tiện ích màn hình",
+                "desc": "Chỉnh sửa, kéo thả các tiện ích trên màn hình",
+                "open": "Mở chỉnh sửa"
+            }
+        },
+        "bar": {
+            "modules": {
+                "vis": "Trực quan hoá âm thanh (Cava)",
+                "actions": "Tác vụ",
+                "workspaces": "Không gian làm việc",
+                "media": "Trình phát nhạc",
+                "tray": "Khay hệ thống",
+                "keyboard": "Bàn phím",
+                "network": "Mạng Wi-Fi",
+                "bluetooth": "Bluetooth",
+                "volume": "Âm lượng",
+                "battery": "Pin",
+                "focus": "Tiêu điểm ứng dụng",
+                "sysmon": "Giám sát hệ thống",
+                "timedate": "Thời gian / Ngày",
+                "info": "Ghi âm / Hẹn giờ",
+                "weather": "Thời tiết"
+            },
+            "position": {
+                "title": "Vị trí thanh Bar",
+                "desc": "Vị trí đặt thanh bar trên màn hình",
+                "top": "Trên cùng",
+                "bottom": "Dưới cùng",
+                "left": "Bên trái",
+                "right": "Bên phải"
+            },
+            "width": {
+                "title": "Chiều rộng thanh Bar",
+                "desc": "Đặt độ rộng của thanh bar theo phần trăm (%)"
+            },
+            "workspaces": {
+                "title": "Chọn số lượng không gian làm việc hiển thị",
+                "desc": "Lưu ý: tùy chọn này không ảnh hưởng đến số lượng workspace thực tế trong compositor"
+            },
+            "opacity": {
+                "title": "Độ mờ / trong suốt",
+                "desc": "Mức độ trong suốt của nền thanh bar"
+            },
+            "style": {
+                "title": "Kiểu dáng thanh Bar",
+                "desc": "Chọn giữa kiểu thanh bar phân đoạn, liền khối hoặc phủ kín",
+                "modular": "Phân đoạn",
+                "solid": "Liền khối",
+                "fill": "Phủ kín"
+            },
+            "time": {
+                "title": "Định dạng thời gian",
+                "desc": "Chuỗi định dạng (ví dụ: HH:mm:ss hoặc hh:mm AP)"
+            },
+            "guide_button": {
+                "title": "Nút Cài đặt",
+                "desc": "Hiển thị nút mở Cài đặt trên thanh bar"
+            },
+            "autohide": {
+                "title": "Tự động ẩn",
+                "desc": "Ẩn thanh bar khi không rê chuột vào"
+            },
+            "timeout": {
+                "title": "Thời gian chờ tự ẩn",
+                "desc": "Độ trễ trước khi thanh bar tự động ẩn (mili-giây)"
+            },
+            "config": {
+                "title": "Bố cục & Vị trí các mô-đun thanh Bar",
+                "desc": "Nhấp chuột phải vào một mục để bắt đầu tạo nhóm, nhấp chuột phải vào mục khác để thêm vào nhóm. Nhấp chuột phải vào mục đã nhóm để bỏ nhóm.",
+                "reset": "Đặt lại",
+                "available": "Mô-đun khả dụng",
+                "left": "Bên trái",
+                "center": "Ở giữa",
+                "right": "Bên phải"
+            }
+        },
+        "theme": {
+            "font": "Phông chữ hệ thống",
+            "radius": {
+                "title": "Bo góc viền",
+                "desc": "Bán kính bo tròn góc cho các cửa sổ và thẻ giao diện"
+            },
+            "colors": {
+                "title": "Chủ đề màu sắc",
+                "desc": "Chọn bảng màu có sẵn hoặc tạo chủ đề màu tùy chỉnh.",
+                "search": "Tìm kiếm chủ đề màu..."
+            },
+            "delete_theme": "Xóa Theme",
+            "wallpaper": {
+                "title": "Thư mục hình nền",
+                "desc": "Thư mục tìm kiếm hình nền",
+                "select_dir": "Chọn thư mục...",
+                "select_wallpaper": "Chọn hình nền",
+                "no_wallpaper_selected": "Chưa chọn hình nền nào"
+            }
+        },
+        "file_picker": {
+            "title": "Chọn hình ảnh",
+            "input_placeholder": "Tìm kiếm tệp...",
+            "not_found": "Không tìm thấy tệp phù hợp",
+            "no_file_selected": "Chưa có tệp nào được chọn",
+            "root": "Thư mục gốc",
+            "places": {
+                "home": "Thư mục cá nhân",
+                "downloads": "Tệp tải về",
+                "pictures": "Hình ảnh"
+            }
+        },
+        "font_picker": {
+            "title": "Chọn phông chữ",
+            "input_placeholder": "Tìm kiếm phông chữ...",
+            "not_found": "Không tìm thấy phông chữ phù hợp",
+            "places": {
+                "user_fonts": "Phông chữ người dùng (~/.local/share/fonts)",
+                "system_fonts": "Phông chữ hệ thống (/usr/share/fonts)"
+            }
+        },
+        "sound_picker": {
+            "title": "Chọn âm thanh thông báo",
+            "no_sound_selected": "Chưa chọn âm thanh",
+            "places": {
+                "user_sounds": "Âm thanh người dùng (~/.local/share/sounds)",
+                "system_sounds": "Âm thanh hệ thống (/usr/share/sounds)"
+            }
+        },
+        "theme_editor": {
+            "title": "Tạo chủ đề màu mới",
+            "name_placeholder": "Tên chủ đề màu...",
+            "preview": "Xem trước",
+            "cancel": "Hủy bỏ",
+            "save": "Lưu chủ đề",
+            "default_name": "Chủ đề tùy chỉnh",
+            "colors": {
+                "base": "Base",
+                "mantle": "Mantle",
+                "crust": "Crust",
+                "text": "Text",
+                "sub0": "Sub0",
+                "sub1": "Sub1",
+                "surf0": "Surf0",
+                "surf1": "Surf1",
+                "surf2": "Surf2",
+                "over0": "Over0",
+                "over1": "Over1",
+                "over2": "Over2",
+                "blue": "Blue",
+                "lavender": "Lavender",
+                "sapphire": "Sapphire",
+                "sky": "Sky",
+                "teal": "Teal",
+                "green": "Green",
+                "yellow": "Yellow",
+                "peach": "Peach",
+                "maroon": "Maroon",
+                "red": "Red",
+                "mauve": "Mauve",
+                "pink": "Pink",
+                "flamingo": "Flamingo",
+                "rosewater": "Rosewater"
+            }
+        },
+        "wellbeing": {
+            "desktop": "Màn hình chính",
+            "not_available": "Không có",
+            "am": "SA",
+            "pm": "CH",
+            "today": "Hôm nay",
+            "week_overview": "Tổng quan tuần",
+            "daily_average": "Trung bình hàng ngày",
+            "no_data": "Chưa có dữ liệu",
+            "same_time": "Cùng thời điểm",
+            "daily_usage": "Thời lượng dùng trong ngày",
+            "peak_hours": "Khung giờ cao điểm",
+            "time_hm": "{h}h {m}m",
+            "time_m": "{m}m",
+            "months": {
+                "january": "Tháng Một",
+                "february": "Tháng Hai",
+                "march": "Tháng Ba",
+                "april": "Tháng Tư",
+                "may": "Tháng Năm",
+                "june": "Tháng Sáu",
+                "july": "Tháng Bảy",
+                "august": "Tháng Tám",
+                "september": "Tháng Chín",
+                "october": "Tháng Mười",
+                "november": "Tháng Mười Một",
+                "december": "Tháng Mười Hai"
+            },
+            "days": {
+                "monday": "Thứ Hai",
+                "tuesday": "Thứ Ba",
+                "wednesday": "Thứ Tư",
+                "thursday": "Thứ Năm",
+                "friday": "Thứ Sáu",
+                "saturday": "Thứ Bảy",
+                "sunday": "Chủ Nhật"
+            },
+            "settings": {
+                "title": "Cài đặt sức khỏe số",
+                "overall_limit": "Giới hạn sử dụng tổng thể hàng ngày",
+                "off": "Tắt",
+                "app_limits": "Giới hạn thời lượng ứng dụng",
+                "app_limits_desc": "Đặt thời gian sử dụng tối đa hàng ngày cho từng ứng dụng",
+                "excluded_apps": "Ứng dụng loại trừ",
+                "excluded_apps_desc": "Không tính các ứng dụng này vào theo dõi tổng thể"
+            }
+        },
+        "update_available": "Có bản cập nhật mới"
+    },
+    "sysnotif": {
+        "battery": {
+            "app_name": "Hệ thống",
+            "full_title": "Pin đã đầy",
+            "full_body": "Pin đã được sạc đầy (100%).",
+            "low_title": "Pin yếu",
+            "low_body": "Mức pin hiện tại là {pct}%. Vui lòng cắm sạc.",
+            "critical_title": "Pin cực kỳ yếu",
+            "critical_body": "Mức pin chỉ còn {pct}%. Hãy cắm sạc ngay lập tức."
+        }
+    },
+    "updater": {
+        "notification": {
+            "app_name": "Cập nhật",
+            "action_open_guide": "Mở Cài đặt",
+            "update_available_title": "Có bản cập nhật mới: v{remote}",
+            "update_available_body": "Phiên bản hiện tại: v{local}. Nhấn để xem lịch sử thay đổi và cập nhật."
+        }
+    },
+    "polkit": {
+        "title": "Yêu cầu xác thực quyền quản trị",
+        "default_message": "Một ứng dụng đang yêu cầu quyền quản trị viên.",
+        "default_description": "Cần xác thực để thực hiện hành động này dưới quyền quản trị.",
+        "password_placeholder": "Mật khẩu người dùng",
+        "error_failed": "Xác thực không thành công. Vui lòng thử lại."
+    },
+    "applauncher": {
+        "search": "Tìm kiếm",
+        "placeholder": "Tìm kiếm ứng dụng hoặc gõ lệnh > ..."
+    },
+    "calendar": {
+        "loading": "Đang tải...",
+        "loading_schedule": "Đang tải lịch trình...",
+        "no_events": "Không có sự kiện nào",
+        "open_web": "Mở trang web",
+        "weather": "Thời tiết",
+        "days": {
+            "mo": "T2",
+            "tu": "T3",
+            "we": "T4",
+            "th": "T5",
+            "fr": "T6",
+            "sa": "T7",
+            "su": "CN"
+        }
+    },
+    "clipboard": {
+        "search": "Tìm kiếm trong clipboard...",
+        "title": "Lịch sử Clipboard",
+        "clear": "Xóa toàn bộ",
+        "empty": "Lịch sử clipboard trống",
+        "recent": "Gần đây",
+        "pinned": "Đã ghim"
+    },
+    "lock": {
+        "status": {
+            "locked": "Đã khóa",
+            "access_denied": "Từ chối truy cập",
+            "authenticating": "Đang xác thực...",
+            "enter_pin": "Nhập mã PIN"
+        },
+        "power": {
+            "suspend": "Tạm dừng",
+            "reboot": "Khởi động lại",
+            "power_off": "Tắt máy"
+        },
+        "default_user": "Người dùng",
+        "unknown": "Không xác định"
+    },
+    "music": {
+        "nothing_playing": "Không có gì đang phát",
+        "loading": "Đang tải...",
+        "by_artist": "Bởi {artist}",
+        "unknown_artist": "Nghệ sĩ không xác định",
+        "speaker": "Loa",
+        "via_source": "Qua {source}",
+        "offline": "Ngoại tuyến",
+        "equalizer": "Bộ cân bằng âm",
+        "eq": {
+            "apply": "Áp dụng",
+            "saved": "Đã lưu"
+        },
+        "presets": {
+            "flat": "Bằng phẳng",
+            "bass": "Trầm",
+            "treble": "Cao",
+            "vocal": "Giọng hát",
+            "pop": "Pop",
+            "rock": "Rock",
+            "jazz": "Jazz",
+            "classic": "Cổ điển",
+            "custom": "Tùy chỉnh"
+        }
+    },
+    "network": {
+        "tabs": {
+            "ethernet": "Ethernet",
+            "wifi": "Wifi",
+            "bluetooth": "Bluetooth"
+        },
+        "status": {
+            "no_ip": "Chưa có IP",
+            "unknown": "Không rõ",
+            "calculating": "Đang tính toán...",
+            "open": "Mạng mở",
+            "current_device": "Thiết bị hiện tại",
+            "powering_on": "Đang bật...",
+            "powering_off": "Đang tắt...",
+            "disconnected": "Đã ngắt kết nối",
+            "disconnecting": "Đang ngắt kết nối...",
+            "hold": "Vui lòng đợi...",
+            "connected": "Đã kết nối"
+        },
+        "actions": {
+            "unpair": "Hủy ghép đôi",
+            "scan": "Quét tìm kiếm"
+        }
+    },
+    "notifications": {
+        "center": {
+            "reserved": "Dành cho các bản cập nhật tiếp theo"
+        },
+        "types": {
+            "default": {
+                "fallback_summary": "Thông báo",
+                "system": "Hệ thống",
+                "action": "Hành động"
+            },
+            "weather": {
+                "fallback_summary": "Báo cáo thời tiết",
+                "fallback_body": "Không có dữ liệu chi tiết."
+            },
+            "screenshot": {
+                "badge": "Ảnh chụp màn hình",
+                "fallback_summary": "Đã chụp màn hình",
+                "click_to_open": "Nhấn để mở thư mục ảnh chụp màn hình"
+            }
+        }
+    },
+    "quickactions": {
+        "systemusage": {
+            "cpu": "CPU",
+            "ram": "RAM",
+            "temp": "Nhiệt độ",
+            "disk": "Ổ đĩa",
+            "net": "Mạng"
+        },
+        "timer": "Đồng hồ bấm giờ"
+    },
+    "screenshot": {
+        "video_mode": "Nhấn ghi hình",
+        "select_region": "Chọn vùng cần chụp",
+        "no_microphones": "Không tìm thấy microphone",
+        "qr_timeout": "Hết thời gian chờ hoặc quét mã QR thất bại.",
+        "qr_not_found": "Không tìm thấy mã QR hợp lệ.",
+        "notifications": {
+            "screenshot_app_name": "Ảnh chụp màn hình",
+            "recorder_app_name": "Trình quay màn hình",
+            "system_app_name": "Hệ thống chụp ảnh",
+            "missing_deps_title": "Thiếu gói phần mềm phụ thuộc",
+            "missing_deps_body": "Không thể khởi động. Vui lòng cài đặt:\n{cmds}",
+            "open_folder": "Mở thư mục",
+            "recording_saved_title": "Đã lưu video quay màn hình",
+            "recording_saved_body": "Tệp: {file}\nThư mục: {folder}",
+            "recording_error_title": "Lỗi ghi hình",
+            "recording_error_body": "Không thể lưu tệp video quay màn hình.",
+            "recording_started_title": "Đã bắt đầu quay màn hình",
+            "recording_started_body": "Nhấn phím tắt chụp màn hình một lần nữa để kết thúc quay.",
+            "screenshot_saved_title": "Đã lưu ảnh chụp màn hình",
+            "screenshot_saved_body": "Tệp: {file}\nThư mục: {folder}"
+        }
+    },
+    "start": {
+        "title": "Serpantinum",
+        "made_by": "Được tạo bởi @{author}",
+        "welcome": "Chào mừng đến với Serpantinum",
+        "tagline": "Giao diện desktop shell dành riêng cho",
+        "you": "Bạn",
+        "start_preview": "Bắt đầu trải nghiệm"
+    },
+    "syspanel": {
+        "user": {
+            "default_name": "Người dùng",
+            "default_os": "Linux",
+            "logout": "Đăng xuất"
+        },
+        "notifications": {
+            "title": "Thông báo",
+            "clear": "Xóa tất cả",
+            "silent": "Im lặng",
+            "mute": "Tắt tiếng",
+            "empty": "Bạn đã xem hết mọi thông báo."
+        },
+        "profiles": {
+            "performance": "Hiệu năng cao",
+            "balanced": "Cân bằng",
+            "power_saver": "Tiết kiệm pin"
+        },
+        "battery": "Thời lượng pin",
+        "actions": {
+            "system_name": "Hệ thống",
+            "hibernate_error_title": "Chế độ ngủ đông không khả dụng",
+            "hibernate_error_body": "Hệ thống hiện chưa cấu hình vùng nhớ SWAP cho ngủ đông."
+        }
+    },
+    "volumepopup": {
+        "no_device": "Không có thiết bị âm thanh",
+        "mute": "Tắt tiếng",
+        "master_output_volume": "Âm lượng đầu ra chính",
+        "no_active_streams": "Không có ứng dụng nào đang phát âm thanh",
+        "active_default": "Mặc định đang hoạt động",
+        "tabs": {
+            "outputs": "Thiết bị phát",
+            "inputs": "Thiết bị thu",
+            "streams": "Ứng dụng"
+        }
+    },
+    "wallpaper": {
+        "notifications": {
+            "downloading": "Đang tải hình nền...",
+            "type_to_search": "Nhập nội dung để tìm kiếm...",
+            "search_paused": "Đã tạm dừng tìm kiếm",
+            "searching_ddg": "Đang tìm kiếm hình nền...",
+            "generating_thumbnails": "Đang tạo ảnh thu nhỏ...",
+            "no_wallpapers_found": "Không tìm thấy hình nền",
+            "videos": "Video",
+            "history": "Đã dùng gần đây"
+        },
+        "filters": {
+            "all": "Tất cả",
+            "vid": "Video",
+            "search": "Tìm kiếm",
+            "red": "Đỏ",
+            "orange": "Cam",
+            "yellow": "Vàng",
+            "green": "Xanh lá",
+            "blue": "Xanh dương",
+            "purple": "Tím",
+            "pink": "Hồng",
+            "monochrome": "Đơn sắc"
+        }
+    },
+    "weather": {
+        "desc": {
+            "sunny": "Trời nắng",
+            "clear": "Trời quang",
+            "cloudy": "Nhiều mây",
+            "mist": "Sương mù",
+            "rainy": "Có mưa",
+            "snow": "Có tuyết",
+            "storm": "Có bão giông",
+            "unknown": "Không rõ",
+            "offline": "Ngoại tuyến"
+        },
+        "days": {
+            "mon": "Th 2",
+            "tue": "Th 3",
+            "wed": "Th 4",
+            "thu": "Th 5",
+            "fri": "Th 6",
+            "sat": "Th 7",
+            "sun": "CN",
+            "monday": "Thứ Hai",
+            "tuesday": "Thứ Ba",
+            "wednesday": "Thứ Tư",
+            "thursday": "Thứ Năm",
+            "friday": "Thứ Sáu",
+            "saturday": "Thứ Bảy",
+            "sunday": "Chủ Nhật"
+        },
+        "months": {
+            "jan": "Thg 1",
+            "feb": "Thg 2",
+            "mar": "Thg 3",
+            "apr": "Thg 4",
+            "may": "Thg 5",
+            "jun": "Thg 6",
+            "jul": "Thg 7",
+            "aug": "Thg 8",
+            "sep": "Thg 9",
+            "oct": "Thg 10",
+            "nov": "Thg 11",
+            "dec": "Thg 12"
+        }
+    },
+    "widgets": {
+        "wallpaper": {
+            "name": "Chọn hình nền",
+            "desc": "Duyệt và đặt hình nền màn hình"
+        },
+        "network": {
+            "name": "Cài đặt mạng",
+            "desc": "Quản lý WiFi, ethernet và kết nối mạng"
+        },
+        "volume": {
+            "name": "Âm lượng & âm thanh",
+            "desc": "Quản lý thiết bị âm thanh và mức âm lượng"
+        },
+        "guide": {
+            "name": "Cài đặt",
+            "desc": "Cài đặt Serpantinum"
+        },
+        "calendar": {
+            "name": "Lịch & đồng hồ",
+            "desc": "Xem ngày, giờ và lịch trình"
+        },
+        "music": {
+            "name": "Trình phát media",
+            "desc": "Điều khiển phát nhạc và media"
+        },
+        "notifications": {
+            "name": "Trung tâm thông báo",
+            "desc": "Xem thông báo gần đây và lịch sử"
+        },
+        "system": {
+            "name": "Điều khiển hệ thống",
+            "desc": "Giám sát hiệu năng, nguồn điện và cài đặt nhanh"
+        },
+        "redactor": {
+            "no_widgets_active": "Không có tiện ích nào đang hoạt động",
+            "click_to_add": "Nhấp vào biểu tượng tiện ích trên thanh công cụ bên dưới để thêm",
+            "done": "Xong",
+            "widget_singular": "tiện ích",
+            "widgets_plural": "tiện ích"
+        },
+        "types": {
+            "clock": "Đồng hồ",
+            "music": "Âm nhạc",
+            "weather": "Thời tiết",
+            "image": "Hình ảnh"
+        },
+        "variants": {
+            "digital": "Điện tử",
+            "analog": "Kim",
+            "full": "Đầy đủ",
+            "minimal": "Tối giản",
+            "round": "Tròn",
+            "compact": "Gọn",
+            "rect": "Chữ nhật",
+            "rounded": "Bo góc"
+        }
+    },
+    "cli": {
+        "usage": "Cách dùng: serpantinum [lệnh] [tùy chọn...]",
+        "description": "Một desktop shell dành cho các trình quản lý cửa sổ Wayland.",
+        "commands": "Lệnh:",
+        "script_commands": "Lệnh script:",
+        "launch_desc": "Khởi chạy các thành phần độc lập (start, widgetredactor)",
+        "msg_desc": "Gửi lệnh hoặc chuyển không gian làm việc đến trình quản lý giao diện",
+        "ipc_desc": "Chuyển tiếp lệnh gọi IPC trực tiếp đến shell",
+        "kill_desc": "Dừng daemon đang chạy một cách an toàn",
+        "options": "Tùy chọn:",
+        "verbose_desc": "Bật ghi log chi tiết",
+        "version_desc": "Hiển thị thông tin phiên bản rồi thoát",
+        "help_desc": "Hiển thị thông báo trợ giúp này rồi thoát",
+        "examples": "Ví dụ:",
+        "daemon_stopped": "Daemon Serpantinum đã dừng.",
+        "starting_daemon": "Daemon chưa chạy. Đang khởi động serpantinumd ở chế độ nền...",
+        "error_missing_qml": "Lỗi: thiếu mục tiêu để khởi chạy.",
+        "launch_usage": "Cách dùng: serpantinum launch <start|widgetredactor> [tham số...]",
+        "error_qml_not_found": "Lỗi: không thể tìm thấy {NAME}.qml trong {DIR}",
+        "error_shell_qml_not_found": "Lỗi: không thể tìm thấy đường dẫn đến shell.qml trong {DIR}",
+        "error_unknown_command": "Lỗi: lệnh không xác định '{CMD}'.",
+        "error_unknown_target": "Lỗi: mục tiêu không xác định '{TARGET}'.",
+        "launch_help": {
+            "usage": "Cách dùng: serpantinum launch <start|widgetredactor> [tham số...]",
+            "description": "Khởi chạy trực tiếp các thành phần độc lập ở chế độ runner.",
+            "available_targets": "Mục tiêu khả dụng:",
+            "target_start": "Khởi chạy giao diện thiết lập ban đầu",
+            "target_widgetredactor": "Khởi chạy giao diện chỉnh sửa widget trên desktop"
+        },
+        "msg_help": {
+            "usage": "Cách dùng: serpantinum msg <lệnh|không gian làm việc> [tham số...]",
+            "description": "Gửi trực tiếp các thông điệp quản lý bố cục, không gian làm việc và cửa sổ.",
+            "available_commands": "Thông điệp khả dụng:",
+            "cmd_workspace": "Chuyển sang không gian làm việc <số> (thêm 'move' để gửi kèm cửa sổ đang hoạt động)",
+            "cmd_open": "Mở một bảng giao diện được quản lý (network, guide, wallpaper, applauncher)",
+            "cmd_toggle": "Bật/tắt một bảng giao diện được quản lý",
+            "cmd_close": "Đóng lớp phủ shell đang hoạt động"
+        },
+        "ipc_help": {
+            "usage": "Cách dùng: serpantinum ipc call <mục tiêu> <phương thức> [tham số...]",
+            "description": "Gửi trực tiếp một lệnh gọi IPC đến phiên bản quickshell đang chạy."
+        },
+        "scripts": {
+            "exit": "Kết thúc phiên đồ họa và thoát trình quản lý cửa sổ",
+            "lock": "Kích hoạt giao diện khóa màn hình",
+            "volume": "Điều khiển âm lượng và trạng thái tắt tiếng của thiết bị âm thanh mặc định",
+            "reload": "Buộc tải lại các thành phần desktop của quickshell",
+            "weather": "Lấy và quản lý dữ liệu dự báo thời tiết cùng bộ nhớ đệm",
+            "location": "Lấy và cập nhật tọa độ địa lý",
+            "screenshot": "Chụp ảnh màn hình, quay video, hoặc quét mã QR",
+            "brightness": "Điều chỉnh độ sáng màn hình",
+            "current_focus": "Theo dõi và ghi log thay đổi cửa sổ đang được focus",
+            "monitors_detect": "Truy vấn màn hình đang hoạt động và tần số quét",
+            "location_manual": "Đặt thủ công tọa độ địa lý và múi giờ",
+            "blue_light_filter": "Điều chỉnh nhiệt độ màu và lịch tự động ngày/đêm",
+            "translate": "Công cụ dịch nhanh văn bản và nội dung đã chọn"
+        }
+    },
+    "daemon": {
+        "already_running": "Daemon đã đang chạy. Đang thoát...",
+        "shutting_down": "Đang tắt daemon serpantinum...",
+        "launching": "Đang khởi chạy daemon serpantinum...",
+        "cli": {
+            "usage": "Cách dùng: serpantinumd <lệnh> [tùy chọn...]",
+            "description": "Daemon dịch vụ nền cho desktop shell serpantinum.",
+            "commands": "Lệnh:",
+            "cmd_start": "Khởi động dịch vụ daemon và chạy các worker nền",
+            "cmd_stop": "Dừng dịch vụ daemon đang chạy",
+            "cmd_status": "Kiểm tra trạng thái hoạt động của dịch vụ daemon",
+            "options": "Tùy chọn:",
+            "opt_verbose": "Bật ghi log chi tiết",
+            "opt_version": "Hiển thị thông tin phiên bản rồi thoát",
+            "opt_help": "Hiển thị thông báo trợ giúp này rồi thoát",
+            "stopped": "Daemon Serpantinum đã dừng.",
+            "status_running": "Daemon Serpantinum đang chạy (PID: {PID}).",
+            "status_stopped": "Daemon Serpantinum hiện không chạy.",
+            "unknown_arg": "Tham số không xác định: {ARG}"
+        }
+    },
+    "installer": {
+        "auth": {
+            "enter_code": "Nhập mã truy cập cài đặt: ",
+            "error_interactive": "Lỗi: Cần terminal tương tác để xác thực.",
+            "error_empty": "Xác thực thất bại: Mã truy cập không được để trống.",
+            "error_default": "Xác thực thất bại: Mã truy cập không hợp lệ hoặc đã hết lượt dùng.",
+            "error_failed": "Xác thực thất bại.",
+            "access_granted": "Đã cấp quyền truy cập. ({active}/{max} người dùng đã kích hoạt mã này)"
+        },
+        "os": {
+            "error_root": "Lỗi: Không được chạy script này trực tiếp với root/sudo. Hãy chạy với tài khoản người dùng bình thường.",
+            "error_unsupported": "Hệ điều hành không được hỗ trợ ({os}). Serpantinum chỉ hỗ trợ Arch Linux và các bản phái sinh.",
+            "error_not_found": "Không thể phát hiện hệ điều hành. Không tìm thấy /etc/os-release.",
+            "unknown_cpu": "CPU không xác định",
+            "unknown_gpu": "Máy ảo / không xác định",
+            "default_os": "Arch Linux"
+        },
+        "ui": {
+            "user": "Người dùng:",
+            "os": "Hệ điều hành:",
+            "cpu": "CPU:",
+            "gpu": "GPU:",
+            "target_version": "Phiên bản mục tiêu:",
+            "install_mode": "Chế độ cài đặt:",
+            "github": "GitHub:",
+            "twitter": "Twitter:",
+            "reddit": "Reddit:",
+            "telegram": "Telegram:",
+            "donate": "Ủng hộ:",
+            "donate_sub": "(Ủng hộ dự án!)",
+            "packages_prompt": " Gói> ",
+            "packages_header": " Nhấn Esc hoặc Enter để quay lại ",
+            "package_missing": "{pkg} (thiếu - sẽ được cài đặt)",
+            "package_installed": "{pkg} (đã cài đặt)",
+            "compositors_title": "=== Chọn compositors mục tiêu ===",
+            "installed": " (đã cài đặt)",
+            "not_installed": " (chưa cài đặt)",
+            "done": "Xong",
+            "compositors_prompt": " Cài đặt compositor > ",
+            "compositors_header": " Bật/tắt các compositor được hỗ trợ, sau đó chọn Done ",
+            "sddm_title": "=== Thiết lập display manager (SDDM) ===",
+            "sddm_detected_active": "Đã phát hiện display manager hoạt động/đã bật: {dm}",
+            "sddm_detected_none": "Đã phát hiện display manager hoạt động/đã bật: Không có",
+            "sddm_opt_install": "Cài đặt và cấu hình SDDM",
+            "sddm_opt_disable": "Xóa '{dm}'",
+            "sddm_opt_wayland": "Buộc sử dụng backend Wayland",
+            "sddm_prompt": " Thiết lập SDDM > ",
+            "sddm_header": " Bật/tắt các tùy chọn, sau đó chọn Done ",
+            "target_compositor_none": "Compositor mục tiêu [Bắt buộc - chưa chọn]",
+            "target_compositor_selected": "Compositor mục tiêu [{comps}]",
+            "target_compositor_req": "Compositor mục tiêu ({label}) [Bắt buộc]",
+            "target_compositor_label": "Compositor mục tiêu ({comps})",
+            "unsupported_compositor": "Compositor không được hỗ trợ",
+            "menu_overview": "Tổng quan cài đặt gói ({count} gói cơ bản)",
+            "menu_sddm": "Quản lý đăng nhập SDDM",
+            "menu_wallpapers": "Bộ hình nền",
+            "menu_telemetry": "Thu thập dữ liệu ẩn danh",
+            "menu_update": "Cập nhật",
+            "menu_reinstall": "Cài đặt lại",
+            "menu_install": "Cài đặt",
+            "menu_exit": "Thoát",
+            "main_menu_prompt": " Menu chính > ",
+            "main_menu_header": " Sử dụng phím mũi tên để di chuyển, Enter để chọn ",
+            "error_no_compositor": "Bạn phải chọn ít nhất một compositor được hỗ trợ trước khi tiếp tục.",
+            "tagline": "A desktop shell built for you",
+            "support_creator": "Ủng hộ người tạo:",
+            "buy_coffee": "Nếu bạn thích dự án này, hãy mua cho tôi một ly cà phê!",
+            "installed_success": "✔ Serpantinum {ver} ({commit}) đã được cài đặt thành công.",
+            "failed_packages": "Các gói sau đã gặp lỗi trong quá trình cài đặt:",
+            "restart_prompt": "Khởi động lại compositor hoặc chạy 'serpantinum start' để bắt đầu.",
+            "ask_reboot": "Bạn có muốn khởi động lại? [y/N] "
+        },
+        "deps": {
+            "syncing": "Đồng bộ hóa và cập nhật gói hệ thống (pacman -Syyu)...",
+            "all_installed": "-> Tất cả gói đã được cài đặt! Bỏ qua giai đoạn tải gói.",
+            "missing_count": "-> Tìm thấy {count} gói còn thiếu cần cài đặt.",
+            "installing_title": "Đang cài đặt gói hệ thống và các dependencies...",
+            "installing_pkg": "Đang cài đặt {pkg}...",
+            "install_ok": "Đã cài đặt thành công {pkg}",
+            "install_failed": "Không thể cài đặt {pkg}"
+        },
+        "deploy": {
+            "configuring_sddm": "Cấu hình display manager SDDM...",
+            "disabling_dm": "-> Vô hiệu hóa display manager xung đột: {dm}",
+            "sddm_success": "-> Đã cài theme SDDM Material You và kích hoạt dịch vụ [ OK ]"
+        }
+    },
+    "translator": {
+        "title": "Dịch",
+        "status_translating": "Dịch...",
+        "speed": "Tốc độ: ",
+        "detected": "Được phát hiện: ",
+        "input_label": "Văn bản nguồn",
+        "placeholder": "Nhập, dán hoặc nói văn bản tại đây...",
+        "chars": "Ký tự",
+        "translation_label": "Dịch",
+        "empty_prompt": "Dịch sẽ xuất hiện ngay tại đây...",
+        "recent": "Gần đây:",
+        "failed": "Không có bản dịch",
+        "quick_settings": "Cài đặt thay thế nhanh",
+        "replace_settings_title": "Thay thế văn bản được chọn",
+        "replace_settings_desc": "Dịch văn bản đã chọn và thay thế tại chỗ",
+        "auto_paste": "Tự động dán văn bản đã dịch",
+        "auto_paste_sub": "Nếu tắt — bản dịch chỉ được sao chép vào clipboard",
+        "keep_clipboard": "Giữ bản dịch trong clipboard",
+        "keep_clipboard_sub": "Nếu tắt — nội dung clipboard ban đầu sẽ được khôi phục sau khi dán"
+    }
+}
