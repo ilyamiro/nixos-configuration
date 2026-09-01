@@ -5,6 +5,8 @@ import QtQuick.Shapes
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Io
+import Quickshell.Bluetooth
+import Quickshell.Networking
 import Quickshell.Services.Pipewire
 import "../reusables"
 import "../"
@@ -36,10 +38,33 @@ PanelWindow {
     readonly property color briColor: Qt.lighter(ThemeBackend.mauve, 1.1)
     readonly property color volColor: Qt.lighter(ThemeBackend.sapphire, 1.5)
     readonly property color micColor: Qt.lighter(ThemeBackend.mauve, 1.3)
+    readonly property color capsColor: Qt.lighter(ThemeBackend.peach, 1.2)
+    readonly property color numColor: Qt.lighter(ThemeBackend.sapphire, 1.4)
+    readonly property color airColor: Qt.lighter(ThemeBackend.red, 1.2)
 
     property bool isVisible: OsdController.isVisible
     property string kind: OsdController.kind
     property int briVal: OsdController.briVal
+    property string stateVal: OsdController.stateVal
+
+    readonly property bool isToggleKind: kind === "capslock" || kind === "numlock" || kind === "airplane"
+    readonly property bool isToggleActive: stateVal === "on" || stateVal === "true" || stateVal === "1"
+
+    readonly property color toggleActiveColor: {
+        if (kind === "capslock") return capsColor;
+        if (kind === "numlock") return numColor;
+        if (kind === "airplane") return airColor;
+        return ThemeBackend.mauve;
+    }
+
+    readonly property string toggleTitle: {
+        if (kind === "capslock") return "Caps Lock";
+        if (kind === "numlock") return "Num Lock";
+        if (kind === "airplane") return "Airplane Mode";
+        return "";
+    }
+
+    readonly property string toggleStatus: isToggleActive ? "ON" : "OFF"
 
     readonly property PwNode activeSink: Audio.defaultSink || (Audio.outputs && Audio.outputs.length > 0 ? Audio.outputs[0] : null)
     readonly property int volVal: activeSink && activeSink.audio ? Math.round(activeSink.audio.volume * 100) : 0
@@ -560,6 +585,12 @@ PanelWindow {
                             return osdWindow.isMuted || osdWindow.volVal === 0 ? "󰖁" : (osdWindow.volVal > 50 ? "󰕾" : "󰖀");
                         } else if (osdWindow.kind === "mic") {
                             return osdWindow.isMicMuted || osdWindow.micVal === 0 ? "󰍭" : "󰍬";
+                        } else if (osdWindow.kind === "capslock") {
+                            return osdWindow.isToggleActive ? "󰬈" : "󰌾";
+                        } else if (osdWindow.kind === "numlock") {
+                            return osdWindow.isToggleActive ? "󰎠" : "󰌾";
+                        } else if (osdWindow.kind === "airplane") {
+                            return "󰀝";
                         } else {
                             return osdWindow.briVal > 66 ? "󰃠" : (osdWindow.briVal > 33 ? "󰃟" : "󰃞");
                         }
@@ -572,6 +603,8 @@ PanelWindow {
                             return osdWindow.isMuted ? ThemeBackend.overlay0 : osdWindow.volColor;
                         } else if (osdWindow.kind === "mic") {
                             return osdWindow.isMicMuted ? ThemeBackend.overlay0 : osdWindow.micColor;
+                        } else if (osdWindow.isToggleKind) {
+                            return osdWindow.isToggleActive ? osdWindow.toggleActiveColor : ThemeBackend.overlay0;
                         } else {
                             return osdWindow.briColor;
                         }
@@ -586,7 +619,15 @@ PanelWindow {
                             if (osdWindow.activeSource) {
                                 Audio.toggleMute(osdWindow.activeSource);
                             }
-                        } else {
+                        } else if (osdWindow.kind === "airplane") {
+                            if (osdWindow.isToggleActive) {
+                                Networking.wifiEnabled = true;
+                                if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = true;
+                            } else {
+                                Networking.wifiEnabled = false;
+                                if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = false;
+                            }
+                        } else if (osdWindow.kind === "brightness") {
                             briCmdThrottle.stop();
                             briCmdThrottle.targetPct = -1;
                             let target = osdWindow.briVal > 0 ? 0 : 100;
@@ -596,8 +637,29 @@ PanelWindow {
                     }
                 }
 
+                Rectangle {
+                    visible: osdWindow.isToggleKind
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.preferredWidth: osdWindow.s(28)
+                    Layout.preferredHeight: osdWindow.s(22)
+                    radius: osdWindow.s(6)
+                    color: osdWindow.isToggleActive ? Qt.rgba(osdWindow.toggleActiveColor.r, osdWindow.toggleActiveColor.g, osdWindow.toggleActiveColor.b, 0.2) : ThemeBackend.surface1
+                    border.width: 1
+                    border.color: osdWindow.isToggleActive ? osdWindow.toggleActiveColor : "transparent"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: osdWindow.toggleStatus
+                        font.family: ThemeBackend.fontFamily
+                        font.pixelSize: osdWindow.s(10)
+                        font.bold: true
+                        color: osdWindow.isToggleActive ? osdWindow.toggleActiveColor : ThemeBackend.overlay0
+                    }
+                }
+
                 Draggable {
                     id: verticalSlider
+                    visible: !osdWindow.isToggleKind
                     vertical: true
                     Layout.fillHeight: true
                     Layout.preferredWidth: osdWindow.s(16)
@@ -676,6 +738,12 @@ PanelWindow {
                                 return osdWindow.isMuted || osdWindow.volVal === 0 ? "󰖁" : (osdWindow.volVal > 50 ? "󰕾" : "󰖀");
                             } else if (osdWindow.kind === "mic") {
                                 return osdWindow.isMicMuted || osdWindow.micVal === 0 ? "󰍭" : "󰍬";
+                            } else if (osdWindow.kind === "capslock") {
+                                return osdWindow.isToggleActive ? "󰬈" : "󰌾";
+                            } else if (osdWindow.kind === "numlock") {
+                                return osdWindow.isToggleActive ? "󰎠" : "󰌾";
+                            } else if (osdWindow.kind === "airplane") {
+                                return "󰀝";
                             } else {
                                 return osdWindow.briVal > 66 ? "󰃠" : (osdWindow.briVal > 33 ? "󰃟" : "󰃞");
                             }
@@ -688,6 +756,8 @@ PanelWindow {
                                 return osdWindow.isMuted ? ThemeBackend.overlay0 : osdWindow.volColor;
                             } else if (osdWindow.kind === "mic") {
                                 return osdWindow.isMicMuted ? ThemeBackend.overlay0 : osdWindow.micColor;
+                            } else if (osdWindow.isToggleKind) {
+                                return osdWindow.isToggleActive ? osdWindow.toggleActiveColor : ThemeBackend.overlay0;
                             } else {
                                 return osdWindow.briColor;
                             }
@@ -702,13 +772,61 @@ PanelWindow {
                                 if (osdWindow.activeSource) {
                                     Audio.toggleMute(osdWindow.activeSource);
                                 }
-                            } else {
+                            } else if (osdWindow.kind === "airplane") {
+                                if (osdWindow.isToggleActive) {
+                                    Networking.wifiEnabled = true;
+                                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = true;
+                                } else {
+                                    Networking.wifiEnabled = false;
+                                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = false;
+                                }
+                            } else if (osdWindow.kind === "brightness") {
                                 briCmdThrottle.stop();
                                 briCmdThrottle.targetPct = -1;
                                 let target = osdWindow.briVal > 0 ? 0 : 100;
                                 OsdController.briVal = target;
                                 Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", target.toString()]);
                             }
+                        }
+                    }
+                }
+
+                RowLayout {
+                    visible: osdWindow.isToggleKind
+                    anchors.left: parent.left
+                    anchors.leftMargin: osdWindow.s(58)
+                    anchors.right: parent.right
+                    anchors.rightMargin: osdWindow.s(16)
+                    anchors.verticalCenter: parent.verticalCenter
+                    opacity: Math.max(0.0, Math.min(1.0, (osdContainer.animProgress - 0.2) / 0.8))
+                    spacing: osdWindow.s(8)
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: osdWindow.toggleTitle
+                        font.family: ThemeBackend.fontFamily
+                        font.pixelSize: osdWindow.s(14)
+                        font.bold: true
+                        color: ThemeBackend.text
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        Layout.preferredHeight: osdWindow.s(24)
+                        Layout.preferredWidth: statusLabel.implicitWidth + osdWindow.s(18)
+                        radius: osdWindow.s(6)
+                        color: osdWindow.isToggleActive ? Qt.rgba(osdWindow.toggleActiveColor.r, osdWindow.toggleActiveColor.g, osdWindow.toggleActiveColor.b, 0.2) : ThemeBackend.surface1
+                        border.width: 1
+                        border.color: osdWindow.isToggleActive ? osdWindow.toggleActiveColor : "transparent"
+
+                        Text {
+                            id: statusLabel
+                            anchors.centerIn: parent
+                            text: osdWindow.toggleStatus
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: osdWindow.s(11)
+                            font.bold: true
+                            color: osdWindow.isToggleActive ? osdWindow.toggleActiveColor : ThemeBackend.overlay0
                         }
                     }
                 }
@@ -721,7 +839,7 @@ PanelWindow {
                     anchors.leftMargin: osdWindow.s(58)
                     anchors.verticalCenter: parent.verticalCenter
                     opacity: Math.max(0.0, Math.min(1.0, (osdContainer.animProgress - 0.2) / 0.8))
-                    visible: opacity > 0.01
+                    visible: !osdWindow.isToggleKind && opacity > 0.01
 
                     from: 0.0
                     to: 100.0

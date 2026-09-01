@@ -5,6 +5,8 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import Quickshell.Bluetooth
+import Quickshell.Networking
 import "WindowRegistry.js" as Registry
 import "notifications" as Notifs
 
@@ -69,6 +71,18 @@ PanelWindow {
                 } else {
                     LauncherController.hide();
                     ClipboardController.toggle();
+                }
+                return;
+            }
+
+            if (cmd === "airplane" || targetWidget === "airplane" || cmd === "flight" || targetWidget === "flight") {
+                let isAirplane = !Networking.wifiEnabled && !(Bluetooth.defaultAdapter && Bluetooth.defaultAdapter.enabled);
+                if (isAirplane) {
+                    Networking.wifiEnabled = true;
+                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = true;
+                } else {
+                    Networking.wifiEnabled = false;
+                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = false;
                 }
                 return;
             }
