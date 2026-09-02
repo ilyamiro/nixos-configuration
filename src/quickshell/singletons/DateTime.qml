@@ -59,7 +59,7 @@ Item {
     readonly property string second: secondFormat !== "" ? Qt.formatDateTime(now, secondFormat) : ""
     readonly property string amPm: amPmFormat !== "" ? Qt.formatDateTime(now, amPmFormat) : ""
 
-    readonly property string fullDate: Qt.formatDateTime(now, "dddd, MMMM dd")
+    readonly property string fullDate: now.toLocaleDateString(Qt.locale(I18n.currentLang), "dddd, MMMM dd")
     readonly property string shortDate: Qt.formatDateTime(now, "d MMM")
     readonly property string dateBadge: Qt.formatDateTime(now, "d MMM").toUpperCase()
     readonly property string day: Qt.formatDateTime(now, "dd")
