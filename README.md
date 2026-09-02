@@ -27,7 +27,7 @@
 For Arch-based distributions (including systemd, OpenRC, and other init systems), run the automated installation script:
 
 ```bash
-bash -c "$(curl -fsSL [https://raw.githubusercontent.com/ilyamiro/serpantinum/master/install/install.sh](https://raw.githubusercontent.com/ilyamiro/serpantinum/master/install/install.sh))"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ilyamiro/serpantinum/master/install/install.sh)"
 
 ```
 
