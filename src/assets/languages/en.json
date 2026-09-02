@@ -231,7 +231,7 @@
       },
       "schedule": {
         "title": "Automated schedule",
-        "desc": "Adjust color temperature automatically based on sunset and sunrise"
+        "desc": "Adjust color temperature automatically based on sunset and sunrise in"
       },
       "temperature": {
         "title": "Color temperature",

@@ -1,3 +1,30 @@
+### 2.0.6
+
+- fix: make bluelight correctly and immidiatly follow the automated schedule. Add a city description
+- add FUNDING.yml
+- fix: blue_light_filter auto-location improved and fixed, also creating a flock for a single wl-gammarelay-rs instance
+- feat(osd): add microphone OSD support and volume controls (#201)
+- style: tune down the scale effect on hover for musicwdiget to prevent the thumbnail from sticking out on the left
+- fix: loop property canExpand in quickshell
+- style: change the volume of the whoosh sound in the MusicPopup equalizer
+- feat: BlueLight singleton to ensure that bluelight applies on shell startup
+- fix: stale thumbnails in the music player due to asynchronious loading
+- fix: serpantinum --version flag to display version correctly on nix
+- fix: make sure focus_daemon.py doesn't self-duplicate on reload and doesn't inflate the usage time
+- feat: change the default icon in grouped notificatoins in the NotificationBox to use the icon of the grouped notifications that it contains
+- fix(nix): add a ... to declare rev from flake.nix
+- fix: return the expand functionality for the clipboard
+- feat(i18n): add vietnamese translation
+- fix: fix the FontAwesome icons being loaded in the widget redactor and making all of the icon glyps offset to the side
+- fix: Weather location doesn't expire after 24h if manually set and doesn't get overwrriten on generaltab changes. fixes #195
+- Fix switch.qml option text being outside of bounds on some translations
+- docs: add autostart instructions for nix and the instructions on how to update for nixos
+- fix(nix): make the version file help the Updater.qml display the correct version for about tab in the settings
+- fix(i18n): fix the translation having a wrong key for widget tab
+- fix: reroute lockscreen calls from systemctl to scripts that fix non-working buttons for niri or systems not on systemd
+- nix: update the lockfile
+- feat: add DDC brightness fallback (#193)
+
 ### 2.0.5
 
 - fix: crucial bug where people couldn't use the config

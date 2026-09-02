@@ -44,6 +44,161 @@ Item {
     property string pendingMonScaleName: ""
     property real pendingMonScaleVal: 1.0
 
+    readonly property string detectedCity: {
+        if (typeof Location !== "undefined" && Location.city && Location.city !== "Unknown") {
+            return Location.city;
+        }
+        let genSet = Config.getSetting("general", {});
+        if (genSet && genSet.location && genSet.location.city && genSet.location.city !== "Unknown") {
+            return genSet.location.city;
+        }
+        return "";
+    }
+
+    readonly property real detectedLat: {
+        if (typeof Location !== "undefined" && Location.latitude !== undefined && Location.latitude !== 0) {
+            return Location.latitude;
+        }
+        let genSet = Config.getSetting("general", {});
+        if (genSet && genSet.location && genSet.location.latitude !== undefined) {
+            return Number(genSet.location.latitude);
+        }
+        return 0;
+    }
+
+    readonly property real detectedLon: {
+        if (typeof Location !== "undefined" && Location.longitude !== undefined && Location.longitude !== 0) {
+            return Location.longitude;
+        }
+        let genSet = Config.getSetting("general", {});
+        if (genSet && genSet.location && genSet.location.longitude !== undefined) {
+            return Number(genSet.location.longitude);
+        }
+        return 0;
+    }
+
+    readonly property bool is24Hour: {
+        if (typeof DateTime !== "undefined") {
+            if (typeof DateTime.is24Hour === "boolean") return DateTime.is24Hour;
+            if (typeof DateTime.use24Hour === "boolean") return DateTime.use24Hour;
+            if (typeof DateTime.clock24 === "boolean") return DateTime.clock24;
+            if (typeof DateTime.clock24h === "boolean") return DateTime.clock24h;
+            if (DateTime.timeOnly && typeof DateTime.timeOnly === "string") {
+                return !/am|pm/i.test(DateTime.timeOnly);
+            }
+            if (DateTime.time && typeof DateTime.time === "string") {
+                return !/am|pm/i.test(DateTime.time);
+            }
+        }
+        let dtSet = Config.getSetting("datetime", {});
+        if (typeof dtSet.clock24 === "boolean") return dtSet.clock24;
+        if (typeof dtSet.clock24h === "boolean") return dtSet.clock24h;
+        if (typeof dtSet.use24Hour === "boolean") return dtSet.use24Hour;
+        if (typeof dtSet.is24Hour === "boolean") return dtSet.is24Hour;
+        let genSet = Config.getSetting("general", {});
+        if (typeof genSet.clock24 === "boolean") return genSet.clock24;
+        if (typeof genSet.clock24h === "boolean") return genSet.clock24h;
+        if (typeof genSet.use24Hour === "boolean") return genSet.use24Hour;
+        if (typeof genSet.is24Hour === "boolean") return genSet.is24Hour;
+        return true;
+    }
+
+    function formatTime(date) {
+        if (!date || isNaN(date.getTime())) return "";
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let minStr = minutes < 10 ? "0" + minutes : minutes.toString();
+        if (displayTabRoot.is24Hour) {
+            let hrStr = hours < 10 ? "0" + hours : hours.toString();
+            return hrStr + ":" + minStr;
+        } else {
+            let ampm = hours >= 12 ? "PM" : "AM";
+            let h12 = hours % 12;
+            if (h12 === 0) h12 = 12;
+            return h12 + ":" + minStr + " " + ampm;
+        }
+    }
+
+    function calculateSunTimes(lat, lon, date) {
+        if (!date) date = new Date();
+        let latNum = Number(lat) || 0;
+        let lonNum = Number(lon) || 0;
+
+        if (latNum === 0 && lonNum === 0) {
+            let sr = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0);
+            let ss = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 19, 0, 0);
+            return { sunrise: sr, sunset: ss };
+        }
+
+        let rad = Math.PI / 180.0;
+        let deg = 180.0 / Math.PI;
+
+        let year = date.getFullYear();
+        let month = date.getMonth();
+        let day = date.getDate();
+
+        let noonUtc = Date.UTC(year, month, day, 12, 0, 0);
+        let d = (noonUtc - 946728000000) / 86400000;
+
+        let M = (357.529 + 0.98560028 * d) % 360;
+        if (M < 0) M += 360;
+
+        let L = (280.459 + 0.98564736 * d) % 360;
+        if (L < 0) L += 360;
+
+        let lambda = (L + 1.915 * Math.sin(M * rad) + 0.020 * Math.sin(2 * M * rad)) % 360;
+        if (lambda < 0) lambda += 360;
+
+        let eps = 23.439 - 0.00000036 * d;
+
+        let sinDec = Math.sin(eps * rad) * Math.sin(lambda * rad);
+        let cosDec = Math.sqrt(Math.max(0, 1 - sinDec * sinDec));
+
+        let alt0 = -0.833 * rad;
+        let latRad = latNum * rad;
+
+        let cosH = (Math.sin(alt0) - Math.sin(latRad) * sinDec) / (Math.cos(latRad) * cosDec);
+        if (cosH > 1 || cosH < -1) {
+            return null;
+        }
+
+        let H0 = Math.acos(cosH) * deg;
+
+        let RA = Math.atan2(Math.cos(eps * rad) * Math.sin(lambda * rad), Math.cos(lambda * rad)) * deg;
+        RA = (RA % 360 + 360) % 360;
+
+        let GMST = (280.46061837 + 360.98564736629 * d) % 360;
+        if (GMST < 0) GMST += 360;
+
+        let noonDiff = (RA - GMST - lonNum) % 360;
+        if (noonDiff > 180) noonDiff -= 360;
+        if (noonDiff < -180) noonDiff += 360;
+
+        let solarNoonUtcHours = 12.0 + (noonDiff / 15.0);
+
+        let sunriseUtcHours = solarNoonUtcHours - (H0 / 15.0);
+        let sunsetUtcHours = solarNoonUtcHours + (H0 / 15.0);
+
+        let sunriseDate = new Date(Date.UTC(year, month, day, 0, 0, 0) + Math.round(sunriseUtcHours * 3600 * 1000));
+        let sunsetDate = new Date(Date.UTC(year, month, day, 0, 0, 0) + Math.round(sunsetUtcHours * 3600 * 1000));
+
+        return { sunrise: sunriseDate, sunset: sunsetDate };
+    }
+
+    readonly property string scheduleDescription: {
+        let city = displayTabRoot.detectedCity;
+        let lat = displayTabRoot.detectedLat;
+        let lon = displayTabRoot.detectedLon;
+        let sun = displayTabRoot.calculateSunTimes(lat, lon, new Date());
+        let timeRange = "";
+        if (sun && sun.sunrise && sun.sunset) {
+            timeRange = displayTabRoot.formatTime(sun.sunrise) + " - " + displayTabRoot.formatTime(sun.sunset);
+        }
+        let place = city ? city : "location";
+        let target = timeRange !== "" ? (place + " (" + timeRange + ")") : place;
+        return target;
+    }
+
     function refreshDisplaySettings() {
         displayTabRoot.displaySettings = JSON.parse(JSON.stringify(Config.getSetting("display", displayTabRoot.defaultDisplaySettings)));
     }
@@ -94,7 +249,6 @@ Item {
         if (!validList || validList.length === 0) return 1.0;
         let best = validList[0];
         let bestDiff = Math.abs(validList[0] - target);
-
         for (let i = 1; i < validList.length; i++) {
             let diff = Math.abs(validList[i] - target);
             if (diff < bestDiff) {
@@ -102,7 +256,6 @@ Item {
                 bestDiff = diff;
             }
         }
-
         return best;
     }
 
@@ -123,10 +276,8 @@ Item {
                 let out = this.text;
                 if (!out) return;
                 let mList = [];
-
                 try {
                     let data = JSON.parse(out.trim());
-
                     if (displayTabRoot.compositor === "niri") {
                         let keys = Object.keys(data);
                         for (let i = 0; i < keys.length; i++) {
@@ -140,7 +291,6 @@ Item {
                             let rr = m.refresh_rate ? Math.round(m.refresh_rate / 1000) : 60;
                             let sc = item.scale !== undefined ? item.scale : 1.0;
                             let isOff = item.active === false || item.is_active === false || (modes.length > 0 && (item.current_mode === null || item.current_mode === undefined));
-
                             mList.push({
                                 name: k,
                                 dimensions: w + "x" + h,
@@ -160,7 +310,6 @@ Item {
                                 let rr = cm.refresh ? Math.round(cm.refresh / 1000) : 60;
                                 let sc = item.scale !== undefined ? item.scale : 1.0;
                                 let isOff = item.active === false;
-
                                 mList.push({
                                     name: name,
                                     dimensions: w + "x" + h,
@@ -180,7 +329,6 @@ Item {
                                 let rr = item.refreshRate ? Math.round(item.refreshRate) : 60;
                                 let sc = item.scale !== undefined ? item.scale : 1.0;
                                 let isOff = item.disabled === true;
-
                                 mList.push({
                                     name: name,
                                     dimensions: w + "x" + h,
@@ -193,11 +341,9 @@ Item {
                     }
                 } catch (e) {
                 }
-
                 if (mList.length > 0) {
                     displayTabRoot.monitorsList = mList;
                     displayTabRoot.refreshDisplaySettings();
-                    BlueLight.applyAll();
                 }
             }
         }
@@ -210,6 +356,21 @@ Item {
 
     function updateMonitorSetting(monName, key, value) {
         if (!monName) return;
+        if (key === "enabled") {
+            BlueLight.setEnabled(monName, value);
+            displayTabRoot.refreshDisplaySettings();
+            return;
+        }
+        if (key === "auto") {
+            BlueLight.setAuto(monName, value);
+            displayTabRoot.refreshDisplaySettings();
+            return;
+        }
+        if (key === "temperature") {
+            BlueLight.setTemperature(monName, value);
+            displayTabRoot.refreshDisplaySettings();
+            return;
+        }
 
         let current = Config.getSetting("display", defaultDisplaySettings);
         if (!current.monitors) current.monitors = {};
@@ -218,15 +379,10 @@ Item {
         current.monitors[monName][key] = value;
         Config.setSetting("display", current);
         displayTabRoot.displaySettings = JSON.parse(JSON.stringify(current));
-
-        if (key === "enabled" || key === "auto" || key === "temperature") {
-            BlueLight.applyForMonitor(monName);
-        }
     }
 
     function applyMonitorPower(monName, enabled) {
         if (!monName) return;
-
         if (displayTabRoot.compositor === "niri") {
             Quickshell.execDetached(["bash", "-c", enabled ? "niri msg output " + monName + " on" : "niri msg output " + monName + " off"]);
         } else if (displayTabRoot.compositor === "sway") {
@@ -235,7 +391,6 @@ Item {
             let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
             let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";
             let scaleVal = mon ? mon.scale : 1.0;
-
             if (enabled) {
                 let luaCmd =
                     'hl.monitor({' +
@@ -245,12 +400,10 @@ Item {
                     ' scale = ' + scaleVal.toString() + ',' +
                     ' disabled = false' +
                     ' })';
-
                 Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "'"]);
             } else {
                 let luaCmd =
                     'hl.monitor({ output = "' + monName + '", disabled = true })';
-
                 Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "'"]);
             }
         }
@@ -258,7 +411,6 @@ Item {
 
     function applyMonitorScale(monName, scaleVal) {
         if (!monName || !scaleVal) return;
-
         if (displayTabRoot.compositor === "niri") {
             Quickshell.execDetached(["bash", "-c", "niri msg output " + monName + " scale " + scaleVal.toString()]);
         } else if (displayTabRoot.compositor === "sway") {
@@ -267,7 +419,6 @@ Item {
             let mon = displayTabRoot.monitorsList.find(m => m.name === monName);
             let modeStr = mon ? (mon.dimensions + "@" + mon.framerate) : "preferred";
             let luaCmd = 'hl.monitor({ output = "' + monName + '", mode = "' + modeStr + '", position = "auto", scale = ' + scaleVal.toString() + ' })';
-
             Quickshell.execDetached(["bash", "-c", "hyprctl eval '" + luaCmd + "' || hyprctl keyword monitor " + monName + "," + modeStr + ",auto," + scaleVal.toString()]);
         }
     }
@@ -281,19 +432,25 @@ Item {
     function flushMonitorSetting(monName) {
         tempDebounceTimer.stop();
         if (pendingMonName === monName) {
-            updateMonitorSetting(monName, "temperature", pendingMonTemp);
+            let name = pendingMonName;
+            let val = pendingMonTemp;
             pendingMonName = "";
+            BlueLight.setTemperature(name, val);
+            displayTabRoot.refreshDisplaySettings();
         }
     }
 
     Timer {
         id: tempDebounceTimer
-        interval: 40
+        interval: 100
         repeat: false
         onTriggered: {
             if (displayTabRoot.pendingMonName !== "") {
-                displayTabRoot.updateMonitorSetting(displayTabRoot.pendingMonName, "temperature", displayTabRoot.pendingMonTemp);
+                let name = displayTabRoot.pendingMonName;
+                let val = displayTabRoot.pendingMonTemp;
                 displayTabRoot.pendingMonName = "";
+                BlueLight.setTemperature(name, val);
+                displayTabRoot.refreshDisplaySettings();
             }
         }
     }
@@ -351,7 +508,13 @@ Item {
         target: Config
         function onSettingsLoaded() {
             displayTabRoot.refreshDisplaySettings();
-            BlueLight.applyAll();
+        }
+    }
+
+    Connections {
+        target: typeof Location !== "undefined" ? Location : null
+        function onLocationUpdated() {
+            displayTabRoot.refreshDisplaySettings();
         }
     }
 
@@ -425,7 +588,6 @@ Item {
                     property int monWidth: parseInt(resDims[0]) || 1920
                     property int monHeight: parseInt(resDims[1]) || 1080
                     property var validScales: displayTabRoot.validScalesForResolution(monWidth, monHeight)
-
                     readonly property int currentScaleIndex: {
                         let i = validScales.indexOf(currentScale);
                         if (i >= 0) return i;
@@ -440,7 +602,7 @@ Item {
                         }
                         filterEnabled = monSettings.enabled !== undefined ? monSettings.enabled : false;
                         filterAuto = monSettings.auto !== undefined ? monSettings.auto : false;
-                        if (displayTabRoot.pendingMonName !== monName) {
+                        if (displayTabRoot.pendingMonName !== monName && !temperatureSlider.pressed) {
                             currentTemp = monSettings.temperature !== undefined ? monSettings.temperature : 50;
                         }
                     }
@@ -594,7 +756,8 @@ Item {
                                     handleOffColor: ThemeBackend.text
                                     onToggled: function(c) {
                                         monDelegate.filterEnabled = c;
-                                        displayTabRoot.updateMonitorSetting(monDelegate.monName, "enabled", c);
+                                        BlueLight.setEnabled(monDelegate.monName, c);
+                                        displayTabRoot.refreshDisplaySettings();
                                     }
 
                                     Binding {
@@ -659,7 +822,7 @@ Item {
                                             }
 
                                             Text {
-                                                text: I18n.t("guide.display.schedule.desc")
+                                                text: I18n.t("guide.display.schedule.desc") + " " + displayTabRoot.scheduleDescription
                                                 font.family: ThemeBackend.fontFamily
                                                 font.pixelSize: rootObj.s(11)
                                                 color: ThemeBackend.subtext0
@@ -676,7 +839,8 @@ Item {
                                             handleOffColor: ThemeBackend.text
                                             onToggled: function(c) {
                                                 monDelegate.filterAuto = c;
-                                                displayTabRoot.updateMonitorSetting(monDelegate.monName, "auto", c);
+                                                BlueLight.setAuto(monDelegate.monName, c);
+                                                displayTabRoot.refreshDisplaySettings();
                                             }
 
                                             Binding {
@@ -691,7 +855,7 @@ Item {
                                 Item {
                                     id: tempSectionWrapper
                                     Layout.fillWidth: true
-                                    property bool isOpen: true
+                                    property bool isOpen: !monDelegate.filterAuto
                                     clip: true
                                     visible: implicitHeight > 0
                                     opacity: isOpen ? 1.0 : 0.0
@@ -734,9 +898,7 @@ Item {
                                                     spacing: rootObj.s(2)
 
                                                     Text {
-                                                        text: monDelegate.filterAuto
-                                                            ? I18n.t("guide.display.temperature.nightTitle", "Night Temperature Target")
-                                                            : I18n.t("guide.display.temperature.title")
+                                                        text: I18n.t("guide.display.temperature.title")
                                                         font.family: ThemeBackend.fontFamily
                                                         font.pixelSize: rootObj.s(13)
                                                         color: ThemeBackend.text
