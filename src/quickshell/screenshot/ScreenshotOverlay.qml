@@ -1502,6 +1502,7 @@ PanelWindow {
     function executeCapture(openEditor, isRecord) {
         let cmd = `bash ${Caching.serpantinumDir}/scripts/screenshot.sh --geometry "${root.geometryString}"`;
         if (isRecord) {
+            if (root.targetMonitorName !== "") cmd += ` --monitor "${root.targetMonitorName}"`;
             cmd += " --record";
             cmd += ` --backend "${root.videoBackend}"`;
             cmd += ` --desk-vol ${root.deskVol} --desk-mute ${root.deskMute}`;
