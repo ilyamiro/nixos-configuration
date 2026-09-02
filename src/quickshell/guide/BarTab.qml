@@ -207,6 +207,7 @@ Item {
             "tray": I18n.t("guide.bar.modules.tray"),
             "sysmon": I18n.t("guide.bar.modules.sysmon"),
             "kb": I18n.t("guide.bar.modules.keyboard"),
+            "vpn": I18n.t("guide.bar.modules.vpn"),
             "wifi": I18n.t("guide.bar.modules.network"),
             "bt": I18n.t("guide.bar.modules.bluetooth"),
             "vol": I18n.t("guide.bar.modules.volume"),
@@ -224,6 +225,7 @@ Item {
             "tray": "󱊞",
             "sysmon": "󰍛",
             "kb": "󰌌",
+            "vpn": "󰦝",
             "wifi": "󰤨",
             "bt": "󰂲",
             "vol": "󰕾",
@@ -241,6 +243,7 @@ Item {
             "tray": ThemeBackend.yellow,
             "sysmon": ThemeBackend.mauve,
             "kb": ThemeBackend.text,
+            "vpn": ThemeBackend.teal,
             "wifi": ThemeBackend.blue,
             "bt": ThemeBackend.mauve,
             "vol": ThemeBackend.peach,
@@ -352,7 +355,7 @@ Item {
         add(c, centerModel);
         add(r, rightModel);
 
-        let allKeys = ["left", "workspaces", "focus", "timedate", "info", "weather", "media", "vis", "tray", "sysmon", "kb", "wifi", "bt", "vol", "bat"];
+        let allKeys = ["left", "workspaces", "focus", "timedate", "info", "weather", "media", "vis", "tray", "sysmon", "kb", "vpn", "wifi", "bt", "vol", "bat"];
         for (let i = 0; i < allKeys.length; i++) {
             if (!used[allKeys[i]]) availableModel.append(getModuleInfo(allKeys[i]));
         }

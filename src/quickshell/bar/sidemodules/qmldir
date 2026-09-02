@@ -3,6 +3,7 @@ SideFocusWidget 1.0 SideFocusWidget.qml
 SideMediaWidget 1.0 SideMediaWidget.qml
 SideTopWidget 1.0 SideTopWidget.qml
 SideTrayWidget 1.0 SideTrayWidget.qml
+SideVpnWidget 1.0 SideVpnWidget.qml
 SideTimeDateWidget 1.0 SideTimeDateWidget.qml
 SideInfoWidget 1.0 SideInfoWidget.qml
 SideWeatherWidget 1.0 SideWeatherWidget.qml

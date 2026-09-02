@@ -47,6 +47,7 @@ Item {
         { id: "Theme", key: "theme", name: "Theme", icon: "✦", file: "theme/ThemeTab.qml" },
         { id: "Notifications", key: "notifications", name: "Notifications", icon: "󰂚", file: "notifications/NotificationsTab.qml" },
         { id: "Idle", key: "idle", name: "Idle", icon: "󰒲", file: "IdleTab.qml" },
+        { id: "Vpn", key: "vpn", name: "VPN", icon: "󰦝", file: "VpnTab.qml" },
         { id: "Wellbeing", key: "wellbeing", name: "Wellbeing", icon: "󰄉", file: "wellbeing/DigitalWellbeingTab.qml" },
         { id: "About", key: "about", name: "About", icon: "", file: "AboutTab.qml" }
     ]

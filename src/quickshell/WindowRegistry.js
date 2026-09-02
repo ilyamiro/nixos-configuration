@@ -26,6 +26,13 @@ function getWidgetLauncherEntries(i18n) {
             fontIcon: "󰸉"
         },
         {
+            id: "vpn",
+            name: tr("widgets.vpn.name", "VPN"),
+            description: tr("widgets.vpn.desc", "Tunnel state, nodes and latency"),
+            icon: "network-vpn",
+            fontIcon: "\uf099d"
+        },
+        {
             id: "network",
             name: tr("widgets.network.name", "Network Settings"),
             description: tr("widgets.network.desc", "Manage WiFi, Ethernet, and network connections"),
@@ -75,6 +82,15 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
     if (!barPosition) barPosition = "top";
 
     let base = {
+        "vpn": {
+            w: 620, h: 660, comp: "vpn/VpnPopup.qml",
+            pos: {
+                "top": { anchor: "top-right", mt: 52, mr: 4 },
+                "bottom": { anchor: "bottom-right", mb: 52, mr: 4 },
+                "left": { anchor: "bottom-left", ml: 52, mb: 4 },
+                "right": { anchor: "bottom-right", mr: 52, mb: 4 }
+            }
+        },
         "network": { 
             w: 720, h: 600, comp: "network/NetworkPopup.qml", 
             pos: { 

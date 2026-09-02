@@ -37,7 +37,8 @@
       "update": "Update",
       "about": "About",
       "display_widgets": "Widgets",
-      "display_general": "General"
+      "display_general": "General",
+      "vpn": "VPN"
     },
     "launcher": {
       "position": {
@@ -263,7 +264,8 @@
         "sysmon": "System monitor",
         "timedate": "Time/date",
         "info": "Recording/timer",
-        "weather": "Weather"
+        "weather": "Weather",
+        "vpn": "VPN"
       },
       "position": {
         "title": "Bar position",
@@ -455,7 +457,34 @@
         "excluded_apps_desc": "Exclude apps from overall tracking going forward"
       }
     },
-    "update_available": "Update available"
+    "update_available": "Update available",
+    "vpn": {
+      "doc_title": "What this panel talks to",
+      "doc_body": "It controls a proxy core that is already running — mihomo, clash-meta, clash-verge, FlClash, anything speaking the same RESTful API. It lists the groups in your config, measures each node, and switches between them. Point it at the address from your config's external-controller, and at its secret if you set one.",
+      "doc_scope": "What it does not do: fetch subscriptions, parse share links, or write configs. That belongs to whatever tool you already use for it, and the panel deliberately stays out of the way — it only ever asks the controller questions. The command settings below are optional; leave them empty and the panel simply does not offer those buttons.",
+      "status_up": "Controller answering at {url} · {groups} groups",
+      "status_down": "Nothing answering at {url}",
+      "recheck": "Recheck",
+      "unset": "not set",
+      "controller": "Controller address",
+      "controller_desc": "The external-controller value from your core's config.",
+      "secret": "Controller secret",
+      "secret_desc": "Sent as a bearer token. Leave empty when the controller is unauthenticated on loopback, which is the usual case.",
+      "primary_group": "Primary group",
+      "primary_group_desc": "The group the panel opens on and the bar reports. PROXY on most configs.",
+      "start_command": "Start command",
+      "start_command_desc": "Optional. Run by the start button, for example: systemctl --user start mihomo. Empty hides the button.",
+      "stop_command": "Stop command",
+      "stop_command_desc": "Optional. Run by the stop button.",
+      "profiles_dir": "Profiles directory",
+      "profiles_dir_desc": "Optional. Config files here are listed in the panel, and picking one asks the controller to load it. Nothing is downloaded or written.",
+      "tun_device": "TUN interface",
+      "tun_device_desc": "Optional. When set, the panel warns if this interface has acquired a DNS server — with a core that hijacks DNS itself, that usually means names have stopped resolving.",
+      "egress_url": "Exit check URL",
+      "egress_url_desc": "Requested when you press Exit, to see which address traffic comes out of. That third party sees the request.",
+      "reset_on_switch": "Close connections when switching",
+      "reset_on_switch_desc": "Established connections keep using the node they were opened on, so without this a switch looks like it did nothing."
+    }
   },
   "sysnotif": {
     "battery": {
@@ -844,6 +873,10 @@
       "compact": "Compact",
       "rect": "Rect",
       "rounded": "Rounded"
+    },
+    "vpn": {
+      "name": "VPN",
+      "desc": "Tunnel state, nodes and latency"
     }
   },
   "cli": {
@@ -1034,5 +1067,34 @@
   },
   "datetime": {
     "full_date": "dddd, MMMM dd"
+  },
+  "vpn": {
+    "state_on": "Connected",
+    "state_off": "Not connected",
+    "mode_is": "Mode: {mode}",
+    "controller_at": "Controller: {url}",
+    "dns_hijacked": "{device} has picked up a DNS server, so names may stop resolving through the tunnel",
+    "start": "Start",
+    "stop": "Stop",
+    "working": "Working...",
+    "probe": "Measure",
+    "probing": "Measuring",
+    "exit": "Exit",
+    "exit_checking_short": "Checking",
+    "mode_rule": "Rules",
+    "mode_global": "Global",
+    "mode_direct": "Direct",
+    "no_nodes_yet": "The controller has not returned any groups yet",
+    "no_controller": "Nothing is answering at {url}. Check the address in the VPN settings.",
+    "profiles": "Profiles",
+    "no_profiles": "No .yaml or .yml files in {dir}",
+    "delay_ms": "{ms} ms",
+    "delay_failed": "failed",
+    "core_says": "Core: {message}",
+    "exit_checking": "Checking where traffic comes out...",
+    "exit_unchecked": "Exit not checked",
+    "exit_is": "Exit: {where}",
+    "chip_on": "On",
+    "chip_off": "Off"
   }
 }

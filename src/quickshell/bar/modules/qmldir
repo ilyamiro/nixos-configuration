@@ -3,6 +3,7 @@ FocusWidget 1.0 FocusWidget.qml
 MediaWidget 1.0 MediaWidget.qml 
 LeftWidget 1.0 LeftWidget.qml
 TrayWidget 1.0 TrayWidget.qml
+VpnWidget 1.0 VpnWidget.qml
 WorkspacesWidget 1.0 WorkspacesWidget.qml
 InfoWidget 1.0 InfoWidget.qml
 TimeDateWidget 1.0 TimeDateWidget.qml 

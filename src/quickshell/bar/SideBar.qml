@@ -201,6 +201,7 @@ Item {
     property real hTray: isModuleActive("tray") ? (trayWidget.targetHeight !== undefined ? trayWidget.targetHeight : trayWidget.height) : 0
     property real hSysmon: isModuleActive("sysmon") ? (sysMonWidget.targetHeight !== undefined ? sysMonWidget.targetHeight : sysMonWidget.height) : 0
     property real hKb: isModuleActive("kb") ? (kbWidget.targetHeight !== undefined ? kbWidget.targetHeight : kbWidget.height) : 0
+    property real hVpn: isModuleActive("vpn") ? (vpnWidget.targetHeight !== undefined ? vpnWidget.targetHeight : vpnWidget.height) : 0
     property real hWifi: isModuleActive("wifi") ? (wifiWidget.targetHeight !== undefined ? wifiWidget.targetHeight : wifiWidget.height) : 0
     property real hBt: isModuleActive("bt") ? (btWidget.targetHeight !== undefined ? btWidget.targetHeight : btWidget.height) : 0
     property real hVol: isModuleActive("vol") ? (volWidget.targetHeight !== undefined ? volWidget.targetHeight : volWidget.height) : 0
@@ -218,6 +219,7 @@ Item {
         if (moduleId === "tray") return hTray;
         if (moduleId === "sysmon") return hSysmon;
         if (moduleId === "kb") return hKb;
+        if (moduleId === "vpn") return hVpn;
         if (moduleId === "wifi") return hWifi;
         if (moduleId === "bt") return hBt;
         if (moduleId === "vol") return hVol;
@@ -397,6 +399,7 @@ Item {
         if (id === "tray") return trayWidget;
         if (id === "sysmon") return sysMonWidget;
         if (id === "kb") return kbWidget;
+        if (id === "vpn") return vpnWidget;
         if (id === "wifi") return wifiWidget;
         if (id === "bt") return btWidget;
         if (id === "vol") return volWidget;
@@ -420,6 +423,7 @@ Item {
         else if (widgetName === "tray") return trayWidget;
         else if (widgetName === "sysmon") return sysMonWidget;
         else if (widgetName === "kb") return kbWidget.kbPill ? kbWidget.kbPill : kbWidget;
+        else if (widgetName === "vpn") return vpnWidget.vpnPill ? vpnWidget.vpnPill : vpnWidget;
         else if (widgetName === "wifi") return wifiWidget.wifiPill ? wifiWidget.wifiPill : wifiWidget;
         else if (widgetName === "bt") return btWidget.btPill ? btWidget.btPill : btWidget;
         else if (widgetName === "volume" || widgetName === "vol") return volWidget.volPill ? volWidget.volPill : volWidget;
@@ -821,6 +825,28 @@ Item {
         }
     }
 
+    SideVpnWidget {
+        id: vpnWidget
+        z: 1
+        x: barWindow && barWindow.barPosition === "right" ? (parent.width - width) : 0
+        y: targetY
+        visible: contentWrapper.isModuleActive("vpn")
+        barWindow: contentWrapper.barWindow
+        isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        moduleActive: contentWrapper.isModuleActive("vpn")
+        isGrouped: contentWrapper.isModuleGrouped("vpn")
+        targetY: contentWrapper.getModuleY("vpn", contentWrapper.layoutState)
+
+        Behavior on opacity {
+            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        }
+
+        Behavior on y {
+            enabled: contentWrapper.layoutAnimationsEnabled
+            NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+        }
+    }
+
     SideWifiWidget {
         id: wifiWidget
         z: 1
@@ -912,13 +938,14 @@ Item {
     Item {
         id: systemWidget
         property alias kbPill: kbWidget.kbPill
+        property alias vpnPill: vpnWidget.vpnPill
         property alias wifiPill: wifiWidget.wifiPill
         property alias btPill: btWidget.btPill
         property alias volPill: volWidget.volPill
         property alias batPill: batWidget.batPill
 
         function getBounds() {
-            let pills = [sysMonWidget, kbWidget, wifiWidget, btWidget, volWidget, batWidget];
+            let pills = [sysMonWidget, kbWidget, vpnWidget, wifiWidget, btWidget, volWidget, batWidget];
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             let found = false;
             for (let i = 0; i < pills.length; i++) {
