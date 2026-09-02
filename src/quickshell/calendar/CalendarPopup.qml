@@ -387,7 +387,7 @@ Item {
         let isRealCurrentMonth = (actualToday.getMonth() === targetMonth && actualToday.getFullYear() === targetYear);
         let todayDate = actualToday.getDate();
 
-        window.targetMonthName = Qt.formatDateTime(d, "MMMM yyyy");
+        window.targetMonthName = d.toLocaleDateString(Qt.locale(I18n.currentLang), "MMMM yyyy");
 
         let firstDay = new Date(targetYear, targetMonth, 1).getDay();
         firstDay = (firstDay === 0) ? 6 : firstDay - 1;
