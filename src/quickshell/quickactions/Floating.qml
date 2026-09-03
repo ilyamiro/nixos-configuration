@@ -119,35 +119,48 @@ Variants {
 
             property int tabCount: Math.max(1, tabModules.length)
 
-            IpcHandler {
-                target: "floating"
+            Connections {
+                target: FloatingController
 
-                function setIndex(idx: string) {
-                    let newIdx = parseInt(idx);
-                    if (!isNaN(newIdx) && newIdx >= 0 && newIdx < floatingWidget.tabCount) {
-                        floatingWidget.activeIndex = newIdx;
+                function onSetIndexRequested(screen, index) {
+                    if (floatingWidget.matchesScreen(screen)) {
+                        floatingWidget.setIndex(index);
                     }
                 }
 
-                function showSystemUsage() {
-                    let sysIndex = 1;
-                    for (let i = 0; i < floatingWidget.tabModules.length; i++) {
-                        if (floatingWidget.tabModules[i].indexOf("SystemUsage") !== -1) {
-                            sysIndex = i;
-                            break;
-                        }
+                function onShowSystemUsageRequested(screen) {
+                    if (floatingWidget.matchesScreen(screen)) {
+                        floatingWidget.showSystemUsage();
                     }
-                    floatingWidget.activeIndex = sysIndex;
-                    let sideEdge = (floatingWidget.barPosition === "left") ? "right" : "left";
-                    let centerPos = floatingWidget.height / 2;
-                    floatingWidget.useGraceTimer = true;
-                    floatingWidget.showSidebar(sideEdge, centerPos, true);
-                    hideTimer.restart();
                 }
+            }
 
-                function forceReload() {
-                    Quickshell.reload(true)
+            function matchesScreen(targetScreen) {
+                return targetScreen && floatingWidget.screen
+                    && (targetScreen === floatingWidget.screen || targetScreen.name === floatingWidget.screen.name);
+            }
+
+            function setIndex(index) {
+                let newIndex = parseInt(index);
+                if (!isNaN(newIndex) && newIndex >= 0 && newIndex < floatingWidget.tabCount) {
+                    floatingWidget.activeIndex = newIndex;
                 }
+            }
+
+            function showSystemUsage() {
+                let sysIndex = 1;
+                for (let i = 0; i < floatingWidget.tabModules.length; i++) {
+                    if (floatingWidget.tabModules[i].indexOf("SystemUsage") !== -1) {
+                        sysIndex = i;
+                        break;
+                    }
+                }
+                floatingWidget.activeIndex = sysIndex;
+                let sideEdge = (floatingWidget.barPosition === "left") ? "right" : "left";
+                let centerPos = floatingWidget.height / 2;
+                floatingWidget.useGraceTimer = true;
+                floatingWidget.showSidebar(sideEdge, centerPos, true);
+                hideTimer.restart();
             }
 
             function childIntercepts(sequenceStr) {

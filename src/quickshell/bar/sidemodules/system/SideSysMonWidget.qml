@@ -238,7 +238,7 @@ Rectangle {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            Quickshell.execDetached(["quickshell", "-p", Caching.mainQml, "ipc", "call", "floating", "showSystemUsage"]);
+            FloatingController.showSystemUsage(sideSysMonRoot.barWindow ? sideSysMonRoot.barWindow.screen : null);
         }
     }
 }
