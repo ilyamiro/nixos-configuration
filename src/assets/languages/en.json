@@ -534,7 +534,8 @@
       "locked": "Locked",
       "access_denied": "Access denied",
       "authenticating": "Authenticating...",
-      "enter_pin": "Enter PIN"
+      "enter_pin": "Enter PIN",
+      "fingerprint_retry": "Fingerprint not recognized, try again"
     },
     "power": {
       "suspend": "Suspend",
