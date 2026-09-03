@@ -533,7 +533,8 @@
       "locked": "Bloccato",
       "access_denied": "Accesso negato",
       "authenticating": "Autenticazione...",
-      "enter_pin": "Inserisci il PIN"
+      "enter_pin": "Inserisci il PIN",
+      "fingerprint_retry": "Impronta non riconosciuta, riprova"
     },
     "power": {
       "suspend": "Sospendi",

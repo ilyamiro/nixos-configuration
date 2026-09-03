@@ -534,7 +534,8 @@
       "locked": "Կողպված է",
       "access_denied": "Մուտքը մերժված է",
       "authenticating": "Նույնականացում...",
-      "enter_pin": "Մուտքագրեք PIN-ը"
+      "enter_pin": "Մուտքագրեք PIN-ը",
+      "fingerprint_retry": "Մատնահետքը չի ճանաչվել, փորձեք կրկին"
     },
     "power": {
       "suspend": "Քնեցնել",
