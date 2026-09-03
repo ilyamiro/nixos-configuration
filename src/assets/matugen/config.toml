@@ -16,3 +16,7 @@ output_path = "~/.config/kitty/colors.conf"
 [templates.cava]
 input_path = "templates/cava-colors.ini.template"
 output_path = "~/.config/cava/config"
+
+[templates.hyprland]
+input_path = "templates/hyprland-colors.lua.template"
+output_path = "~/.config/hypr/config/matugen-colors.lua"
