@@ -294,6 +294,7 @@ Item {
                         if (app === "weather") return "weather";
                         if (app === "screenshot" || app === "screen recorder") return "screenshot";
                         if (app === "update" || app === "updater" || app === "serpantinum updater") return "update";
+                        if (app === "battery" || app === "bat" || app === "power") return "battery";
                         return "default";
                     }
 
@@ -434,6 +435,7 @@ Item {
                             if (app === "weather") return "../notifications/types/Weather.qml";
                             if (app === "screenshot" || app === "screen recorder") return "../notifications/types/Screenshot.qml";
                             if (app === "update" || app === "updater" || app === "serpantinum updater") return "../notifications/types/Update.qml";
+                            if (app === "battery" || app === "bat" || app === "power") return "../notifications/types/Battery.qml";
                             return "../notifications/types/Default.qml";
                         }
                         onLoaded: {
@@ -672,6 +674,15 @@ Item {
                                                     font.family: ThemeBackend.fontFamily
                                                     font.pixelSize: root.s(22)
                                                     color: ThemeBackend.green
+                                                }
+
+                                                Text {
+                                                    anchors.centerIn: parent
+                                                    visible: groupWrapper.customType === "battery"
+                                                    text: "󰁹"
+                                                    font.family: "Iosevka Nerd Font"
+                                                    font.pixelSize: root.s(22)
+                                                    color: ThemeBackend.teal
                                                 }
 
                                                 Image {
@@ -914,10 +925,11 @@ Item {
                                                 source: {
                                                     if (!memberData) return "";
                                                     let appn = memberData.appName || displayName || "";
-                                                    let app = appn.toLowerCase().trim();
+                                                    let app = (appn || "").toLowerCase().trim();
                                                     if (app === "weather") return "../notifications/types/Weather.qml";
                                                     if (app === "screenshot" || app === "screen recorder") return "../notifications/types/Screenshot.qml";
                                                     if (app === "update" || app === "updater" || app === "serpantinum updater") return "../notifications/types/Update.qml";
+                                                    if (app === "battery" || app === "bat" || app === "power") return "../notifications/types/Battery.qml";
                                                     return "../notifications/types/Default.qml";
                                                 }
 

@@ -42,15 +42,18 @@ Item {
     readonly property color profileColor: Qt.lighter(ThemeBackend.blue, 1.55)
     readonly property int batCapacity: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
 
-    readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
+    readonly property bool isCharging: !isDesktop && UPower.displayDevice.ready && (
+        UPower.displayDevice.state === UPowerDeviceState.Charging ||
+        UPower.displayDevice.state === UPowerDeviceState.FullyCharged
+    )
 
     readonly property string batStatus: {
-        if (!UPower.displayDevice.ready) return "Unknown";
+        if (isDesktop || !UPower.displayDevice.ready) return "Unknown";
         switch (UPower.displayDevice.state) {
             case UPowerDeviceState.FullyCharged: return "Fully Charged";
             case UPowerDeviceState.Charging: return "Charging";
             case UPowerDeviceState.Discharging: return "Discharging";
-            default: return "Unknown";
+            default: return "Not Charging";
         }
     }
 

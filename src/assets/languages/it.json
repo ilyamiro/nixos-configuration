@@ -464,7 +464,9 @@
       "low_title": "Batteria scarica",
       "low_body": "La batteria è al {pct}%. Si prega di caricare il dispositivo.",
       "critical_title": "Livello batteria critico!",
-      "critical_body": "La batteria è al {pct}%. Carica immediatamente il dispositivo."
+      "critical_body": "La batteria è al {pct}%. Carica immediatamente il dispositivo.",
+      "emergency_title": "Spegnimento imminente",
+      "emergency_body": "La batteria è al {pct}%. Il sistema si spegnerà a breve!"
     }
   },
   "updater": {

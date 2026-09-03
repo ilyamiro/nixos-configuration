@@ -21,8 +21,17 @@ Rectangle {
     readonly property int batCap: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
     readonly property string batPercent: batCap + "%"
 
-    readonly property string batStatus: UPower.displayDevice.ready ? (UPower.displayDevice.state === UPowerDeviceState.FullyCharged ? "Full" : (UPower.displayDevice.state === UPowerDeviceState.Charging ? "Charging" : "Unknown")) : "Unknown"
-    readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
+    readonly property bool isCharging: !isDesktop && UPower.displayDevice.ready && (
+        UPower.displayDevice.state === UPowerDeviceState.Charging ||
+        UPower.displayDevice.state === UPowerDeviceState.FullyCharged
+    )
+    readonly property string batStatus: {
+        if (isDesktop || !UPower.displayDevice.ready) return "Unknown";
+        if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged) return "Full";
+        if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "Charging";
+        if (UPower.displayDevice.state === UPowerDeviceState.Discharging) return "Discharging";
+        return "Not charging";
+    }
     readonly property string batIcon: isDesktop ? "󰐥" : (isCharging ? "󰂄" : (batCap > 20 ? "󰁹" : "󰂃"))
 
     property color batDynamicColor: {

@@ -509,7 +509,9 @@
       "low_title": "Batería baja",
       "low_body": "El nivel de batería está al {pct}%. Conecta el cargador.",
       "critical_title": "Batería crítica",
-      "critical_body": "El nivel de batería está al {pct}%. Conecta el cargador inmediatamente."
+      "critical_body": "El nivel de batería está al {pct}%. Conecta el cargador inmediatamente.",
+      "emergency_title": "Apagado inminente",
+      "emergency_body": "El nivel de batería está al {pct}%. ¡El sistema se apagará pronto!"
     }
   },
   "updater": {

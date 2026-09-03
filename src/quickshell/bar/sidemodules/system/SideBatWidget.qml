@@ -20,7 +20,10 @@ Rectangle {
 
     property bool isDesktop: UPower.displayDevice.ready ? !UPower.displayDevice.isLaptopBattery : SystemInfo.isDesktop
     readonly property int batCap: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
-    readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
+    readonly property bool isCharging: !isDesktop && UPower.displayDevice.ready && (
+        UPower.displayDevice.state === UPowerDeviceState.Charging ||
+        UPower.displayDevice.state === UPowerDeviceState.FullyCharged
+    )
     readonly property string batIcon: isDesktop ? "󰐥" : (isCharging ? "󰂄" : (batCap > 20 ? "󰁹" : "󰂃"))
 
     x: barWindow ? barWindow.baseOffsetX : 0

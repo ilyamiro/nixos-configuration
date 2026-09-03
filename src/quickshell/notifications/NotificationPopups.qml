@@ -250,6 +250,7 @@ PanelWindow {
                         let app = (model.appName || "").toLowerCase();
                         if (app === "weather") return "types/Weather.qml";
                         if (app === "screenshot" || app === "screen recorder") return "types/Screenshot.qml";
+                        if (app === "battery" || app === "bat" || app === "power") return "types/Battery.qml";
                         return "types/Default.qml";
                     }
                     onLoaded: {

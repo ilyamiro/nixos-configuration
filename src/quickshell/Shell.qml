@@ -45,5 +45,6 @@ ShellRoot {
 
     Component.onCompleted: {
         FirstLaunch.checkFirstLaunch();
+        SysNotif.init();
     }
 }

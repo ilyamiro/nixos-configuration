@@ -465,7 +465,9 @@
       "low_title": "Battery low",
       "low_body": "Battery level is at {pct}%. Please connect your charger.",
       "critical_title": "Battery critical",
-      "critical_body": "Battery level is at {pct}%. Connect your charger immediately."
+      "critical_body": "Battery level is at {pct}%. Connect your charger immediately.",
+      "emergency_title": "Battery imminent shutdown",
+      "emergency_body": "Battery level is at {pct}%. System will shut down soon!"
     }
   },
   "updater": {

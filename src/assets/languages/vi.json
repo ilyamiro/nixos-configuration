@@ -465,7 +465,9 @@
       "low_title": "Pin yếu",
       "low_body": "Mức pin còn {pct}%. Vui lòng kết nối bộ sạc.",
       "critical_title": "Pin cạn kiệt",
-      "critical_body": "Mức pin còn {pct}%. Hãy cắm sạc ngay lập tức."
+      "critical_body": "Mức pin còn {pct}%. Hãy cắm sạc ngay lập tức.",
+      "emergency_title": "Hệ thống sắp tắt nguồn",
+      "emergency_body": "Mức pin còn {pct}%. Hệ thống sẽ sớm tắt nguồn!"
     }
   },
   "updater": {
