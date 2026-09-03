@@ -649,6 +649,7 @@ Scope {
                     property real mainOpacity: 1.0
 
                     property bool isSysSubscribed: false
+                    property bool isCavaSubscribed: false
                     function updateSysSubscription() {
                         if (screenRoot.wingsReveal > 0.98 && !isSysSubscribed) {
                             SysData.subscribe();
@@ -660,10 +661,13 @@ Scope {
                     }
 
                     function updateCavaConsumer() {
-                        if (screenRoot.wingsReveal > 0.98) {
+                        let shouldSubscribe = screenRoot.wingsReveal > 0.98;
+                        if (shouldSubscribe && !screenRoot.isCavaSubscribed) {
                             Cava.registerConsumer();
-                        } else {
+                            screenRoot.isCavaSubscribed = true;
+                        } else if (!shouldSubscribe && screenRoot.isCavaSubscribed) {
                             Cava.unregisterConsumer();
+                            screenRoot.isCavaSubscribed = false;
                         }
                     }
 
@@ -966,7 +970,10 @@ Scope {
                     }
 
                     Component.onDestruction: {
-                        Cava.unregisterConsumer();
+                        if (screenRoot.isCavaSubscribed) {
+                            Cava.unregisterConsumer();
+                            screenRoot.isCavaSubscribed = false;
+                        }
                         if (isSysSubscribed) {
                             SysData.unsubscribe();
                             isSysSubscribed = false;
