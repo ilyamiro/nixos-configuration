@@ -219,6 +219,10 @@
         "title": "Sao chép cài đặt",
         "desc": "Sao chép JSON cấu hình vào bộ nhớ tạm",
         "button": "Sao chép cài đặt"
+      },
+      "screenshot_on_release": {
+        "title": "Chụp vùng khi thả chuột",
+        "desc": "Chụp ảnh màn hình ngay khi kéo xong mà không cần nhấn nút chụp"
       }
     },
     "display": {

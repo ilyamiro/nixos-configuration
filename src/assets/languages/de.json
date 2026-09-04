@@ -220,6 +220,10 @@
         "title": "Einstellungen kopieren",
         "desc": "Konfigurations-JSON in die zwischenablage kopieren",
         "button": "Einstellungen kopieren"
+      },
+      "screenshot_on_release": {
+        "title": "Bereich beim Loslassen der Maus erfassen",
+        "desc": "Erstellt den Screenshot sofort nach dem Ziehen, ohne auf den Auslöser zu klicken"
       }
     },
     "display": {

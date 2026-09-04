@@ -220,6 +220,10 @@
         "title": "Copiar configuración",
         "desc": "Copiar JSON de configuración al portapapeles",
         "button": "Copiar configuración"
+      },
+      "screenshot_on_release": {
+        "title": "Capturar región al soltar el ratón",
+        "desc": "Tomar la captura de pantalla en cuanto termine de arrastrar, sin hacer clic en el disparador"
       }
     },
     "display": {

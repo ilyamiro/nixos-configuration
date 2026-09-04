@@ -219,6 +219,10 @@
         "title": "Copia impostazioni",
         "desc": "Copia il JSON di configurazione nelle note",
         "button": "Copia Impostazioni"
+      },
+      "screenshot_on_release": {
+        "title": "Cattura area al rilascio del mouse",
+        "desc": "Cattura lo screenshot non appena si rilascia il cursore, senza cliccare l'otturatore"
       }
     },
     "display": {

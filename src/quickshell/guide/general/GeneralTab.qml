@@ -572,51 +572,6 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: rowShotReleaseLayout.implicitHeight + rootObj.s(18)
-                color: "transparent"
-
-                RowLayout {
-                    id: rowShotReleaseLayout
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: rootObj.s(16)
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: rootObj.s(2)
-                        Text {
-                            text: I18n.t("guide.general.screenshot_on_release.title") || "Capture region on mouse release"
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: rootObj.s(13)
-                            color: ThemeBackend.text
-                        }
-                        Text {
-                            text: I18n.t("guide.general.screenshot_on_release.desc") || "Take the screenshot as soon as you finish dragging, without clicking the shutter"
-                            font.family: ThemeBackend.fontFamily
-                            font.pixelSize: rootObj.s(11)
-                            color: ThemeBackend.subtext0
-                        }
-                    }
-
-                    Toggle {
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        Layout.rightMargin: rootObj.s(8)
-                        checked: generalTabRoot.screenshotCaptureOnRelease
-                        accentColor: ThemeBackend.mauve
-                        baseColor: ThemeBackend.surface1
-                        handleColor: ThemeBackend.crust
-                        handleOffColor: ThemeBackend.text
-                        onToggled: function(c) {
-                            generalTabRoot.screenshotCaptureOnRelease = c;
-                            generalTabRoot.updateGeneralSettings();
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
                 implicitHeight: locSectionCol.implicitHeight
                 color: "transparent"
 
@@ -865,6 +820,14 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(ThemeBackend.surface1, 0.2)
+                Layout.topMargin: rootObj.s(5)
+                Layout.bottomMargin: rootObj.s(5)
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
                 implicitHeight: rowWeatherUnitLayout.implicitHeight + rootObj.s(18)
                 color: "transparent"
 
@@ -917,6 +880,59 @@ Item {
                             if (typeof Weather !== "undefined") {
                                 Weather.unit = generalTabRoot.weatherUnit;
                             }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(ThemeBackend.surface1, 0.2)
+                Layout.topMargin: rootObj.s(5)
+                Layout.bottomMargin: rootObj.s(5)
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: rowShotReleaseLayout.implicitHeight + rootObj.s(18)
+                color: "transparent"
+
+                RowLayout {
+                    id: rowShotReleaseLayout
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: rootObj.s(16)
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: rootObj.s(2)
+                        Text {
+                            text: I18n.t("guide.general.screenshot_on_release.title") || "Capture region on mouse release"
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(13)
+                            color: ThemeBackend.text
+                        }
+                        Text {
+                            text: I18n.t("guide.general.screenshot_on_release.desc") || "Take the screenshot as soon as you finish dragging, without clicking the shutter"
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(11)
+                            color: ThemeBackend.subtext0
+                        }
+                    }
+
+                    Toggle {
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        Layout.rightMargin: rootObj.s(8)
+                        checked: generalTabRoot.screenshotCaptureOnRelease
+                        accentColor: ThemeBackend.mauve
+                        baseColor: ThemeBackend.surface1
+                        handleColor: ThemeBackend.crust
+                        handleOffColor: ThemeBackend.text
+                        onToggled: function(c) {
+                            generalTabRoot.screenshotCaptureOnRelease = c;
+                            generalTabRoot.updateGeneralSettings();
                         }
                     }
                 }

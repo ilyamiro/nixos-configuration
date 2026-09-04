@@ -219,6 +219,10 @@
         "title": "설정 복사",
         "desc": "설정 JSON을 클립보드에 복사합니다",
         "button": "설정 복사"
+      },
+      "screenshot_on_release": {
+        "title": "마우스를 뗄 때 영역 캡처",
+        "desc": "셔터를 누르지 않고 드래그가 끝나면 즉시 스크린샷을 찍습니다"
       }
     },
     "display": {
