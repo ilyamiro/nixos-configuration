@@ -8,6 +8,8 @@ TrayBase 1.0 popouts/TrayBase.qml
 Osd 1.0 popouts/Osd.qml
 SideMusicPopout popouts/SideMusicPopout.qml
 
+
+singleton Wallpaper 1.0 singletons/Wallpaper.qml 
 singleton Audio 1.0 singletons/Audio.qml
 singleton Caching 1.0 singletons/Caching.qml
 singleton Cava 1.0 singletons/Cava.qml

@@ -28,6 +28,41 @@ PanelWindow {
         onActivated: switchWidget("hidden", "")
     }
 
+    function resolveTargetScreen() {
+        try {
+            if (typeof Hyprland !== "undefined" && Hyprland.focusedMonitor) {
+                let monName = Hyprland.focusedMonitor.name;
+                let screens = Quickshell.screens || [];
+                let len = screens.length !== undefined ? screens.length : (screens.count !== undefined ? screens.count : 0);
+                for (let i = 0; i < len; i++) {
+                    let s = screens[i] !== undefined ? screens[i] : screens.get(i);
+                    if (s && s.name === monName) return s;
+                }
+            }
+        } catch (e) {}
+
+        try {
+            if (typeof ToplevelManager !== "undefined" && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel.screens && ToplevelManager.activeToplevel.screens.length > 0) {
+                return ToplevelManager.activeToplevel.screens[0];
+            }
+        } catch (e) {}
+
+        if (masterWindow.screen) return masterWindow.screen;
+        return (Quickshell.screens && (Quickshell.screens.length > 0 || Quickshell.screens.count > 0))
+            ? (Quickshell.screens[0] || Quickshell.screens.get(0))
+            : null;
+    }
+
+    function reportWidgetState() {
+        if (!Caching.runDir) return;
+        let sName = (masterWindow.currentActive === "hidden" || !masterWindow.screen) ? "" : (masterWindow.screen.name || "");
+        let payload = JSON.stringify({
+            widget: masterWindow.currentActive,
+            screen: sName
+        });
+        Quickshell.execDetached(["bash", "-c", "echo '" + payload + "' > " + Caching.runDir + "/current_widget"]);
+    }
+
     IpcHandler {
         target: "main"
 
@@ -316,7 +351,13 @@ PanelWindow {
     property string currentActive: "hidden"
 
     onCurrentActiveChanged: {
-        Quickshell.execDetached(["bash", "-c", "echo '" + currentActive + "' > " + Caching.runDir + "/current_widget"]);
+        reportWidgetState();
+    }
+
+    onScreenChanged: {
+        if (currentActive !== "hidden") {
+            reportWidgetState();
+        }
     }
 
     property bool isVisible: false
@@ -405,8 +446,10 @@ PanelWindow {
     function getLayout(name) {
         let bp = masterWindow.barPosition;
         let effHidden = masterWindow.isBarEffectivelyHidden;
+        let scrW = masterWindow.screen ? masterWindow.screen.width : masterWindow.width;
+        let scrH = masterWindow.screen ? masterWindow.screen.height : masterWindow.height;
 
-        let result = Registry.getLayout(name, 0, 0, masterWindow.width, masterWindow.height, masterWindow.globalUiScale, bp);
+        let result = Registry.getLayout(name, 0, 0, scrW, scrH, masterWindow.globalUiScale, bp);
         if (!result) return null;
 
         let scale = masterWindow.globalUiScale || 1.0;
@@ -579,12 +622,21 @@ PanelWindow {
                 delayedClear.restart();
             }
         } else {
+            let targetScreen = resolveTargetScreen();
+            if (targetScreen && masterWindow.screen !== targetScreen) {
+                masterWindow.screen = targetScreen;
+            }
             executeSwitch(newWidget, arg, gen);
         }
     }
 
     function executeSwitch(newWidget, arg, gen) {
         if (gen !== masterWindow.switchGeneration || newWidget === "hidden") return;
+
+        let targetScreen = resolveTargetScreen();
+        if (targetScreen && masterWindow.screen !== targetScreen) {
+            masterWindow.screen = targetScreen;
+        }
 
         let t = getLayout(newWidget);
         if (!t || !t.w || !t.h || t.w < 10 || t.h < 10) {
