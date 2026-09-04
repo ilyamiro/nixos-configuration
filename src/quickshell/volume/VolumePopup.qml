@@ -380,7 +380,7 @@ Item {
                                 onWheel: (wheel) => {
                                     if (!window.activeNode) return;
                                     let delta = wheel.angleDelta.y > 0 ? 5 : -5;
-                                    let newVol = Math.max(0, Math.min(100, window.activeVol + delta));
+                                    let newVol = Math.max(0, Math.min(Audio.maxVolume, window.activeVol + delta));
                                     if (newVol > 0 && window.activeMute) {
                                         Audio.toggleMute(window.activeNode);
                                     }
@@ -431,7 +431,7 @@ Item {
                                 Layout.preferredHeight: window.s(16)
                                 Layout.alignment: Qt.AlignVCenter
                                 from: 0.0
-                                to: 100.0
+                                to: Audio.maxVolume
                                 value: window.activeVol
                                 backgroundColor: ThemeBackend.surface1
                                 accentColor: window.activeMute ? ThemeBackend.surface2 : window.tabColor
@@ -447,7 +447,7 @@ Item {
                                 handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
 
                                 onMoved: (val) => {
-                                    let pct = Math.max(0, Math.min(100, Math.round(val)));
+                                    let pct = Math.max(0, Math.min(Audio.maxVolume, Math.round(val)));
                                     if (pct > 0 && window.activeMute) Audio.toggleMute(window.activeNode);
                                     Audio.setVolume(window.activeNode, pct);
                                 }
@@ -654,7 +654,7 @@ Item {
                                         Layout.preferredHeight: window.s(16)
                                         Layout.alignment: Qt.AlignVCenter
                                         from: 0.0
-                                        to: 100.0
+                                        to: Audio.maxVolume
                                         value: delegateRoot.nodeVol
                                         backgroundColor: ThemeBackend.surface1
                                         accentColor: delegateRoot.nodeMute ? ThemeBackend.surface2 : window.tabColor
@@ -670,7 +670,7 @@ Item {
                                         handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
 
                                         onMoved: (val) => {
-                                            let pct = Math.max(0, Math.min(100, Math.round(val)));
+                                            let pct = Math.max(0, Math.min(Audio.maxVolume, Math.round(val)));
                                             if (pct > 0 && delegateRoot.nodeMute) Audio.toggleMute(delegateRoot.node);
                                             Audio.setVolume(delegateRoot.node, pct);
                                         }
