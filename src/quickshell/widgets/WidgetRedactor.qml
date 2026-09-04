@@ -84,12 +84,14 @@ PanelWindow {
     }
 
     function exitRedactor() {
+        WidgetSync.setRedactMode(redactorWindow.safeMonitorName, false);
         sendIpc("setRedactMode", ["false"]);
         sendBarIpc("setRedactMode", ["false"]);
         exitTimer.start();
     }
 
     Component.onDestruction: {
+        WidgetSync.setRedactMode(redactorWindow.safeMonitorName, false);
         sendIpc("setRedactMode", ["false"]);
         sendBarIpc("setRedactMode", ["false"]);
     }
@@ -126,6 +128,7 @@ PanelWindow {
         function removeAllWidgets() {
             redactorMode.selectedId = "";
             activeWidgetsModel.clear();
+            WidgetSync.clearWidgets(redactorWindow.safeMonitorName);
             redactorWindow.sendIpc("clear", []);
             redactorMode.updateToolbarObscured();
         }
@@ -151,9 +154,9 @@ PanelWindow {
             for (let i = 0; i < activeWidgetsModel.count; i++) {
                 let item = activeWidgetsModel.get(i);
                 if (!item) continue;
-                let rot = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? item.wRotation : 0;
-                let bw = (Math.round(rot) % 180 === 0) ? item.wWidth : item.wHeight;
-                let bh = (Math.round(rot) % 180 === 0) ? item.wHeight : item.wWidth;
+                let rot = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? Math.abs(Math.round(item.wRotation)) : 0;
+                let bw = (rot % 180 === 0) ? item.wWidth : item.wHeight;
+                let bh = (rot % 180 === 0) ? item.wHeight : item.wWidth;
                 let isSel = (redactorMode.selectedId === item.wId);
                 let gap = isSel ? s(20) : 0;
                 let chromeH = isSel ? s(90) : 0;
@@ -475,6 +478,8 @@ PanelWindow {
 
             redactorMode.topZ += 1;
             redactorMode.selectedId = newId;
+            WidgetSync.addWidget(redactorWindow.safeMonitorName, newId, typeKey, spawnX, spawnY, defW, defH, 1.0, "", 0);
+            WidgetSync.bringToFront(redactorWindow.safeMonitorName, newId);
             redactorWindow.sendIpc("add", [newId, typeKey, spawnX.toString(), spawnY.toString(), defW.toString(), defH.toString(), "1.0", "", "0"]);
             redactorWindow.sendIpc("bringToFront", [newId]);
             redactorMode.updateToolbarObscured();
@@ -588,8 +593,8 @@ PanelWindow {
 
                     x: model.wX
                     y: model.wY
-                    width: (Math.round(widgetProxy.wRotation || 0) % 180 === 0) ? model.wWidth : model.wHeight
-                    height: (Math.round(widgetProxy.wRotation || 0) % 180 === 0) ? model.wHeight : model.wWidth
+                    width: (Math.abs(Math.round(widgetProxy.wRotation || 0)) % 180 === 0) ? model.wWidth : model.wHeight
+                    height: (Math.abs(Math.round(widgetProxy.wRotation || 0)) % 180 === 0) ? model.wHeight : model.wWidth
 
                     property int currentZ: index
                     z: (widgetProxy.isSelected ? 50000 : 0) + currentZ
@@ -606,6 +611,7 @@ PanelWindow {
                     function bringToFront() {
                         redactorMode.topZ += 1;
                         widgetProxy.currentZ = redactorMode.topZ;
+                        WidgetSync.bringToFront(redactorWindow.safeMonitorName, String(widgetProxy.wId));
                         redactorWindow.sendIpc("bringToFront", [String(widgetProxy.wId)]);
                     }
 
@@ -620,13 +626,12 @@ PanelWindow {
                     property int wIndex: index
 
                     property bool isSelected: redactorMode.selectedId === widgetProxy.wId
-                    property bool isSyncPending: false
                     property bool hasUnsyncedChanges: false
 
                     property var savedAspects: ({})
 
-                    function applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, currentMouseX, currentMouseY, mouseArea, edges, isCorner) {
-                        let localPos = mouseArea.mapToItem(workspaceArea, currentMouseX, currentMouseY);
+                    function applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouseArea, edges, isCorner) {
+                        let localPos = mouseArea.mapToItem(workspaceArea, mouse.x, mouse.y);
                         let dx = localPos.x - startMouseX;
                         let dy = localPos.y - startMouseY;
 
@@ -698,7 +703,7 @@ PanelWindow {
                     }
 
                     function rotateWidget() {
-                        let currentRot = Math.round(widgetProxy.wRotation || 0);
+                        let currentRot = Math.abs(Math.round(widgetProxy.wRotation || 0)) % 360;
                         let nextRot = currentRot + 90;
 
                         let curBW = (currentRot % 180 === 0) ? model.wWidth : model.wHeight;
@@ -761,6 +766,7 @@ PanelWindow {
                         model.wX = newX;
                         model.wY = newY;
 
+                        WidgetSync.setRotation(redactorWindow.safeMonitorName, String(widgetProxy.wId), nextRot);
                         redactorWindow.sendIpc("rotate", [String(widgetProxy.wId), nextRot.toString()]);
                         finalizeSync();
                     }
@@ -800,25 +806,47 @@ PanelWindow {
                             model.wHeight = newH;
                         }
 
+                        WidgetSync.setVariant(redactorWindow.safeMonitorName, String(widgetProxy.wId), variantId);
                         redactorWindow.sendIpc("variant", [String(widgetProxy.wId), variantId]);
                         finalizeSync();
                     }
 
                     function resetWidgetSize() {
+                        let currentRot = Math.abs(Math.round(widgetProxy.wRotation || 0)) % 360;
+                        let curBW = (currentRot % 180 === 0) ? model.wWidth : model.wHeight;
+                        let curBH = (currentRot % 180 === 0) ? model.wHeight : model.wWidth;
+                        let cx = model.wX + curBW / 2.0;
+                        let cy = model.wY + curBH / 2.0;
+
                         let def = getDefaultSize(preview.item);
+                        let clamped = redactorMode.clampResize(preview.item, def.w, def.h, 0, 0, true);
+                        let finalW = clamped.w;
+                        let finalH = clamped.h;
+
+                        let newX = cx - finalW / 2.0;
+                        let newY = cy - finalH / 2.0;
+
+                        let mX = Math.max(0, redactorMode.safeWidth - finalW);
+                        let mY = Math.max(0, redactorMode.safeHeight - finalH);
+                        newX = Math.max(0, Math.min(mX, newX));
+                        newY = Math.max(0, Math.min(mY, newY));
+
+                        if (redactorMode.gridEnabled) {
+                            let snapped = redactorMode.snapBoxToGrid(preview.item, newX, newY, finalW, finalH);
+                            newX = snapped.x;
+                            newY = snapped.y;
+                            finalW = snapped.w;
+                            finalH = snapped.h;
+                        }
+
                         model.wOpacity = 1.0;
                         model.wRotation = 0;
-                        if (redactorMode.gridEnabled) {
-                            let snapped = redactorMode.snapBoxToGrid(preview.item, model.wX, model.wY, def.w, def.h);
-                            model.wX = snapped.x;
-                            model.wY = snapped.y;
-                            model.wWidth = snapped.w;
-                            model.wHeight = snapped.h;
-                        } else {
-                            let clamped = redactorMode.clampResize(preview.item, def.w, def.h, 0, 0, true);
-                            model.wWidth = clamped.w;
-                            model.wHeight = clamped.h;
-                        }
+                        model.wWidth = finalW;
+                        model.wHeight = finalH;
+                        model.wX = newX;
+                        model.wY = newY;
+
+                        WidgetSync.setRotation(redactorWindow.safeMonitorName, String(widgetProxy.wId), 0);
                         redactorWindow.sendIpc("rotate", [String(widgetProxy.wId), "0"]);
                         finalizeSync();
                     }
@@ -831,26 +859,13 @@ PanelWindow {
                         onTriggered: {
                             if (!widgetProxy.hasUnsyncedChanges) {
                                 running = false;
-                                widgetProxy.isSyncPending = false;
                                 return;
                             }
-                            if (widgetProxy.isSyncPending) {
-                                return;
-                            }
-                            widgetProxy.isSyncPending = true;
                             widgetProxy.hasUnsyncedChanges = false;
                             let curOp = widgetProxy.wOpacity;
                             let curRot = widgetProxy.wRotation;
-                            let cmd = ["quickshell", "-p", Caching.mainQml, "ipc", "call", "widgets-" + redactorWindow.safeMonitorName, "geometry", String(widgetProxy.wId), model.wX.toString(), model.wY.toString(), model.wWidth.toString(), model.wHeight.toString(), curOp.toString(), curRot.toString()];
-                            syncProcess.command = cmd;
-                            syncProcess.running = false;
-                            syncProcess.running = true;
+                            WidgetSync.setGeometry(redactorWindow.safeMonitorName, String(widgetProxy.wId), model.wX, model.wY, model.wWidth, model.wHeight, curOp, curRot);
                         }
-                    }
-
-                    Process {
-                        id: syncProcess
-                        onExited: widgetProxy.isSyncPending = false
                     }
 
                     function triggerSync() {
@@ -865,9 +880,12 @@ PanelWindow {
                     function finalizeSync() {
                         syncTimer.stop();
                         widgetProxy.hasUnsyncedChanges = false;
-                        widgetProxy.isSyncPending = false;
                         let curOp = widgetProxy.wOpacity;
                         let curRot = widgetProxy.wRotation;
+                        WidgetSync.setGeometry(redactorWindow.safeMonitorName, String(widgetProxy.wId), model.wX, model.wY, model.wWidth, model.wHeight, curOp, curRot);
+                        WidgetSync.setOpacity(redactorWindow.safeMonitorName, String(widgetProxy.wId), curOp);
+                        WidgetSync.setRotation(redactorWindow.safeMonitorName, String(widgetProxy.wId), curRot);
+                        WidgetSync.bringToFront(redactorWindow.safeMonitorName, String(widgetProxy.wId));
                         redactorWindow.sendIpc("geometry", [String(widgetProxy.wId), model.wX.toString(), model.wY.toString(), model.wWidth.toString(), model.wHeight.toString(), curOp.toString(), curRot.toString()]);
                         redactorWindow.sendIpc("opacity", [String(widgetProxy.wId), curOp.toString()]);
                         redactorWindow.sendIpc("rotate", [String(widgetProxy.wId), curRot.toString()]);
@@ -879,6 +897,7 @@ PanelWindow {
                         id: baseSelectMa
                         anchors.fill: parent
                         hoverEnabled: true
+                        preventStealing: true
                         cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
 
                         property real startDragX
@@ -918,6 +937,12 @@ PanelWindow {
                         }
 
                         onReleased: {
+                            redactorMode.activeGuideX = -1;
+                            redactorMode.activeGuideY = -1;
+                            widgetProxy.finalizeSync();
+                        }
+
+                        onCanceled: {
                             redactorMode.activeGuideX = -1;
                             redactorMode.activeGuideY = -1;
                             widgetProxy.finalizeSync();
@@ -995,56 +1020,6 @@ PanelWindow {
                                 border.width: s(2)
                                 border.color: ThemeBackend.mauve
                                 radius: 0
-
-                                MouseArea {
-                                    id: dragMa
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-                                    enabled: widgetProxy.isSelected
-
-                                    property real startDragX
-                                    property real startDragY
-                                    property real startWidgetX
-                                    property real startWidgetY
-
-                                    onPressed: (mouse) => {
-                                        redactorMode.selectedId = widgetProxy.wId;
-                                        widgetProxy.bringToFront();
-                                        let localPos = mapToItem(workspaceArea, mouse.x, mouse.y);
-                                        startDragX = localPos.x;
-                                        startDragY = localPos.y;
-                                        startWidgetX = model.wX;
-                                        startWidgetY = model.wY;
-                                    }
-
-                                    onPositionChanged: (mouse) => {
-                                        if (pressed) {
-                                            let localPos = mapToItem(workspaceArea, mouse.x, mouse.y);
-                                            let dx = localPos.x - startDragX;
-                                            let dy = localPos.y - startDragY;
-
-                                            let rawX = startWidgetX + dx;
-                                            let rawY = startWidgetY + dy;
-
-                                            let snapInfo = redactorMode.calculateSnap(widgetProxy, rawX, rawY);
-
-                                            model.wX = snapInfo.x;
-                                            model.wY = snapInfo.y;
-
-                                            redactorMode.activeGuideX = snapInfo.guideX;
-                                            redactorMode.activeGuideY = snapInfo.guideY;
-
-                                            widgetProxy.triggerSync();
-                                        }
-                                    }
-
-                                    onReleased: {
-                                        redactorMode.activeGuideX = -1;
-                                        redactorMode.activeGuideY = -1;
-                                        widgetProxy.finalizeSync();
-                                    }
-                                }
                             }
 
                             Item {
@@ -1076,6 +1051,7 @@ PanelWindow {
                                 anchors.margins: -s(6)
                                 enabled: preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeBDiagCursor : Qt.SizeFDiagCursor
 
                                 property real startMouseX
@@ -1098,11 +1074,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeTl, {left: true, top: true, right: false, bottom: false}, true);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeTl, {left: true, top: true, right: false, bottom: false}, true);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1115,6 +1095,7 @@ PanelWindow {
                                 anchors.margins: -s(6)
                                 enabled: preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor
 
                                 property real startMouseX
@@ -1137,11 +1118,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeTr, {left: false, top: true, right: true, bottom: false}, true);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeTr, {left: false, top: true, right: true, bottom: false}, true);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1154,6 +1139,7 @@ PanelWindow {
                                 anchors.margins: -s(6)
                                 enabled: preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeFDiagCursor : Qt.SizeBDiagCursor
 
                                 property real startMouseX
@@ -1176,11 +1162,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeBl, {left: true, top: false, right: false, bottom: true}, true);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeBl, {left: true, top: false, right: false, bottom: true}, true);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1193,6 +1183,7 @@ PanelWindow {
                                 anchors.margins: -s(6)
                                 enabled: preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeBDiagCursor : Qt.SizeFDiagCursor
 
                                 property real startMouseX
@@ -1215,11 +1206,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeBr, {left: false, top: false, right: true, bottom: true}, true);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeBr, {left: false, top: false, right: true, bottom: true}, true);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1233,6 +1228,7 @@ PanelWindow {
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeHorCursor : Qt.SizeVerCursor
 
                                 property real startMouseX
@@ -1255,11 +1251,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeTop, {left: false, top: true, right: false, bottom: false}, false);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeTop, {left: false, top: true, right: false, bottom: false}, false);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1273,6 +1273,7 @@ PanelWindow {
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeHorCursor : Qt.SizeVerCursor
 
                                 property real startMouseX
@@ -1295,11 +1296,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeBottom, {left: false, top: false, right: false, bottom: true}, false);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeBottom, {left: false, top: false, right: false, bottom: true}, false);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1313,6 +1318,7 @@ PanelWindow {
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeVerCursor : Qt.SizeHorCursor
 
                                 property real startMouseX
@@ -1335,11 +1341,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeLeft, {left: true, top: false, right: false, bottom: false}, false);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeLeft, {left: true, top: false, right: false, bottom: false}, false);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1353,6 +1363,7 @@ PanelWindow {
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
+                                preventStealing: true
                                 cursorShape: selectionUI.isRotated90 ? Qt.SizeVerCursor : Qt.SizeHorCursor
 
                                 property real startMouseX
@@ -1375,11 +1386,15 @@ PanelWindow {
 
                                 onPositionChanged: (mouse) => {
                                     if (pressed) {
-                                        widgetProxy.applyResize(startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouse.x, mouse.y, resizeRight, {left: false, top: false, right: true, bottom: false}, false);
+                                        widgetProxy.applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, resizeRight, {left: false, top: false, right: true, bottom: false}, false);
                                     }
                                 }
 
                                 onReleased: {
+                                    widgetProxy.finalizeSync();
+                                }
+
+                                onCanceled: {
                                     widgetProxy.finalizeSync();
                                 }
                             }
@@ -1392,16 +1407,52 @@ PanelWindow {
                         opacity: widgetProxy.isSelected ? 1.0 : 0.0
                         visible: opacity > 0
                         Behavior on opacity { NumberAnimation { duration: 150 } }
-                        y: {
-                            let limitY = (toolbar.opacity > 0.1 && !redactorMode.toolbarObscured) ? toolbar.y : redactorMode.safeHeight;
-                            let fitsBelow = (widgetProxy.y + parent.height + widgetProxy.selectionGap + height + s(8)) <= limitY;
-                            if (fitsBelow) {
-                                return parent.height + widgetProxy.selectionGap + s(8);
-                            }
-                            return -widgetProxy.selectionGap - height - s(8);
-                        }
-                        anchors.horizontalCenter: parent.horizontalCenter
                         spacing: s(6)
+
+                        readonly property real limitY: (toolbar.opacity > 0.1 && !redactorMode.toolbarObscured) ? toolbar.y : redactorMode.safeHeight
+
+                        readonly property bool fitsBelow: (widgetProxy.y + widgetProxy.height + widgetProxy.selectionGap + implicitHeight + s(8)) <= limitY
+                        readonly property bool fitsAbove: (widgetProxy.y - widgetProxy.selectionGap - implicitHeight - s(8)) >= 0
+
+                        readonly property bool fitsRight: (widgetProxy.x + widgetProxy.width + widgetProxy.selectionGap + implicitWidth + s(8)) <= redactorMode.safeWidth
+                        readonly property bool fitsLeft: (widgetProxy.x - widgetProxy.selectionGap - implicitWidth - s(8)) >= 0
+
+                        readonly property int posMode: {
+                            if (fitsBelow) return 0;
+                            if (fitsAbove) return 1;
+                            if (fitsRight) return 2;
+                            if (fitsLeft) return 3;
+                            return 4;
+                        }
+
+                        x: {
+                            if (posMode === 2) {
+                                return widgetProxy.width + widgetProxy.selectionGap + s(8);
+                            } else if (posMode === 3) {
+                                return -widgetProxy.selectionGap - implicitWidth - s(8);
+                            } else {
+                                let idealX = (widgetProxy.width - implicitWidth) / 2;
+                                let screenX = widgetProxy.x + idealX;
+                                let clampedScreenX = Math.max(s(8), Math.min(redactorMode.safeWidth - implicitWidth - s(8), screenX));
+                                return clampedScreenX - widgetProxy.x;
+                            }
+                        }
+
+                        y: {
+                            if (posMode === 0) {
+                                return widgetProxy.height + widgetProxy.selectionGap + s(8);
+                            } else if (posMode === 1) {
+                                return -widgetProxy.selectionGap - implicitHeight - s(8);
+                            } else if (posMode === 2 || posMode === 3) {
+                                let idealY = (widgetProxy.height - implicitHeight) / 2;
+                                let screenY = widgetProxy.y + idealY;
+                                let clampedScreenY = Math.max(s(8), Math.min(limitY - implicitHeight - s(8), screenY));
+                                return clampedScreenY - widgetProxy.y;
+                            } else {
+                                let screenY = Math.min(limitY - implicitHeight - s(15), Math.max(s(15), widgetProxy.y + widgetProxy.height - implicitHeight - s(15)));
+                                return screenY - widgetProxy.y;
+                            }
+                        }
 
                         property var variantsList: WidgetRegistry.variantList(widgetProxy.wType)
                         property bool hasVariants: variantsList.length > 1
@@ -1513,6 +1564,7 @@ PanelWindow {
                                     if (redactorMode.selectedId === rmId) {
                                         redactorMode.selectedId = "";
                                     }
+                                    WidgetSync.removeWidget(redactorWindow.safeMonitorName, rmId);
                                     redactorWindow.sendIpc("remove", [rmId]);
                                     activeWidgetsModel.remove(widgetProxy.wIndex, 1);
                                     if (activeWidgetsModel.count === 0) {
@@ -1725,6 +1777,7 @@ PanelWindow {
             redactorMode.isReady = true;
             redactorMode.updateToolbarObscured();
             Qt.callLater(() => {
+                WidgetSync.setRedactMode(redactorWindow.safeMonitorName, true);
                 redactorWindow.sendIpc("setRedactMode", ["true"]);
                 redactorWindow.sendBarIpc("setRedactMode", ["true"]);
             });
@@ -1866,6 +1919,7 @@ PanelWindow {
                 onImageSelected: (filePath, fileName) => {
                     if (targetWidgetIndex >= 0 && targetWidgetId !== "") {
                         activeWidgetsModel.setProperty(targetWidgetIndex, "wImagePath", filePath);
+                        WidgetSync.setImagePath(redactorWindow.safeMonitorName, targetWidgetId, filePath);
                         redactorWindow.sendIpc("imagePath", [targetWidgetId, filePath]);
                         targetWidgetIndex = -1;
                         targetWidgetId = "";
@@ -1900,6 +1954,8 @@ PanelWindow {
 
                         redactorMode.topZ += 1;
                         redactorMode.selectedId = newId;
+                        WidgetSync.addWidget(redactorWindow.safeMonitorName, newId, "image", spawnX, spawnY, defW, defH, 1.0, filePath, 0);
+                        WidgetSync.bringToFront(redactorWindow.safeMonitorName, newId);
                         redactorWindow.sendIpc("add", [newId, "image", spawnX.toString(), spawnY.toString(), defW.toString(), defH.toString(), "1.0", filePath, "0"]);
                         redactorWindow.sendIpc("bringToFront", [newId]);
                         redactorMode.updateToolbarObscured();

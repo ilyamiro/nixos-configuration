@@ -128,6 +128,158 @@ Item {
         loadProcess.running = true;
     }
 
+    Connections {
+        target: WidgetSync
+
+        function onGeometryChanged(monitor, widgetId, x, y, w, h, opacity, rotation) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                let item = widgetsModel.get(i);
+                if (String(item.wId).trim() === target) {
+                    widgetsModel.setProperty(i, "wX", x);
+                    widgetsModel.setProperty(i, "wY", y);
+                    widgetsModel.setProperty(i, "wWidth", w);
+                    widgetsModel.setProperty(i, "wHeight", h);
+                    if (opacity !== undefined) widgetsModel.setProperty(i, "wOpacity", opacity);
+                    if (rotation !== undefined && !isNaN(rotation)) widgetsModel.setProperty(i, "wRotation", rotation);
+                    saveTimer.restart();
+                    break;
+                }
+            }
+        }
+
+        function onOpacityChanged(monitor, widgetId, opacity) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) {
+                    widgetsModel.setProperty(i, "wOpacity", opacity);
+                    saveTimer.restart();
+                    break;
+                }
+            }
+        }
+
+        function onRotationChanged(monitor, widgetId, rotation) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) {
+                    widgetsModel.setProperty(i, "wRotation", rotation);
+                    saveTimer.restart();
+                    break;
+                }
+            }
+        }
+
+        function onVariantChanged(monitor, widgetId, variant) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) {
+                    widgetsModel.setProperty(i, "wVariant", variant);
+                    loaderRoot.saveNow();
+                    break;
+                }
+            }
+        }
+
+        function onImagePathChanged(monitor, widgetId, imagePath) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) {
+                    widgetsModel.setProperty(i, "wImagePath", imagePath);
+                    loaderRoot.saveNow();
+                    break;
+                }
+            }
+        }
+
+        function onWidgetAdded(monitor, widgetId, type, x, y, w, h, opacity, imagePath, rotation) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) return;
+            }
+            let defSize = WidgetRegistry.defaultSize(type);
+            let variant = WidgetRegistry.defaultVariant(type);
+            widgetsModel.append({
+                wType: type,
+                wVariant: variant,
+                wX: x !== undefined ? x : 100,
+                wY: y !== undefined ? y : 100,
+                wWidth: w !== undefined ? w : defSize.w,
+                wHeight: h !== undefined ? h : defSize.h,
+                wOpacity: opacity !== undefined ? opacity : 1.0,
+                wRotation: rotation !== undefined ? rotation : 0,
+                wImagePath: imagePath || "",
+                wId: target,
+                isRemoving: false
+            });
+            loaderRoot.saveNow();
+        }
+
+        function onWidgetRemoved(monitor, widgetId) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                if (String(widgetsModel.get(i).wId).trim() === target) {
+                    widgetsModel.setProperty(i, "isRemoving", true);
+                    loaderRoot.saveNow();
+                    break;
+                }
+            }
+        }
+
+        function onWidgetsCleared(monitor) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            for (let i = 0; i < widgetsModel.count; i++) {
+                widgetsModel.setProperty(i, "isRemoving", true);
+            }
+            loaderRoot.saveNow();
+        }
+
+        function onBringToFrontRequested(monitor, widgetId) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            let target = String(widgetId).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                let item = widgetsModel.get(i);
+                if (String(item.wId).trim() === target) {
+                    if (i < widgetsModel.count - 1) {
+                        let obj = {
+                            wType: item.wType || "time",
+                            wVariant: item.wVariant || WidgetRegistry.defaultVariant(item.wType || "time"),
+                            wX: item.wX,
+                            wY: item.wY,
+                            wWidth: item.wWidth,
+                            wHeight: item.wHeight,
+                            wOpacity: item.wOpacity !== undefined ? item.wOpacity : 1.0,
+                            wRotation: item.wRotation || 0,
+                            wImagePath: item.wImagePath || "",
+                            imagePath: item.wImagePath || "",
+                            wId: item.wId,
+                            isRemoving: false
+                        };
+                        widgetsModel.remove(i, 1);
+                        widgetsModel.append(obj);
+                        loaderRoot.saveNow();
+                    }
+                    break;
+                }
+            }
+        }
+
+        function onRedactModeChanged(monitor, active) {
+            if (monitor !== loaderRoot.safeMonitorName) return;
+            if (!active && loaderRoot.isRedacting) {
+                loaderRoot.saveNow();
+            }
+            loaderRoot.isRedacting = active;
+        }
+    }
+
     IpcHandler {
         target: "widgets-" + loaderRoot.safeMonitorName
 

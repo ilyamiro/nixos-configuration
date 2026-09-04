@@ -36,6 +36,7 @@ singleton OsdController 1.0 singletons/widgetcontrols/OsdController.qml
 singleton SideMusicController 1.0 singletons/widgetcontrols/SideMusicController.qml
 singleton ClipboardController 1.0 singletons/widgetcontrols/ClipboardController.qml
 singleton FloatingController 1.0 singletons/widgetcontrols/FloatingController.qml
+singleton WidgetSync 1.0 singletons/widgetcontrols/WidgetSync.qml
 
 PopoutManager 1.0 popouts/PopoutManager.qml
 
