@@ -1,3 +1,28 @@
+### 2.1.0
+
+- feat: add rotation iconbutton into the widget toolbar, allow to rotate widgets by 90 degrees
+- feat: add a new visualizer widget
+- fix: make sure the first launch applies the wallpaper through the wallpaper singleton
+- fix: prevent crashes in the networkpopup widget. fixes #229
+- feat: switch the wallpaperengine to use the singleton for communicating with the wallpaperpicker
+- fix: battery widgets not following theme's borderradius
+- style: make the draggable handle size bigger in the osd to match the syspanel
+- feat: add a distinctPills setting for the solid and fill styles of the bar
+- feat: optimize the opening sequence for the systempanel
+- fix: make sure Main.qml specified the monitor the widget is open on
+- feat/fix: add a distinctPills support for the topbar and sidebar, fix the topbar sliding out on all monitors when syspanel was open
+- fix: make sure the visualizer widgets zero-out when nothing is playing
+- feat: add a search animation for the clipboard
+- feat: add a search animation for the launcher, add a center position
+- i18n: add new keys for distinctPills setting for the bar and launcher center position
+- style: implement a distinctPills property for pill-like look for all of the widgets. Change the paddings and adjust the sizes or all widgets for better look
+- fix: eliminate the race condition of the displaywidgettab when only the last connected monitor was correctly reporting the existing desktop widgets
+- feat: add Korean language support (#233)
+- fix: show system monitor on the correct screen - #221
+- style: increase the widget width and change alignment of icon glyps in the weatherfaceround
+- style: change the harcoded JetBrains Font in dropdowns and switches to the fontfamily
+- fix: prevent duplicate lockscreen cava subscriptions (#219)
+
 ### 2.0.7
 
 - feat: a series of optimizations tied to visibility of widgets
