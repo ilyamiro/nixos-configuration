@@ -4,48 +4,10 @@ import Quickshell.Wayland
 import Quickshell.Io
 import QtMultimedia
 import "../"
+import "../singletons"
 
 ShellRoot {
     id: globalRoot
-
-    signal wallpaperChanged(string screenName, string path, string transition)
-    signal playbackChanged(string screenName, string state)
-    signal wallpaperCleared(string screenName)
-
-    property var screenWallpapers: ({})
-    property var screenWallpaperPaths: ({})
-
-    IpcHandler {
-        target: "wallpaper"
-
-        function setWallpaper(screenName: string, path: string, transition: string): void {
-            globalRoot.wallpaperChanged(screenName, path, transition ? transition : "fade");
-        }
-
-        function getWallpaper(screenName: string): string {
-            if (!screenName || screenName === "") {
-                let keys = Object.keys(globalRoot.screenWallpapers);
-                return keys.length > 0 ? globalRoot.screenWallpapers[keys[0]] : "";
-            }
-            return globalRoot.screenWallpapers[screenName] || "";
-        }
-
-        function getWallpaperPath(screenName: string): string {
-            if (!screenName || screenName === "") {
-                let keys = Object.keys(globalRoot.screenWallpaperPaths);
-                return keys.length > 0 ? globalRoot.screenWallpaperPaths[keys[0]] : "";
-            }
-            return globalRoot.screenWallpaperPaths[screenName] || "";
-        }
-
-        function setPlayback(screenName: string, state: string): void {
-            globalRoot.playbackChanged(screenName, state);
-        }
-
-        function clearWallpaper(screenName: string): void {
-            globalRoot.wallpaperCleared(screenName);
-        }
-    }
 
     Variants {
         id: root
@@ -91,22 +53,22 @@ ShellRoot {
 
                 onCurrentWallpaperPathChanged: {
                     if (barWindow.screen && barWindow.screen.name) {
-                        let map = Object.assign({}, globalRoot.screenWallpaperPaths);
+                        let map = Object.assign({}, Wallpaper.screenWallpaperPaths);
                         map[barWindow.screen.name] = currentWallpaperPath;
-                        globalRoot.screenWallpaperPaths = map;
+                        Wallpaper.screenWallpaperPaths = map;
                     }
                 }
 
                 onOriginalFileNameChanged: {
                     if (barWindow.screen && barWindow.screen.name) {
-                        let map = Object.assign({}, globalRoot.screenWallpapers);
+                        let map = Object.assign({}, Wallpaper.screenWallpapers);
                         map[barWindow.screen.name] = originalFileName;
-                        globalRoot.screenWallpapers = map;
+                        Wallpaper.screenWallpapers = map;
                     }
                 }
 
                 Connections {
-                    target: globalRoot
+                    target: Wallpaper
 
                     function onWallpaperChanged(screenName, path, transition) {
                         if (screenName === "all" || screenName === barWindow.screen.name)

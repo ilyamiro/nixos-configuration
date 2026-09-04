@@ -9,6 +9,7 @@ import Quickshell
 import Quickshell.Io
 import "../"
 import "../reusables"
+import "../singletons"
 
 Item {
     id: window
@@ -230,6 +231,10 @@ Item {
         stdout: StdioCollector {
             onStreamFinished: {
                 let activeWallpaper = this.text.trim();
+                if (!activeWallpaper) {
+                    let scName = masterWindow.screen ? masterWindow.screen.name : "";
+                    activeWallpaper = Wallpaper.getWallpaper(scName);
+                }
                 window.trackerResolved = true;
                 if (window.widgetArg !== "") {
                     window.targetWallName = window.widgetArg;
@@ -345,11 +350,11 @@ Item {
         if (outputs === "none") return;
 
         if (outputs === "all") {
-            Quickshell.execDetached(["quickshell", "-p", Caching.mainQml, "ipc", "call", "wallpaper", "setWallpaper", "all", targetFile, transition]);
+            Wallpaper.setWallpaper("all", targetFile, transition);
         } else {
             let monArr = outputs.split(",");
             for (let i = 0; i < monArr.length; i++) {
-                Quickshell.execDetached(["quickshell", "-p", Caching.mainQml, "ipc", "call", "wallpaper", "setWallpaper", monArr[i], targetFile, transition]);
+                Wallpaper.setWallpaper(monArr[i], targetFile, transition);
             }
         }
     }
