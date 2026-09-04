@@ -24,6 +24,38 @@ Item {
 
     property real cardRadius: ThemeBackend.borderRadius <= 16 ? ThemeBackend.borderRadius * 2 : Math.min(32, 32 - 16 * Math.exp(-(ThemeBackend.borderRadius - 16) / 12))
 
+    property var defaultWidgetsSettings: ({
+        "hideBarInRedactor": true
+    })
+
+    property var widgetsSettings: {
+        let s = (typeof Config !== "undefined" && Config.rawSettings) ? Config.rawSettings["widgets"] : undefined;
+        if (s !== undefined && s !== null) return s;
+        if (typeof Config !== "undefined" && typeof Config.getSetting === "function") {
+            return Config.getSetting("widgets", displayWidgetsRoot.defaultWidgetsSettings);
+        }
+        return displayWidgetsRoot.defaultWidgetsSettings;
+    }
+
+    property bool currentHideBarInRedactor: widgetsSettings && widgetsSettings.hideBarInRedactor !== undefined ? widgetsSettings.hideBarInRedactor : true
+
+    function syncSettings() {
+        let s = (typeof Config !== "undefined" && typeof Config.getSetting === "function")
+            ? Config.getSetting("widgets", displayWidgetsRoot.defaultWidgetsSettings)
+            : displayWidgetsRoot.defaultWidgetsSettings;
+        displayWidgetsRoot.widgetsSettings = s;
+        displayWidgetsRoot.currentHideBarInRedactor = s.hideBarInRedactor !== undefined ? s.hideBarInRedactor : true;
+    }
+
+    function updateWidgetsSetting(key, value) {
+        let current = JSON.parse(JSON.stringify((typeof Config !== "undefined" && typeof Config.getSetting === "function") ? (Config.getSetting("widgets", defaultWidgetsSettings) || defaultWidgetsSettings) : defaultWidgetsSettings));
+        current[key] = value;
+        if (typeof Config !== "undefined" && typeof Config.setSetting === "function") {
+            Config.setSetting("widgets", current);
+        }
+        displayWidgetsRoot.widgetsSettings = current;
+    }
+
     property var monitorsList: []
     property var monitorWidgetsMap: ({})
 
@@ -167,12 +199,21 @@ Item {
     }
 
     Component.onCompleted: {
+        syncSettings();
         screenDetector.running = true;
     }
 
     onVisibleChanged: {
         if (visible) {
+            syncSettings();
             screenDetector.running = true;
+        }
+    }
+
+    Connections {
+        target: typeof Config !== "undefined" ? Config : null
+        function onSettingsLoaded() {
+            displayWidgetsRoot.syncSettings();
         }
     }
 
@@ -211,6 +252,63 @@ Item {
             id: widgetsCol
             width: parent.width - (parent.contentHeight > parent.height ? rootObj.s(6) : 0)
             spacing: rootObj.s(12)
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: rowHideBarLayout.implicitHeight + rootObj.s(18)
+                color: "transparent"
+
+                RowLayout {
+                    id: rowHideBarLayout
+                    anchors.left: parent.left
+                    anchors.leftMargin: rootObj.s(12)
+                    anchors.right: parent.right
+                    anchors.rightMargin: rootObj.s(12)
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: rootObj.s(16)
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: rootObj.s(2)
+
+                        Text {
+                            text: I18n.t("guide.display.widgets.hide_bar.title", "Hide Bar in Redactor")
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(13)
+                            color: ThemeBackend.text
+                        }
+
+                        Text {
+                            text: I18n.t("guide.display.widgets.hide_bar.desc", "Automatically hide the bar when editing widgets in redactor mode")
+                            font.family: ThemeBackend.fontFamily
+                            font.pixelSize: rootObj.s(11)
+                            color: ThemeBackend.subtext0
+                        }
+                    }
+
+                    Toggle {
+                        id: hideBarToggle
+                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                        checked: displayWidgetsRoot.currentHideBarInRedactor
+                        accentColor: ThemeBackend.mauve
+                        baseColor: ThemeBackend.surface1
+                        handleColor: ThemeBackend.crust
+                        handleOffColor: ThemeBackend.text
+                        onToggled: function(val) {
+                            displayWidgetsRoot.currentHideBarInRedactor = val;
+                            displayWidgetsRoot.updateWidgetsSetting("hideBarInRedactor", val);
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(ThemeBackend.surface1, 0.3)
+                Layout.topMargin: rootObj.s(2)
+                Layout.bottomMargin: rootObj.s(6)
+            }
 
             Repeater {
                 model: displayWidgetsRoot.monitorsList

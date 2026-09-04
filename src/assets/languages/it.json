@@ -249,7 +249,11 @@
       "widgets": {
         "title": "Widget desktop",
         "desc": "Piazza e configura i Widget per questo monitor",
-        "open": "Apri configurazione"
+        "open": "Apri configurazione",
+        "hide_bar": {
+          "title": "Nascondi barra nel redattore",
+          "desc": "Nascondi automaticamente la barra durante la modifica dei widget in modalità redattore"
+        }
       }
     },
     "bar": {

@@ -249,7 +249,11 @@
       "widgets": {
         "title": "Desktop widgets",
         "desc": "Configure and place widgets for this monitor",
-        "open": "Open redactor"
+        "open": "Open redactor",
+        "hide_bar": {
+          "title": "Hide the bar in the redactor",
+          "desc": "Automatically hide the bar when editing widgets in redactor mode"
+        }
       }
     },
     "bar": {

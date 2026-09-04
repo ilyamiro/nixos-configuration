@@ -20,6 +20,19 @@ Variants {
             property bool startupFilesReady: false
             property bool isRedacting: false
 
+            property bool hideBarInRedactor: {
+                let dummy = configRevision;
+                if (typeof Config !== "undefined" && Config.rawSettings && Config.rawSettings.widgets && Config.rawSettings.widgets.hideBarInRedactor !== undefined) {
+                    return Config.rawSettings.widgets.hideBarInRedactor;
+                }
+                if (typeof Config !== "undefined" && Config.rawSettings && Config.rawSettings.bar && Config.rawSettings.bar.hideBarInRedactor !== undefined) {
+                    return Config.rawSettings.bar.hideBarInRedactor;
+                }
+                return true;
+            }
+
+            property bool shouldHideForRedact: isRedacting && hideBarInRedactor
+
             property var activeToplevel: ToplevelManager.activeToplevel
             property bool isFullscreenActive: {
                 if (!activeToplevel || !activeToplevel.fullscreen) return false;
@@ -125,7 +138,7 @@ Variants {
             }
 
             property bool isRevealed: {
-                if (isRedacting) return false;
+                if (shouldHideForRedact) return false;
                 if (!autohide) return true;
                 if (barHover.hovered) return true;
                 if (hideTimer.running) return true;
@@ -256,11 +269,11 @@ Variants {
                 right: isFill ? 0 : (barPosition === "left" ? 0 : (autohide ? 0 : s(4)))
             }
 
-            exclusiveZone: (!barConfigReady || autohide || isRedacting) ? 0 : barHeight
+            exclusiveZone: (!barConfigReady || autohide || shouldHideForRedact) ? 0 : barHeight
             color: "transparent"
 
-            property real activeMaskHeight: isRedacting ? 0 : ((autohide && !isRevealed) ? s(4) : (isVertical ? (isFill ? barWindow.height : (effectiveBarHeight + edgePadding * 2)) : (isFill ? (barHeight + cornerRadius) : (barHeight + edgePadding))))
-            property real activeMaskWidth: isRedacting ? 0 : ((autohide && !isRevealed) ? s(4) : (isVertical ? (isFill ? (barHeight + cornerRadius) : (barHeight + edgePadding)) : (isFill ? barWindow.width : (effectiveBarWidth + edgePadding * 2))))
+            property real activeMaskHeight: shouldHideForRedact ? 0 : ((autohide && !isRevealed) ? s(4) : (isVertical ? (isFill ? barWindow.height : (effectiveBarHeight + edgePadding * 2)) : (isFill ? (barHeight + cornerRadius) : (barHeight + edgePadding))))
+            property real activeMaskWidth: shouldHideForRedact ? 0 : ((autohide && !isRevealed) ? s(4) : (isVertical ? (isFill ? (barHeight + cornerRadius) : (barHeight + edgePadding)) : (isFill ? barWindow.width : (effectiveBarWidth + edgePadding * 2))))
 
             mask: Region {
                 Region {

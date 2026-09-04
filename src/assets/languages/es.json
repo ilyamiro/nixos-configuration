@@ -250,7 +250,11 @@
       "widgets": {
         "title": "Widgets de escritorio",
         "desc": "Configurar y ubicar widgets en este monitor",
-        "open": "Abrir editor"
+        "open": "Abrir editor",
+        "hide_bar": {
+          "title": "Ocultar barra en el redactor",
+          "desc": "Ocultar automáticamente la barra al editar widgets en el modo redactor"
+        }
       }
     },
     "bar": {

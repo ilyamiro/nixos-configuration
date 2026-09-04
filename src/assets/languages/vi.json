@@ -249,7 +249,11 @@
       "widgets": {
         "title": "Tiện ích màn hình",
         "desc": "Cấu hình và đặt tiện ích cho màn hình này",
-        "open": "Mở trình chỉnh sửa"
+        "open": "Mở trình chỉnh sửa",
+        "hide_bar": {
+          "title": "Ẩn thanh trong trình chỉnh sửa",
+          "desc": "Tự động ẩn thanh khi chỉnh sửa tiện ích con ở chế độ biên tập"
+        }
       }
     },
     "bar": {

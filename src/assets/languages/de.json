@@ -250,7 +250,11 @@
       "widgets": {
         "title": "Desktop-widgets",
         "desc": "Widgets für diesen monitor konfigurieren und platzieren",
-        "open": "Editor öffnen"
+        "open": "Editor öffnen",
+        "hide_bar": {
+          "title": "Leiste im Redaktor ausblenden",
+          "desc": "Die Leiste beim Bearbeiten von Widgets im Redaktormodus automatisch ausblenden"
+        }
       }
     },
     "bar": {
