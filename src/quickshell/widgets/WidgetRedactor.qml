@@ -1357,6 +1357,9 @@ PanelWindow {
                     ColumnLayout {
                         id: bottomChrome
                         z: 40
+                        opacity: widgetProxy.isSelected ? 1.0 : 0.0
+                        visible: opacity > 0
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
                         y: {
                             let limitY = (toolbar.opacity > 0.1 && !redactorMode.toolbarObscured) ? toolbar.y : redactorMode.safeHeight;
                             let fitsBelow = (widgetProxy.y + parent.height + widgetProxy.selectionGap + height + s(8)) <= limitY;
