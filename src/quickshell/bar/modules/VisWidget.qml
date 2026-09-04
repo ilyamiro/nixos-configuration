@@ -21,7 +21,7 @@ Rectangle {
     property int barCount: 16
     property bool isVisVisible: moduleActive && showLayout
     property bool isSubscribed: false
-    readonly property bool shouldSubscribe: isVisVisible && MprisController.isPlaying
+    readonly property bool shouldSubscribe: isVisVisible
 
     onShouldSubscribeChanged: updateSubscription()
 

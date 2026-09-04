@@ -87,6 +87,7 @@ Item {
         ]
         stdout: SplitParser {
             onRead: data => {
+                if (!root.processEnabled) return;
                 dataWatchdog.restart();
                 let str = data.trim();
                 if (str.length === 0) return;
