@@ -47,7 +47,8 @@
         "top": "Oben",
         "bottom": "Unten",
         "left": "Links",
-        "right": "Rechts"
+        "right": "Rechts",
+        "center": "Mitte"
       },
       "width": {
         "title": "Starter-breite",
@@ -318,6 +319,10 @@
         "left": "Links",
         "center": "Mitte",
         "right": "Rechts"
+      },
+      "distinct_pills": {
+        "title": "Aktiviere einen modularen und kompakten Stil für Widgets",
+        "desc": "Verleiht den Modulen der Leiste einen umrandeten Rahmen und verkleinert sie für ein kompakteres, modulares Erscheinungsbild"
       }
     },
     "theme": {

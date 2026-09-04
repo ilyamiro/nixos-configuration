@@ -47,7 +47,8 @@
         "top": "Arriba",
         "bottom": "Abajo",
         "left": "Izquierda",
-        "right": "Derecha"
+        "right": "Derecha",
+        "center": "Centro"
       },
       "width": {
         "title": "Ancho del lanzador",
@@ -318,6 +319,10 @@
         "left": "Izquierda",
         "center": "Centro",
         "right": "Derecha"
+      },
+      "distinct_pills": {
+        "title": "Activar un estilo modular y compacto para los widgets",
+        "desc": "Hace que los módulos de la barra tengan un contorno rectangular y reduzcan su tamaño para adaptarse a una apariencia modular"
       }
     },
     "theme": {

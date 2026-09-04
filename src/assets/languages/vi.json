@@ -46,7 +46,8 @@
         "top": "Trên",
         "bottom": "Dưới",
         "left": "Trái",
-        "right": "Phải"
+        "right": "Phải",
+        "center": "Giữa"
       },
       "width": {
         "title": "Chiều rộng trình khởi chạy",
@@ -317,6 +318,10 @@
         "left": "Trái",
         "center": "Giữa",
         "right": "Phải"
+      },
+      "distinct_pills": {
+        "title": "Bật kiểu dáng mô-đun và gọn gàng cho tiện ích",
+        "desc": "Thêm đường viền cho các mô-đun trên thanh và thu nhỏ kích thước để phù hợp với giao diện mô-đun"
       }
     },
     "theme": {

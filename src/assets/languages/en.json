@@ -46,7 +46,8 @@
         "top": "Top",
         "bottom": "Bottom",
         "left": "Left",
-        "right": "Right"
+        "right": "Right",
+        "center": "Center"
       },
       "width": {
         "title": "Launcher width",
@@ -317,6 +318,10 @@
         "left": "Left",
         "center": "Center",
         "right": "Right"
+      },
+      "distinct_pills": {
+        "title": "Enable a modular and compact style for widgets",
+        "desc": "Makes bar's modules have an outlining rectangle and shrink their size to fit the modular look"
       }
     },
     "theme": {

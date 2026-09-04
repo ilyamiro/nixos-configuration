@@ -46,7 +46,8 @@
         "top": "Superiore",
         "bottom": "Inferiore",
         "left": "Sinistro",
-        "right": "Destro"
+        "right": "Destro",
+        "center": "Centro"
       },
       "width": {
         "title": "Larghezza avviatore",
@@ -316,6 +317,10 @@
         "left": "Sinistra",
         "center": "Centro",
         "right": "Destra"
+      },
+      "distinct_pills": {
+        "title": "Abilita uno stile modulare e compatto per i widget",
+        "desc": "Aggiunge un bordo ai moduli della barra e ne riduce le dimensioni per adattarsi a un aspetto modulare"
       }
     },
     "theme": {
