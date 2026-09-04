@@ -14,43 +14,15 @@ Item {
     id: window
     focus: true
 
-    property var btDevicesSnapshot: []
-
-    Timer {
-        id: btSnapshotDebounce
-        interval: 0
-        repeat: false
-        onTriggered: {
-            window.updateBtDevicesSnapshot();
-            window.requestBtRebuild();
-        }
-    }
-
     Timer {
         id: btRebuildDebounce
-        interval: 0
+        interval: 150
         repeat: false
         onTriggered: window.rebuildBtData(false)
     }
 
     function requestBtRebuild() {
         if (window.visible) btRebuildDebounce.restart();
-    }
-
-    function updateBtDevicesSnapshot() {
-        let adapter = Bluetooth.defaultAdapter;
-        if (!adapter || !adapter.devices) {
-            window.btDevicesSnapshot = [];
-            return;
-        }
-        let devs = adapter.devices.values || adapter.devices;
-        let list = [];
-        let count = devs.length !== undefined ? devs.length : (devs.count !== undefined ? devs.count : 0);
-        for (let i = 0; i < count; i++) {
-            let d = devs[i] !== undefined ? devs[i] : (devs.get ? devs.get(i) : null);
-            if (d) list.push(d);
-        }
-        window.btDevicesSnapshot = list;
     }
 
     function getBtDevicesList() {
@@ -133,7 +105,6 @@ Item {
             window.rebuildEthData();
             window.rebuildWifiData();
             window.rebuildBtData(false);
-            window.updateBtDevicesSnapshot();
             window.fetchIpData();
             window.fetchFreqData();
             if (window.activeMode === "bt" && !btProfilePoller.running) btProfilePoller.running = true;
@@ -145,7 +116,6 @@ Item {
             btConnectSimTimer.stop();
             busyTimeout.stop();
             failClearTimer.stop();
-            btSnapshotDebounce.stop();
             btRebuildDebounce.stop();
             powerMinSpinTimer.stop();
             introPlayTimer.stop();
@@ -153,6 +123,8 @@ Item {
             mainPollerTimer.stop();
             window.pendingWifiId = "";
             window.pendingWifiSsid = "";
+            window.pendingPairThenConnect = "";
+            window.btOpsInFlight = ({});
             window.hoveredCardCount = 0;
             window.disconnectHoverCount = 0;
             window.introState = 0.0;
@@ -190,7 +162,6 @@ Item {
             enabled: window.visible
             ignoreUnknownSignals: true
             function onEnabledChanged() {
-                btSnapshotDebounce.restart();
                 window.requestBtRebuild();
             }
             function onDiscoveringChanged() {
@@ -202,15 +173,15 @@ Item {
             enabled: window.visible
             ignoreUnknownSignals: true
             function onObjectInsertedPost(object, index) {
-                btSnapshotDebounce.restart();
+                window.requestBtRebuild();
             }
             function onObjectRemovedPost(object, index) {
-                btSnapshotDebounce.restart();
+                window.requestBtRebuild();
             }
         }
         Repeater {
             id: btDeviceRepeater
-            model: window.visible ? window.btDevicesSnapshot : null
+            model: (window.visible && Bluetooth.defaultAdapter) ? Bluetooth.defaultAdapter.devices : null
             Item {
                 property var device: modelData
                 Connections {
@@ -221,7 +192,25 @@ Item {
                     function onBatteryChanged() { window.requestBtRebuild(); }
                     function onBatteryAvailableChanged() { window.requestBtRebuild(); }
                     function onStateChanged() { window.requestBtRebuild(); }
-                    function onPairedChanged() { window.requestBtRebuild(); }
+                    function onPairedChanged() {
+                        window.requestBtRebuild();
+                        if (device && device.paired && window.pendingPairThenConnect === device.address) {
+                            window.pendingPairThenConnect = "";
+                            let mac = device.address;
+                            window.withBtOpLock(mac, function() {
+                                let devList = window.getBtDevicesList();
+                                let d = null;
+                                for (let i = 0; i < devList.length; i++) {
+                                    if (devList[i] && devList[i].address === mac) { d = devList[i]; break; }
+                                }
+                                if (!d) return;
+                                d.connect();
+                                btConnectSimTimer.targetId = window.connectingId;
+                                btConnectSimTimer.attemptId = window.activeConnectId;
+                                btConnectSimTimer.restart();
+                            });
+                        }
+                    }
                     function onTrustedChanged() { window.requestBtRebuild(); }
                     function onNameChanged() { window.requestBtRebuild(); }
                     function onDeviceNameChanged() { window.requestBtRebuild(); }
@@ -519,7 +508,6 @@ Item {
         window.findDevices();
         window.rebuildEthData();
         window.rebuildWifiData();
-        window.updateBtDevicesSnapshot();
 
         let hasCache = false;
         if (cache.lastBtJson !== "") { window.rebuildBtData(true); hasCache = true; }
@@ -558,6 +546,34 @@ Item {
     property var disconnectingDevices: ({})
     property string connectingId: ""
     property string failedId: ""
+
+    property var btOpsInFlight: ({})
+    property string pendingPairThenConnect: ""
+
+    function isBtOpBusy(mac) {
+        return !!window.btOpsInFlight[mac];
+    }
+
+    function withBtOpLock(mac, fn) {
+        if (!mac || window.isBtOpBusy(mac)) return false;
+
+        let ops = window.btOpsInFlight;
+        ops[mac] = true;
+        window.btOpsInFlight = Object.assign({}, ops);
+
+        Qt.callLater(function() {
+            try {
+                fn();
+            } catch (e) {
+                console.warn("BT op failed for", mac, e);
+            } finally {
+                let o = window.btOpsInFlight;
+                delete o[mac];
+                window.btOpsInFlight = Object.assign({}, o);
+            }
+        });
+        return true;
+    }
 
     Timer { id: busyTimeout; interval: 15000; onTriggered: { window.busyTasks = ({}); window.disconnectingDevices = ({}); window.connectingId = ""; } }
     Timer { id: failClearTimer; interval: 4000; onTriggered: window.failedId = "" }
@@ -602,15 +618,33 @@ Item {
             }
         } else {
             window.stopBtScan();
-            let d = window.btDeviceMap[macOrSsid];
-            if (d) {
+            let mac = macOrSsid;
+            if (window.isBtOpBusy(mac)) return;
+
+            window.withBtOpLock(mac, function() {
+                let devList = window.getBtDevicesList();
+                let d = null;
+                for (let i = 0; i < devList.length; i++) {
+                    if (devList[i] && devList[i].address === mac) { d = devList[i]; break; }
+                }
+                if (!d) {
+                    let b = window.busyTasks; delete b[id]; window.busyTasks = Object.assign({}, b);
+                    window.connectingId = "";
+                    window.failedId = id || "";
+                    failClearTimer.restart();
+                    return;
+                }
                 d.trusted = true;
-                if (!d.paired && !d.bonded) d.pair();
-                d.connect();
-                btConnectSimTimer.targetId = id || "";
-                btConnectSimTimer.attemptId = window.activeConnectId;
-                btConnectSimTimer.restart();
-            }
+                if (!d.paired && !d.bonded) {
+                    window.pendingPairThenConnect = mac;
+                    d.pair();
+                } else {
+                    d.connect();
+                    btConnectSimTimer.targetId = id || "";
+                    btConnectSimTimer.attemptId = window.activeConnectId;
+                    btConnectSimTimer.restart();
+                }
+            });
         }
     }
 
@@ -1977,7 +2011,11 @@ Item {
                                     busyTimeout.restart();
 
                                     if (window.activeMode === "bt") {
-                                        let devToDisconnect = window.btDeviceMap[coreContainer.myId];
+                                        let devList = window.getBtDevicesList();
+                                        let devToDisconnect = null;
+                                        for (let i = 0; i < devList.length; i++) {
+                                            if (devList[i] && devList[i].address === coreContainer.myId) { devToDisconnect = devList[i]; break; }
+                                        }
                                         if (devToDisconnect) devToDisconnect.disconnect();
                                     } else if (window.activeMode === "eth") {
                                         if (window.ethDevice) window.ethDevice.disconnect();
@@ -2220,8 +2258,26 @@ Item {
                             } else if (currentIsInfoNode && currentCmd) {
                                 if (currentCmd.indexOf("BT_FORGET_") === 0) {
                                     let macToForget = currentCmd.substring(10);
-                                    let devToForget = window.btDeviceMap[macToForget];
-                                    if (devToForget) devToForget.forget();
+                                    window.withBtOpLock(macToForget, function() {
+                                        let devList = window.getBtDevicesList();
+                                        let devToForget = null;
+                                        for (let i = 0; i < devList.length; i++) {
+                                            if (devList[i] && devList[i].address === macToForget) { devToForget = devList[i]; break; }
+                                        }
+                                        if (!devToForget) return;
+
+                                        let map = Object.assign({}, window.btDeviceMap);
+                                        delete map[macToForget];
+                                        window.btDeviceMap = map;
+
+                                        let bt = window.busyTasks; delete bt[macToForget]; window.busyTasks = Object.assign({}, bt);
+                                        let dd = window.disconnectingDevices; delete dd[macToForget]; window.disconnectingDevices = Object.assign({}, dd);
+                                        if (window.connectingId === macToForget) window.connectingId = "";
+                                        if (window.failedId === macToForget) window.failedId = "";
+
+                                        devToForget.forget();
+                                        window.requestBtRebuild();
+                                    });
                                 } else {
                                     Quickshell.execDetached(["sh", "-c", currentCmd]);
                                 }
@@ -2249,6 +2305,7 @@ Item {
                         FillButton {
                             id: fillBtn
                             visible: isMyActionable
+                            enabled: !isMyBusy && !window.isBtOpBusy(itemId)
                             anchors.fill: parent
                             cornerRadius: ThemeBackend.borderRadius
                             fillDuration: 600
@@ -2271,6 +2328,7 @@ Item {
                         ClickButton {
                             id: clickBtn
                             visible: !isMyActionable
+                            enabled: !isMyBusy && !window.isBtOpBusy(itemId)
                             anchors.fill: parent
                             cornerRadius: ThemeBackend.borderRadius
                             accentColor: ThemeBackend.surface0
