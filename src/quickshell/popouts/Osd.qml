@@ -690,7 +690,7 @@ PanelWindow {
                     gradColor2: Qt.lighter(activeColor, 1.05)
                     gradColor3: Qt.lighter(activeColor, 1.10)
                     cornerRadius: osdWindow.s(5)
-                    handleSize: osdWindow.s(16)
+                    handleSize: osdWindow.s(22)
 
                     handleColor: (osdWindow.isMutedState) ? ThemeBackend.overlay0 : Qt.lighter(activeColor, 1.15)
                     handleHoverColor: (osdWindow.isMutedState) ? ThemeBackend.subtext0 : Qt.lighter(activeColor, 1.5)
@@ -882,7 +882,7 @@ PanelWindow {
                     gradColor2: Qt.lighter(activeColor, 1.05)
                     gradColor3: Qt.lighter(activeColor, 1.10)
                     cornerRadius: osdWindow.s(5)
-                    handleSize: osdWindow.s(16)
+                    handleSize: osdWindow.s(22)
 
                     handleColor: (osdWindow.isMutedState) ? ThemeBackend.overlay0 : Qt.lighter(activeColor, 1.15)
                     handleHoverColor: (osdWindow.isMutedState) ? ThemeBackend.subtext0 : Qt.lighter(activeColor, 1.5)
