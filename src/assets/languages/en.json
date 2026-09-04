@@ -219,6 +219,10 @@
         "title": "Copy settings",
         "desc": "Copy configuration JSON to clipboard",
         "button": "Copy settings"
+      },
+      "maxvolume": {
+        "title": "Maximum volume",
+        "desc": "Upper limit for the volume slider, OSD and media keys"
       }
     },
     "display": {

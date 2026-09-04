@@ -671,7 +671,7 @@ PanelWindow {
                     Layout.preferredWidth: osdWindow.s(16)
                     Layout.alignment: Qt.AlignHCenter
                     from: 0.0
-                    to: 100.0
+                    to: Audio.maxVolume
                     value: osdWindow.currentVal
                     backgroundColor: ThemeBackend.surface1
 
@@ -708,7 +708,7 @@ PanelWindow {
                     }
                     onMoved: val => {
                         OsdController.restartTimer();
-                        let pct = Math.max(0, Math.min(100, Math.round(val)));
+                        let pct = Math.max(0, Math.min(Audio.maxVolume, Math.round(val)));
                         if (osdWindow.kind === "brightness") {
                             OsdController.briVal = pct;
                             briCmdThrottle.targetPct = pct;
@@ -863,7 +863,7 @@ PanelWindow {
                     visible: !osdWindow.isToggleKind && opacity > 0.01
 
                     from: 0.0
-                    to: 100.0
+                    to: Audio.maxVolume
                     value: osdWindow.currentVal
                     backgroundColor: ThemeBackend.surface1
 
@@ -900,7 +900,7 @@ PanelWindow {
                     }
                     onMoved: val => {
                         OsdController.restartTimer();
-                        let pct = Math.max(0, Math.min(100, Math.round(val)));
+                        let pct = Math.max(0, Math.min(Audio.maxVolume, Math.round(val)));
                         if (osdWindow.kind === "brightness") {
                             OsdController.briVal = pct;
                             briCmdThrottle.targetPct = pct;

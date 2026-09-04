@@ -110,7 +110,7 @@ Rectangle {
                     let steps = Math.trunc(volPill.wheelAccumulator / threshold)
                     volPill.wheelAccumulator = volPill.wheelAccumulator % threshold
                     if (steps !== 0 && Audio.defaultSink) {
-                        let newVol = Math.max(0, Math.min(100, sysVolume + (steps * 5)))
+                        let newVol = Math.max(0, Math.min(Audio.maxVolume, sysVolume + (steps * 5)))
                         Audio.setVolume(Audio.defaultSink, newVol)
                     }
                 }

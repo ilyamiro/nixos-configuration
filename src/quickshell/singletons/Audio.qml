@@ -44,6 +44,23 @@ Singleton {
     readonly property PwNode defaultSink: Pipewire.defaultAudioSink
     readonly property PwNode defaultSource: Pipewire.defaultAudioSource
 
+    // Upper limit for every volume surface (popup sliders, OSD, bar widget) and
+    // for scripts/volume.sh. Percentage; 100 keeps the classic behaviour.
+    property var generalSettings: Config.getSetting("general", { "maxVolume": 100 })
+    readonly property int maxVolume: {
+        let v = (generalSettings && generalSettings.maxVolume !== undefined) ? Number(generalSettings.maxVolume) : 100;
+        if (isNaN(v)) return 100;
+        return Math.max(100, Math.min(200, Math.round(v)));
+    }
+    readonly property real maxVolumeFactor: maxVolume / 100.0
+
+    Connections {
+        target: Config
+        function onSettingsLoaded() {
+            root.generalSettings = Config.getSetting("general", { "maxVolume": 100 });
+        }
+    }
+
     function setDefaultOutput(node) {
         if (node) Pipewire.preferredDefaultAudioSink = node;
     }
@@ -57,7 +74,7 @@ Singleton {
     }
 
     function setVolume(node, pct) {
-        if (node && node.audio) node.audio.volume = Math.max(0, Math.min(1.5, pct / 100.0));
+        if (node && node.audio) node.audio.volume = Math.max(0, Math.min(root.maxVolumeFactor, pct / 100.0));
     }
 
     function getNodeName(node) {
