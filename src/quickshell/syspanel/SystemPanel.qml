@@ -11,7 +11,6 @@ import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import "../"
 import "../reusables"
-import "../notifications"
 import "../singletons"
 
 Item {
@@ -163,7 +162,6 @@ Item {
         NotificationManager.sysPanelOpen = visible;
         if (visible) {
             forceActiveFocus();
-            focusTimer.restart();
             resetAndPlayIntro();
 
             animCapacity = batCapacity;
@@ -182,26 +180,14 @@ Item {
             if (nightLightBtn) nightLightBtn.updateState();
             if (coffeeBtn) coffeeBtn.updateState();
 
-            hibernateCheck.running = false;
-            hibernateCheck.running = true;
-
-            briPollerTimer.stop();
-            briPoller.running = false;
-            briPoller.running = true;
+            briPollerTimer.interval = 150;
+            briPollerTimer.restart();
         } else {
             briPollerTimer.stop();
             briPoller.running = false;
             startupSequence.stop();
             closeSequence.stop();
         }
-    }
-
-    Timer {
-        id: focusTimer
-        interval: 50
-        running: false
-        repeat: false
-        onTriggered: root.forceActiveFocus()
     }
 
     Timer {
@@ -219,14 +205,15 @@ Item {
     }
 
     Component.onCompleted: {
+        hibernateCheck.running = true;
         if (visible) {
             NotificationManager.sysPanelOpen = true;
             if (nightLightBtn) nightLightBtn.updateState();
             if (coffeeBtn) coffeeBtn.updateState();
             resetAndPlayIntro();
-            focusTimer.start();
-            briPoller.running = true;
-            hibernateCheck.running = true;
+            forceActiveFocus();
+            briPollerTimer.interval = 150;
+            briPollerTimer.restart();
             animCapacity = batCapacity;
         }
     }
@@ -241,7 +228,10 @@ Item {
         interval: root.usesDdcBrightness ? 10000 : 1500
         repeat: false
         onTriggered: {
-            if (root.visible) briPoller.running = true;
+            if (root.visible) {
+                briPoller.running = true;
+                interval = root.usesDdcBrightness ? 10000 : 1500;
+            }
         }
     }
 
@@ -271,39 +261,36 @@ Item {
 
     ParallelAnimation {
         id: startupSequence
-        NumberAnimation { target: root; property: "introContent"; to: 1.0; duration: 600; easing.type: Easing.OutQuart }
+        NumberAnimation { target: root; property: "introContent"; to: 1.0; duration: 280; easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "introTop"; from: 0; to: 1.0; duration: 320; easing.type: Easing.OutCubic }
 
         SequentialAnimation {
-            PauseAnimation { duration: 50 }
-            NumberAnimation { target: root; property: "introTop"; from: 0; to: 1.0; duration: 900; easing.type: Easing.OutExpo }
+            PauseAnimation { duration: 25 }
+            NumberAnimation { target: root; property: "introSliders"; from: 0; to: 1.0; duration: 320; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 100 }
-            NumberAnimation { target: root; property: "introSliders"; from: 0; to: 1.0; duration: 900; easing.type: Easing.OutExpo }
+            PauseAnimation { duration: 40 }
+            NumberAnimation { target: root; property: "introNotifs"; from: 0; to: 1.0; duration: 340; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 150 }
-            NumberAnimation { target: root; property: "introNotifs"; from: 0; to: 1.0; duration: 900; easing.type: Easing.OutExpo }
+            PauseAnimation { duration: 55 }
+            NumberAnimation { target: root; property: "introActions"; from: 0; to: 1.0; duration: 340; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 200 }
-            NumberAnimation { target: root; property: "introActions"; from: 0; to: 1.0; duration: 900; easing.type: Easing.OutExpo }
-        }
-        SequentialAnimation {
-            PauseAnimation { duration: 250 }
-            NumberAnimation { target: root; property: "introCore"; from: 0; to: 1.0; duration: 900; easing.type: Easing.OutExpo }
+            PauseAnimation { duration: 70 }
+            NumberAnimation { target: root; property: "introCore"; from: 0; to: 1.0; duration: 360; easing.type: Easing.OutCubic }
         }
     }
 
     SequentialAnimation {
         id: closeSequence
         ParallelAnimation {
-            NumberAnimation { target: root; property: "introContent"; to: 0.0; duration: 500; easing.type: Easing.OutQuint }
-            NumberAnimation { target: root; property: "introTop"; to: 0.0; duration: 400; easing.type: Easing.OutQuint }
-            NumberAnimation { target: root; property: "introSliders"; to: 0.0; duration: 400; easing.type: Easing.OutQuint }
-            NumberAnimation { target: root; property: "introNotifs"; to: 0.0; duration: 400; easing.type: Easing.OutQuint }
-            NumberAnimation { target: root; property: "introActions"; to: 0.0; duration: 400; easing.type: Easing.OutQuint }
-            NumberAnimation { target: root; property: "introCore"; to: 0.0; duration: 400; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introContent"; to: 0.0; duration: 300; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introTop"; to: 0.0; duration: 250; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introSliders"; to: 0.0; duration: 250; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introNotifs"; to: 0.0; duration: 250; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introActions"; to: 0.0; duration: 250; easing.type: Easing.OutQuint }
+            NumberAnimation { target: root; property: "introCore"; to: 0.0; duration: 250; easing.type: Easing.OutQuint }
         }
         ScriptAction {
             script: {
@@ -1046,14 +1033,11 @@ Item {
                                     from: 0; to: Math.PI * 2; duration: 800
                                 }
                                 onWavePhaseChanged: requestPaint()
+
                                 Connections {
                                     target: actionCapsule
                                     enabled: root.visible
                                     function onFillLevelChanged() { actionWaveCanvas.requestPaint() }
-                                }
-                                Connections {
-                                    target: actionCapsule
-                                    enabled: root.visible
                                     function onRadiusChanged() { actionWaveCanvas.requestPaint() }
                                 }
 
@@ -1273,43 +1257,31 @@ Item {
                         }
 
                         onWavePhaseChanged: requestPaint()
+
                         Connections {
                             target: batteryBox
                             enabled: root.visible
                             function onFillLevelChanged() { waveCanvas.requestPaint() }
-                        }
-                        Connections {
-                            target: batteryBox
-                            enabled: root.visible
                             function onWaveAmpChanged() { waveCanvas.requestPaint() }
+                            function onRadiusChanged() { waveCanvas.requestPaint() }
                         }
+
                         Connections {
                             target: root
                             enabled: root.visible
                             function onBatColorFlatChanged() { waveCanvas.requestPaint() }
-                        }
-                        Connections {
-                            target: root
-                            enabled: root.visible
                             function onIsChargingChanged() { waveCanvas.requestPaint() }
+                            function onVisibleChanged() {
+                                if (root.visible) waveCanvas.requestPaint();
+                            }
                         }
-                        Connections {
-                            target: batteryBox
-                            enabled: root.visible
-                            function onRadiusChanged() { waveCanvas.requestPaint() }
-                        }
+
                         Connections {
                             target: UPower.displayDevice
                             enabled: root.visible
                             function onReadyChanged() { waveCanvas.requestPaint() }
                             function onStateChanged() { waveCanvas.requestPaint() }
                             function onPercentageChanged() { waveCanvas.requestPaint() }
-                        }
-                        Connections {
-                            target: root
-                            function onVisibleChanged() {
-                                if (root.visible) waveCanvas.requestPaint();
-                            }
                         }
 
                         onPaint: {
