@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import "../"
+import "./"
 
 Item {
     id: root
@@ -88,19 +89,7 @@ Item {
                 }
             } catch (e) {}
 
-            let cleanWp = wp.replace(/'/g, "'\\''");
-            let mainFallback = root.serpantinumDir ? (root.serpantinumDir + "/quickshell/Shell.qml") : "";
-            let retryCmd =
-                "WP='" + cleanWp + "'; " +
-                "FALLBACK='" + mainFallback + "'; " +
-                "for ((i=0; i<15; i++)); do " +
-                "if [ -n \"$MAIN_QML\" ] && quickshell -p \"$MAIN_QML\" ipc call wallpaper setWallpaper all \"$WP\" fade >/dev/null 2>&1; then exit 0; fi; " +
-                "if [ -n \"$FALLBACK\" ] && quickshell -p \"$FALLBACK\" ipc call wallpaper setWallpaper all \"$WP\" fade >/dev/null 2>&1; then exit 0; fi; " +
-                "if quickshell ipc call wallpaper setWallpaper all \"$WP\" fade >/dev/null 2>&1; then exit 0; fi; " +
-                "sleep 0.15; " +
-                "done";
-
-            Quickshell.execDetached(["bash", "-c", retryCmd]);
+            Wallpaper.setWallpaper("all", wp, "fade");
             launchStageTimer.interval = 900;
         } else {
             launchStageTimer.interval = 100;
