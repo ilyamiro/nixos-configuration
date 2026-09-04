@@ -192,22 +192,31 @@ def run_indexing(src_dir, per_dir_cache, index_file, poster_dir):
 
     entries_to_process = []
     seen_entry_names = set()
+    seen_entry_paths = set()
     try:
         dir_entries = list(os.scandir(src_dir))
     except Exception:
         dir_entries = []
 
     for entry in dir_entries:
-        if not entry.is_file():
+        try:
+            if not entry.is_file():
+                continue
+        except OSError:
             continue
+
         fname = entry.name
         if fname in seen_entry_names:
             continue
+
         ext = os.path.splitext(fname)[1].lower()
         if ext not in img_exts and ext not in vid_exts:
             continue
 
         try:
+            real_path = os.path.realpath(entry.path)
+            if real_path in seen_entry_paths:
+                continue
             st = entry.stat()
             mtime = int(st.st_mtime)
             size = int(st.st_size)
@@ -215,23 +224,26 @@ def run_indexing(src_dir, per_dir_cache, index_file, poster_dir):
             continue
 
         seen_entry_names.add(fname)
+        seen_entry_paths.add(real_path)
         fpath = os.path.abspath(entry.path)
         is_video = ext in vid_exts
         entries_to_process.append((fname, fpath, mtime, size, is_video))
 
     workers = min(12, max(4, os.cpu_count() or 4))
-    items = []
-    seen_result_names = set()
+    items_map = {}
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [executor.submit(process_entry, item, poster_dir, cached_items) for item in entries_to_process]
         for f in futures:
             try:
                 res = f.result()
-                if res and res.get("fileName") and res["fileName"] not in seen_result_names:
-                    seen_result_names.add(res["fileName"])
-                    items.append(res)
+                if res and res.get("fileName") and res.get("filePath"):
+                    fn = res["fileName"]
+                    if fn not in items_map:
+                        items_map[fn] = res
             except Exception:
                 pass
+
+    items = [items_map[k] for k in sorted(items_map.keys())]
 
     output_data = {
         "srcDir": os.path.abspath(src_dir),
