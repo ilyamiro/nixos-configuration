@@ -391,6 +391,9 @@ Item {
                             Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                             checked: launcherTabRoot.currentSmartRanking
                             accentColor: ThemeBackend.mauve
+                            baseColor: ThemeBackend.surface1
+                            handleColor: ThemeBackend.crust
+                            handleOffColor: ThemeBackend.text
                             onToggled: function(val) {
                                 launcherTabRoot.currentSmartRanking = val;
                                 launcherTabRoot.updateLauncherSetting("smartRanking", val);
