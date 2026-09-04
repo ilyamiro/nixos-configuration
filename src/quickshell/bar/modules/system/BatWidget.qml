@@ -14,8 +14,10 @@ Rectangle {
     id: batWidgetRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
 
     property bool isDesktop: UPower.displayDevice.ready ? !UPower.displayDevice.isLaptopBattery : SystemInfo.isDesktop
     readonly property int batCap: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
@@ -42,16 +44,15 @@ Rectangle {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
-    y: barWindow ? barWindow.baseOffsetY : 0
-    height: barWindow ? barWindow.barHeight : 40
-    radius: Math.min(ThemeBackend.borderRadius, height / 2)
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
+    radius: ThemeBackend.borderRadius
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
     layer.enabled: true
 
-    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(10) : 10)) : 0
+    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
     width: targetWidth
 
     opacity: (showLayout && moduleActive) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -81,7 +82,7 @@ Rectangle {
     Row {
         id: sysLayout
         anchors.centerIn: parent
-        property int pillHeight: barWindow ? barWindow.s(30) : 30
+        property int pillHeight: barWindow ? barWindow.s(batWidgetRoot.isCompact ? 28 : 30) : (batWidgetRoot.isCompact ? 28 : 30)
 
         Rectangle {
             id: batPill
@@ -98,13 +99,13 @@ Rectangle {
             property real waveCenterOffset: 0.375 * waveAmp * (Math.sin(batWidgetRoot.globalWavePhase) - Math.cos(batWidgetRoot.globalWavePhase))
 
             height: sysLayout.pillHeight
-            property real targetWidth: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(32) : 32) : (baseContentRow.implicitWidth + (barWindow ? barWindow.s(18) : 18))
+            property real targetWidth: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 30 : 32) : (batWidgetRoot.isCompact ? 30 : 32)) : (baseContentRow.implicitWidth + (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 16 : 18) : (batWidgetRoot.isCompact ? 16 : 18)))
             width: targetWidth
             Behavior on width { NumberAnimation { duration: 480; easing.type: Easing.OutQuint } }
 
             radius: Math.min(Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2)), height / 2)
-            color: ThemeBackend.surface0
-            border.color: ThemeBackend.surface1
+            color: batWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+            border.color: batWidgetRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1
             border.width: 1
             clip: true
 
@@ -194,13 +195,13 @@ Rectangle {
             Row {
                 id: baseContentRow
                 anchors.centerIn: parent
-                spacing: batWidgetRoot.isDesktop ? 0 : (barWindow ? barWindow.s(6) : 6)
+                spacing: batWidgetRoot.isDesktop ? 0 : (barWindow ? barWindow.s(5) : 5)
 
                 Text {
                     text: batWidgetRoot.batIcon
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(16) : 16) : (barWindow ? barWindow.s(13.5) : 13.5)
-                    color: batWidgetRoot.isDesktop ? ThemeBackend.red : ThemeBackend.subtext0
+                    font.pixelSize: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 15 : 16) : (batWidgetRoot.isCompact ? 15 : 16)) : (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 12 : 13.5) : (batWidgetRoot.isCompact ? 12 : 13.5))
+                    color: batWidgetRoot.isDesktop ? ThemeBackend.red : (batWidgetRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0)
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -208,7 +209,7 @@ Rectangle {
                     visible: !batWidgetRoot.isDesktop
                     text: batWidgetRoot.batPercent
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: barWindow ? barWindow.s(12.6) : 12.6
+                    font.pixelSize: barWindow ? barWindow.s(batWidgetRoot.isCompact ? 11 : 12.6) : (batWidgetRoot.isCompact ? 11 : 12.6)
                     font.bold: true
                     color: ThemeBackend.text
                     anchors.verticalCenter: parent.verticalCenter
@@ -232,12 +233,12 @@ Rectangle {
 
                     Row {
                         anchors.centerIn: parent
-                        spacing: batWidgetRoot.isDesktop ? 0 : (barWindow ? barWindow.s(6) : 6)
+                        spacing: batWidgetRoot.isDesktop ? 0 : (barWindow ? barWindow.s(5) : 5)
 
                         Text {
                             text: batWidgetRoot.batIcon
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(16) : 16) : (barWindow ? barWindow.s(13.5) : 13.5)
+                            font.pixelSize: batWidgetRoot.isDesktop ? (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 15 : 16) : (batWidgetRoot.isCompact ? 15 : 16)) : (barWindow ? barWindow.s(batWidgetRoot.isCompact ? 12 : 13.5) : (batWidgetRoot.isCompact ? 12 : 13.5))
                             color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.75)
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -246,7 +247,7 @@ Rectangle {
                             visible: !batWidgetRoot.isDesktop
                             text: batWidgetRoot.batPercent
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: barWindow ? barWindow.s(12.6) : 12.6
+                            font.pixelSize: barWindow ? barWindow.s(batWidgetRoot.isCompact ? 11 : 12.6) : (batWidgetRoot.isCompact ? 11 : 12.6)
                             font.bold: true
                             color: ThemeBackend.crust
                             anchors.verticalCenter: parent.verticalCenter

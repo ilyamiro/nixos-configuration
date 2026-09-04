@@ -14,8 +14,10 @@ Rectangle {
     id: btWidgetRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property bool isDesktop: false
     property string btStatus: "Off"
     property string btIcon: "󰂲"
@@ -144,15 +146,14 @@ Rectangle {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
-    y: barWindow.baseOffsetY
-    height: barWindow.barHeight
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     radius: ThemeBackend.borderRadius
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
 
-    property real targetWidth: (moduleActive && !isDesktop && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + barWindow.s(10)) : 0
+    property real targetWidth: (moduleActive && !isDesktop && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
     width: targetWidth
 
     opacity: (showLayout && moduleActive && !isDesktop) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -173,7 +174,7 @@ Rectangle {
     Row {
         id: sysLayout
         anchors.centerIn: parent
-        property int pillHeight: barWindow.s(30)
+        property int pillHeight: barWindow ? barWindow.s(btWidgetRoot.isCompact ? 28 : 30) : (btWidgetRoot.isCompact ? 28 : 30)
 
         ClickButton {
             id: btPill
@@ -181,16 +182,16 @@ Rectangle {
             property bool isActive: isBtOn
 
             height: sysLayout.pillHeight
-            maxWidth: barWindow.s(160)
+            maxWidth: barWindow ? barWindow.s(btWidgetRoot.isCompact ? 156 : 160) : (btWidgetRoot.isCompact ? 156 : 160)
             visible: targetWidth > 0
             cornerRadius: Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2))
-            horizontalPadding: barWindow.s(12)
+            horizontalPadding: barWindow ? barWindow.s(btWidgetRoot.isCompact ? 10 : 12) : (btWidgetRoot.isCompact ? 10 : 12)
             buttonIcon: btIcon
-            iconFontSize: barWindow.s(15)
+            iconFontSize: barWindow ? barWindow.s(btWidgetRoot.isCompact ? 14 : 15) : (btWidgetRoot.isCompact ? 14 : 15)
             buttonText: btDevice
-            textFontSize: barWindow.s(12)
-            accentColor: isActive ? ThemeBackend.mauve : ThemeBackend.surface0
-            textColor: isActive ? ThemeBackend.base : ThemeBackend.text
+            textFontSize: barWindow ? barWindow.s(btWidgetRoot.isCompact ? 11 : 12) : (btWidgetRoot.isCompact ? 11 : 12)
+            accentColor: isActive ? (btWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.08) : ThemeBackend.mauve) : (btWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0)
+            textColor: isActive ? ThemeBackend.base : (btWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.text, 1.05) : ThemeBackend.text)
 
             property real targetWidth: isDesktop ? 0 : implicitWidth
             width: targetWidth

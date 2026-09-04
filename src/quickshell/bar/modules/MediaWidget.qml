@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Controls
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
@@ -15,8 +16,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real contentWrapperWidth: 0
     property bool layoutAnimationsEnabled: true
 
@@ -31,25 +34,25 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
     radius: ThemeBackend.borderRadius
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    y: barWindow ? barWindow.baseOffsetY : 0
-    height: barWindow ? barWindow.barHeight : 0
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     clip: true
     layer.enabled: true
 
-    property real colWidth: barWindow ? barWindow.s(120) : 120
-    property real innerSpacing: barWindow ? barWindow.s(8) : 8
-    property real btnSpacing: barWindow ? barWindow.s(4) : 4
+    property real colWidth: barWindow ? barWindow.s(isCompact ? 116 : 120) : (isCompact ? 116 : 120)
+    property real innerSpacing: barWindow ? barWindow.s(isCompact ? 6 : 8) : (isCompact ? 6 : 8)
+    property real btnSpacing: barWindow ? barWindow.s(isCompact ? 3 : 4) : (isCompact ? 3 : 4)
+    property real sidePadding: barWindow ? barWindow.s(isCompact ? 6 : 8) : (isCompact ? 6 : 8)
 
     property real targetWidth: {
         if (!moduleActive) return 0;
-        let iconW = barWindow ? barWindow.s(28) : 28;
-        let gapInfo = barWindow ? barWindow.s(10) : 10;
-        let btnW = (barWindow ? barWindow.s(30) : 30) * 3 + btnSpacing * 2;
-        let margins = (barWindow ? barWindow.s(12) : 12) * 2;
+        let iconW = barWindow ? barWindow.s(isCompact ? 26 : 28) : (isCompact ? 26 : 28);
+        let gapInfo = barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10);
+        let btnW = (barWindow ? barWindow.s(isCompact ? 28 : 30) : (isCompact ? 28 : 30)) * 3 + btnSpacing * 2;
+        let margins = sidePadding * 2;
         return iconW + gapInfo + colWidth + innerSpacing + btnW + margins;
     }
 
@@ -73,9 +76,9 @@ Rectangle {
         id: mediaLayoutContainer
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: barWindow ? barWindow.s(12) : 12
+        anchors.leftMargin: mediaWidgetRoot.sidePadding
         anchors.right: parent.right
-        anchors.rightMargin: barWindow ? barWindow.s(12) : 12
+        anchors.rightMargin: mediaWidgetRoot.sidePadding
         height: parent.height
         clip: true
 
@@ -95,19 +98,20 @@ Rectangle {
                 Row {
                     id: infoLayout
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: barWindow ? barWindow.s(10) : 10
+                    spacing: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 8 : 10) : (mediaWidgetRoot.isCompact ? 8 : 10)
                     transformOrigin: Item.Left
 
                     scale: mediaInfoMouse.containsMouse ? 1.01 : 1.0
                     Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutExpo } }
 
                     Rectangle {
-                        width: barWindow ? barWindow.s(28) : 28
-                        height: barWindow ? barWindow.s(28) : 28
-                        radius: ThemeBackend.borderRadius
-                        color: ThemeBackend.surface1
+                        id: mediaThumbBox
+                        width: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 26 : 28) : (mediaWidgetRoot.isCompact ? 26 : 28)
+                        height: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 26 : 28) : (mediaWidgetRoot.isCompact ? 26 : 28)
+                        radius: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 9 : 10) : (mediaWidgetRoot.isCompact ? 9 : 10)
+                        color: mediaWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface1, 1.1) : ThemeBackend.surface1
                         border.width: 1
-                        border.color: (isMediaActive && MprisController.isPlaying) ? ThemeBackend.mauve : ThemeBackend.surface1
+                        border.color: (isMediaActive && MprisController.isPlaying) ? ThemeBackend.mauve : (mediaWidgetRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1)
                         clip: true
                         anchors.verticalCenter: parent.verticalCenter
 
@@ -115,22 +119,46 @@ Rectangle {
                             anchors.centerIn: parent
                             text: "󰎈"
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: barWindow ? barWindow.s(14) : 14
-                            color: ThemeBackend.subtext0
+                            font.pixelSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 13 : 14) : (mediaWidgetRoot.isCompact ? 13 : 14)
+                            color: mediaWidgetRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0
                             visible: !isMediaActive || !MprisController.artUrl
                         }
 
                         Image {
+                            id: mediaArtImg
                             anchors.fill: parent
                             source: (isMediaActive && MprisController.artUrl) ? (MprisController.artUrl.startsWith("file://") || MprisController.artUrl.startsWith("http") ? MprisController.artUrl : "file://" + MprisController.artUrl) : ""
                             fillMode: Image.PreserveAspectCrop
-                            visible: isMediaActive && MprisController.artUrl !== "" && status === Image.Ready
+                            visible: false
+                        }
+
+                        MultiEffect {
+                            anchors.fill: mediaArtImg
+                            source: mediaArtImg
+                            maskEnabled: true
+                            maskSource: mediaArtMask
+                            visible: isMediaActive && MprisController.artUrl !== "" && mediaArtImg.status === Image.Ready
+                        }
+
+                        Item {
+                            id: mediaArtMask
+                            anchors.fill: parent
+                            layer.enabled: true
+                            visible: false
+
+                            Rectangle {
+                                anchors.fill: parent
+                                radius: mediaThumbBox.radius
+                                color: "black"
+                            }
                         }
 
                         Rectangle {
                             anchors.fill: parent
+                            radius: parent.radius
                             color: ThemeBackend.surface0
                             opacity: 0.15
+                            visible: isMediaActive && MprisController.artUrl !== "" && mediaArtImg.status === Image.Ready
                         }
                     }
 
@@ -167,7 +195,7 @@ Rectangle {
                                         text: isMediaActive ? (player ? player.trackTitle : "") : I18n.t("music.nothing_playing")
                                         font.family: ThemeBackend.fontFamily
                                         font.weight: Font.Black
-                                        font.pixelSize: barWindow ? barWindow.s(12) : 12
+                                        font.pixelSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 11 : 12) : (mediaWidgetRoot.isCompact ? 11 : 12)
                                         color: ThemeBackend.text
 
                                         onTextChanged: {
@@ -185,7 +213,7 @@ Rectangle {
                                         text: titleTextMain.text
                                         font.family: ThemeBackend.fontFamily
                                         font.weight: Font.Black
-                                        font.pixelSize: barWindow ? barWindow.s(12) : 12
+                                        font.pixelSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 11 : 12) : (mediaWidgetRoot.isCompact ? 11 : 12)
                                         color: ThemeBackend.text
                                         visible: titleTextMain.implicitWidth > titleClipRect.width
                                     }
@@ -217,8 +245,8 @@ Rectangle {
                             text: isMediaActive && player ? (mediaWidgetRoot.formatTime(MprisController.livePosition) + " / " + mediaWidgetRoot.formatTime(player.length)) : ""
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Black
-                            font.pixelSize: barWindow ? barWindow.s(10) : 10
-                            color: ThemeBackend.subtext0
+                            font.pixelSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 9 : 10) : (mediaWidgetRoot.isCompact ? 9 : 10)
+                            color: mediaWidgetRoot.isCompact ? ThemeBackend.overlay2 : ThemeBackend.subtext0
                             width: parent.width
                             elide: Text.ElideRight
                             visible: isMediaActive
@@ -234,39 +262,39 @@ Rectangle {
 
                 IconButton {
                     id: prevMediaButton
-                    height: barWindow ? barWindow.s(30) : 30
-                    width: barWindow ? barWindow.s(30) : 30
-                    cornerRadius: barWindow ? barWindow.s(10) : 10
+                    height: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    width: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    cornerRadius: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 9 : 10) : (mediaWidgetRoot.isCompact ? 9 : 10)
                     buttonIcon: "󰒮"
-                    iconFontSize: barWindow ? barWindow.s(16) : 16
-                    accentColor: ThemeBackend.surface0
-                    textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+                    iconFontSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 15 : 16) : (mediaWidgetRoot.isCompact ? 15 : 16)
+                    accentColor: mediaWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                    textColor: isHoveredOrHighlighted ? ThemeBackend.text : (mediaWidgetRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
                     anchors.verticalCenter: parent.verticalCenter
                     onClicked: if (player && player.canGoPrevious) player.previous()
                 }
 
                 IconButton {
                     id: playMediaButton
-                    height: barWindow ? barWindow.s(30) : 30
-                    width: barWindow ? barWindow.s(30) : 30
-                    cornerRadius: barWindow ? barWindow.s(10) : 10
+                    height: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    width: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    cornerRadius: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 9 : 10) : (mediaWidgetRoot.isCompact ? 9 : 10)
                     buttonIcon: (isMediaActive && MprisController.isPlaying) ? "󰏤" : "󰐊"
-                    iconFontSize: barWindow ? barWindow.s(18) : 18
-                    accentColor: ThemeBackend.surface0
-                    textColor: isHoveredOrHighlighted ? ThemeBackend.green : ThemeBackend.text
+                    iconFontSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 17 : 18) : (mediaWidgetRoot.isCompact ? 17 : 18)
+                    accentColor: mediaWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                    textColor: isHoveredOrHighlighted ? ThemeBackend.green : (mediaWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.text, 1.1) : ThemeBackend.text)
                     anchors.verticalCenter: parent.verticalCenter
                     onClicked: if (player && player.canTogglePlaying) player.togglePlaying()
                 }
 
                 IconButton {
                     id: nextMediaButton
-                    height: barWindow ? barWindow.s(30) : 30
-                    width: barWindow ? barWindow.s(30) : 30
-                    cornerRadius: barWindow ? barWindow.s(10) : 10
+                    height: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    width: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 28 : 30) : (mediaWidgetRoot.isCompact ? 28 : 30)
+                    cornerRadius: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 9 : 10) : (mediaWidgetRoot.isCompact ? 9 : 10)
                     buttonIcon: "󰒭"
-                    iconFontSize: barWindow ? barWindow.s(16) : 16
-                    accentColor: ThemeBackend.surface0
-                    textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+                    iconFontSize: barWindow ? barWindow.s(mediaWidgetRoot.isCompact ? 15 : 16) : (mediaWidgetRoot.isCompact ? 15 : 16)
+                    accentColor: mediaWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                    textColor: isHoveredOrHighlighted ? ThemeBackend.text : (mediaWidgetRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
                     anchors.verticalCenter: parent.verticalCenter
                     onClicked: if (player && player.canGoNext) player.next()
                 }

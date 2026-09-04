@@ -13,8 +13,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     readonly property bool isRightBar: barWindow ? (barWindow.barPosition === "right") : false
 
     readonly property string timeHourStr: DateTime.hour
@@ -33,9 +35,9 @@ Rectangle {
         NumberAnimation { duration: sideTimeDateRoot.animDuration; easing.type: Easing.OutQuint }
     }
 
-    property real verticalPadding: barWindow ? barWindow.s(12) : 12
+    property real verticalPadding: barWindow ? barWindow.s(isCompact ? 10 : 12) : (isCompact ? 10 : 12)
     property real baseHeight: timeCol.implicitHeight + (verticalPadding * 2)
-    property real baseWidth: barWindow ? barWindow.barHeight : 40
+    property real baseWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
 
     property real targetWidth: moduleActive ? baseWidth : 0
     property real targetHeight: moduleActive ? baseHeight : 0
@@ -66,10 +68,6 @@ Rectangle {
     width: targetWidth
     height: targetHeight
 
-    readonly property bool isBarOpaque: (barWindow && barWindow.barOpacity !== undefined) ? (barWindow.barOpacity >= 1.0) : true
-    readonly property bool paintOwnBackground: (!isGrouped && !isSolid)
-    readonly property bool paintBaseBackground: (!isGrouped && !isSolid) || isBarOpaque
-
     color: "transparent"
     border.width: 0
     clip: true
@@ -82,11 +80,9 @@ Rectangle {
         width: parent.width
         height: parent.height
         radius: ThemeBackend.borderRadius
-        color: sideTimeDateRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base
-        property bool showBorder: (!sideTimeDateRoot.isGrouped && !sideTimeDateRoot.isSolid)
-        border.width: showBorder ? 1 : 0
-        border.color: showBorder ? (sideTimeDateRoot.isHovered ? ThemeBackend.surface1 : ThemeBackend.surface0) : "transparent"
-        visible: sideTimeDateRoot.paintOwnBackground && width > 0
+        color: sideTimeDateRoot.isGrouped ? "transparent" : (sideTimeDateRoot.isSolid ? (sideTimeDateRoot.distinctPills ? (sideTimeDateRoot.isHovered ? ThemeBackend.surface0 : Qt.darker(ThemeBackend.surface0, 1.15)) : "transparent") : (sideTimeDateRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base))
+        border.width: 0
+        visible: height > 0
 
         Behavior on color { enabled: barWindow ? !barWindow.positionChanging : true; ColorAnimation { duration: 250 } }
     }
@@ -120,9 +116,9 @@ Rectangle {
 
     Item {
         id: topArea
-        width: barWindow ? barWindow.barHeight : 40
+        width: parent.width
         height: parent.height
-        x: sideTimeDateRoot.isRightBar ? (parent.width - width) : 0
+        anchors.centerIn: parent
 
         Column {
             id: timeCol
@@ -132,18 +128,18 @@ Rectangle {
             Text {
                 text: timeHourStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(14) : 14
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 13 : 14) : (sideTimeDateRoot.isCompact ? 13 : 14)
                 font.weight: Font.Black
-                color: ThemeBackend.blue
+                color: sideTimeDateRoot.isCompact ? Qt.lighter(ThemeBackend.blue, 1.1) : ThemeBackend.blue
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Text {
                 text: timeMinStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(14) : 14
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 13 : 14) : (sideTimeDateRoot.isCompact ? 13 : 14)
                 font.weight: Font.Black
-                color: ThemeBackend.sapphire
+                color: sideTimeDateRoot.isCompact ? Qt.lighter(ThemeBackend.sapphire, 1.1) : ThemeBackend.sapphire
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -151,9 +147,9 @@ Rectangle {
                 visible: timeSecStr !== ""
                 text: timeSecStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(14) : 14
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 13 : 14) : (sideTimeDateRoot.isCompact ? 13 : 14)
                 font.weight: Font.Bold
-                color: ThemeBackend.teal
+                color: sideTimeDateRoot.isCompact ? Qt.lighter(ThemeBackend.teal, 1.1) : ThemeBackend.teal
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -161,14 +157,14 @@ Rectangle {
                 visible: timeAmPmStr !== ""
                 text: timeAmPmStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(14) : 14
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 13 : 14) : (sideTimeDateRoot.isCompact ? 13 : 14)
                 font.weight: Font.Bold
-                color: ThemeBackend.mauve
+                color: sideTimeDateRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.1) : ThemeBackend.mauve
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Item {
-                width: barWindow ? barWindow.s(16) : 16
+                width: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 14 : 16) : (sideTimeDateRoot.isCompact ? 14 : 16)
                 height: barWindow ? barWindow.s(12) : 12
                 anchors.horizontalCenter: parent.horizontalCenter
                 Rectangle {
@@ -182,7 +178,7 @@ Rectangle {
             Text {
                 text: dayStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(12) : 12
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 11 : 12) : (sideTimeDateRoot.isCompact ? 11 : 12)
                 font.weight: Font.Bold
                 color: ThemeBackend.text
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -191,9 +187,9 @@ Rectangle {
             Text {
                 text: monthStr
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(10) : 10
+                font.pixelSize: barWindow ? barWindow.s(sideTimeDateRoot.isCompact ? 9 : 10) : (sideTimeDateRoot.isCompact ? 9 : 10)
                 font.weight: Font.Bold
-                color: ThemeBackend.subtext0
+                color: sideTimeDateRoot.isCompact ? Qt.lighter(ThemeBackend.subtext0, 1.08) : ThemeBackend.subtext0
                 anchors.horizontalCenter: parent.horizontalCenter
             }
         }

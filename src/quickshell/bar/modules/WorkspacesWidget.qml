@@ -15,8 +15,10 @@ Rectangle {
     property var barWindow
     property var paths
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property bool isNiri: false
     property bool isSway: false
 
@@ -226,15 +228,14 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
     radius: ThemeBackend.borderRadius
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    height: barWindow.barHeight
-    y: barWindow.baseOffsetY
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     clip: true
 
-    property real targetWidth: (moduleActive && workspaceCount > 0) ? wsLayout.implicitWidth + barWindow.s(22) : 0
+    property real targetWidth: (moduleActive && workspaceCount > 0) ? wsLayout.implicitWidth + barWindow.s(isCompact ? 18 : 22) : 0
     width: targetWidth
     Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
 
@@ -292,8 +293,8 @@ Rectangle {
     Rectangle {
         id: activeHighlight
         z: 3
-        radius: barWindow.s(8)
-        color: ThemeBackend.mauve
+        radius: barWindow.s(workspacesWidgetRoot.isCompact ? 7 : 8)
+        color: workspacesWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.05) : ThemeBackend.mauve
 
         property int prevIdx: 0
         property int curIdx: workspacesWidgetRoot.activeIndex
@@ -316,15 +317,17 @@ Rectangle {
         function getX(index, activeIndex) {
             if (index < 0) return 0;
             let xPos = 0;
-            let spacing = barWindow.s(8);
+            let spacing = barWindow.s(workspacesWidgetRoot.isCompact ? 7 : 8);
+            let activeW = barWindow.s(workspacesWidgetRoot.isCompact ? 34 : 36);
+            let inactiveW = barWindow.s(workspacesWidgetRoot.isCompact ? 16 : 18);
             for (let i = 0; i < index; i++) {
-                xPos += (i === activeIndex ? barWindow.s(36) : barWindow.s(18)) + spacing;
+                xPos += (i === activeIndex ? activeW : inactiveW) + spacing;
             }
             return xPos;
         }
 
         property real targetLeft: curIdx >= 0 ? getX(curIdx, curIdx) : 0
-        property real targetRight: curIdx >= 0 ? targetLeft + barWindow.s(36) : 0
+        property real targetRight: curIdx >= 0 ? targetLeft + barWindow.s(workspacesWidgetRoot.isCompact ? 34 : 36) : 0
         property real actualLeft: targetLeft
         property real actualRight: targetRight
 
@@ -334,7 +337,7 @@ Rectangle {
         x: wsLayout.x + actualLeft
         y: wsLayout.y + (wsLayout.height - height) / 2
         width: actualRight - actualLeft
-        height: barWindow.s(18)
+        height: barWindow.s(workspacesWidgetRoot.isCompact ? 16 : 18)
         opacity: (workspacesWidgetRoot.workspaceCount > 0 && workspacesWidgetRoot.activeIndex >= 0) ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 180 } }
     }
@@ -343,7 +346,7 @@ Rectangle {
         id: wsLayout
         z: 2
         anchors.centerIn: parent
-        spacing: barWindow.s(8)
+        spacing: barWindow.s(workspacesWidgetRoot.isCompact ? 7 : 8)
 
         Repeater {
             model: workspacesWidgetRoot.workspaceCount
@@ -356,7 +359,7 @@ Rectangle {
                 property var ws: workspacesWidgetRoot.wsForId(wsId)
                 property bool isOccupied: {
                     if (workspacesWidgetRoot.isNiri) {
-                        return !workspacesWidgetRoot.niriOccupiedMap[index];
+                        return !!workspacesWidgetRoot.niriOccupiedMap[index];
                     }
                     if (workspacesWidgetRoot.isSway) {
                         return !!workspacesWidgetRoot.swayOccupiedMap[index];
@@ -366,8 +369,8 @@ Rectangle {
                 property bool isActive: index === workspacesWidgetRoot.activeIndex
                 property bool initAnimTrigger: false
 
-                width: isActive ? barWindow.s(36) : barWindow.s(18)
-                height: barWindow.s(18)
+                width: isActive ? barWindow.s(workspacesWidgetRoot.isCompact ? 34 : 36) : barWindow.s(workspacesWidgetRoot.isCompact ? 16 : 18)
+                height: barWindow.s(workspacesWidgetRoot.isCompact ? 16 : 18)
                 anchors.verticalCenter: parent.verticalCenter
 
                 Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
@@ -375,13 +378,11 @@ Rectangle {
                 Rectangle {
                     id: wsVisualShape
                     anchors.fill: parent
-                    radius: barWindow.s(10)
-                    color: wsPill.isActive ? "transparent" : (wsPill.isOccupied ? ThemeBackend.surface2 : ThemeBackend.surface0)
+                    radius: barWindow.s(workspacesWidgetRoot.isCompact ? 8 : 10)
+                    color: wsPill.isActive ? "transparent" : (wsPill.isOccupied ? ThemeBackend.surface2 : (workspacesWidgetRoot.isCompact ? ThemeBackend.surface1 : ThemeBackend.surface0))
                     border.width: 0
-                    border.color: wsPillMouse.containsMouse ? ThemeBackend.overlay2 : ThemeBackend.surface1
 
                     Behavior on color { ColorAnimation { duration: 250 } }
-                    Behavior on border.color { ColorAnimation { duration: 250 } }
 
                     scale: wsPillMouse.pressed ? 0.88 : (wsPillMouse.containsMouse ? 1.08 : 1.0)
                     Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }

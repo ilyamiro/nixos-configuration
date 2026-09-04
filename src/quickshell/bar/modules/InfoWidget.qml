@@ -13,8 +13,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     readonly property bool isBottomBar: barWindow ? (barWindow.barPosition === "bottom") : false
 
     property bool isRecording: false
@@ -126,15 +128,15 @@ Rectangle {
     property alias recRow: recRow
     property alias timerRow: timerRow
 
-    property real horizontalPadding: barWindow ? barWindow.s(12) : 12
-    property real innerSpacing: barWindow ? barWindow.s(12) : 12
+    property real horizontalPadding: barWindow ? barWindow.s(isCompact ? 10 : 12) : (isCompact ? 10 : 12)
+    property real innerSpacing: barWindow ? barWindow.s(isCompact ? 10 : 12) : (isCompact ? 10 : 12)
 
     property real recWidth: isRecording ? recRow.implicitWidth : 0
     property real timerWidth: isTimerActive ? timerRow.implicitWidth : 0
     property real activeSpacing: (isRecording && isTimerActive) ? innerSpacing : 0
 
     property real baseWidth: hasActiveContent ? (recWidth + timerWidth + activeSpacing + (horizontalPadding * 2)) : 0
-    property real baseHeight: barWindow ? barWindow.barHeight : 30
+    property real baseHeight: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
 
     property real targetHeight: baseHeight
     property real targetWidth: moduleActive ? baseWidth : 0
@@ -149,7 +151,7 @@ Rectangle {
     property bool isHovered: bgMouse.containsMouse
     property bool showLayout: false
 
-    property real targetY: barWindow ? barWindow.baseOffsetY : 0
+    property real targetY: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - targetHeight) / 2 : 0
     y: targetY
 
     Behavior on y {
@@ -159,10 +161,6 @@ Rectangle {
 
     width: targetWidth
     height: targetHeight
-
-    readonly property bool isBarOpaque: (barWindow && barWindow.barOpacity !== undefined) ? (barWindow.barOpacity >= 1.0) : true
-    readonly property bool paintOwnBackground: (!isGrouped && !isSolid)
-    readonly property bool paintBaseBackground: (!isGrouped && !isSolid) || isBarOpaque
 
     color: "transparent"
     border.width: 0
@@ -176,11 +174,9 @@ Rectangle {
         width: parent.width
         height: parent.height
         radius: ThemeBackend.borderRadius
-        color: infoWidgetRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base
-        property bool showBorder: (!infoWidgetRoot.isGrouped && !infoWidgetRoot.isSolid)
-        border.width: showBorder ? 1 : 0
-        border.color: showBorder ? (infoWidgetRoot.isHovered ? ThemeBackend.surface1 : ThemeBackend.surface0) : "transparent"
-        visible: infoWidgetRoot.paintOwnBackground && height > 0
+        color: infoWidgetRoot.isGrouped ? "transparent" : (infoWidgetRoot.isSolid ? (infoWidgetRoot.distinctPills ? (infoWidgetRoot.isHovered ? ThemeBackend.surface0 : Qt.darker(ThemeBackend.surface0, 1.15)) : "transparent") : (infoWidgetRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base))
+        border.width: 0
+        visible: height > 0
 
         Behavior on color { enabled: barWindow ? !barWindow.positionChanging : true; ColorAnimation { duration: 250 } }
     }
@@ -215,8 +211,8 @@ Rectangle {
     Item {
         id: topArea
         width: parent.width
-        height: barWindow ? barWindow.barHeight : 30
-        y: infoWidgetRoot.isBottomBar ? (parent.height - height) : 0
+        height: parent.height
+        anchors.centerIn: parent
 
         Row {
             id: centerActiveRow
@@ -225,7 +221,7 @@ Rectangle {
 
             Row {
                 id: recRow
-                spacing: barWindow ? barWindow.s(6) : 6
+                spacing: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 5 : 6) : (infoWidgetRoot.isCompact ? 5 : 6)
                 visible: isRecording
                 opacity: isRecording ? 1.0 : 0.0
                 Behavior on opacity {
@@ -235,10 +231,10 @@ Rectangle {
 
                 Rectangle {
                     id: recDot
-                    width: barWindow ? barWindow.s(10) : 10
-                    height: barWindow ? barWindow.s(10) : 10
-                    radius: barWindow ? barWindow.s(5) : 5
-                    color: ThemeBackend.red
+                    width: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 8 : 10) : (infoWidgetRoot.isCompact ? 8 : 10)
+                    height: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 8 : 10) : (infoWidgetRoot.isCompact ? 8 : 10)
+                    radius: width * 0.5
+                    color: infoWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.red, 1.08) : ThemeBackend.red
                     anchors.verticalCenter: parent.verticalCenter
 
                     SequentialAnimation on opacity {
@@ -253,16 +249,16 @@ Rectangle {
                     id: recText
                     text: recTimeFormatted
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: barWindow ? barWindow.s(14) : 14
+                    font.pixelSize: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 13 : 14) : (infoWidgetRoot.isCompact ? 13 : 14)
                     font.weight: Font.Bold
-                    color: ThemeBackend.red
+                    color: infoWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.red, 1.08) : ThemeBackend.red
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
 
             Row {
                 id: timerRow
-                spacing: barWindow ? barWindow.s(6) : 6
+                spacing: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 5 : 6) : (infoWidgetRoot.isCompact ? 5 : 6)
                 visible: isTimerActive
                 opacity: isTimerActive ? 1.0 : 0.0
                 Behavior on opacity {
@@ -273,8 +269,8 @@ Rectangle {
                 Text {
                     text: timerIcon
                     font.family: "Font Awesome 6 Free Solid"
-                    font.pixelSize: barWindow ? barWindow.s(12) : 12
-                    color: infoWidgetRoot.timerColor
+                    font.pixelSize: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 11 : 12) : (infoWidgetRoot.isCompact ? 11 : 12)
+                    color: infoWidgetRoot.isCompact ? Qt.lighter(infoWidgetRoot.timerColor, 1.08) : infoWidgetRoot.timerColor
                     anchors.verticalCenter: parent.verticalCenter
                     Behavior on color { ColorAnimation { duration: 250 } }
                 }
@@ -283,9 +279,9 @@ Rectangle {
                     id: timerText
                     text: timerTimeFormatted
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: barWindow ? barWindow.s(14) : 14
+                    font.pixelSize: barWindow ? barWindow.s(infoWidgetRoot.isCompact ? 13 : 14) : (infoWidgetRoot.isCompact ? 13 : 14)
                     font.weight: Font.Bold
-                    color: infoWidgetRoot.timerColor
+                    color: infoWidgetRoot.isCompact ? Qt.lighter(infoWidgetRoot.timerColor, 1.08) : infoWidgetRoot.timerColor
                     anchors.verticalCenter: parent.verticalCenter
                     Behavior on color { ColorAnimation { duration: 250 } }
                 }

@@ -13,8 +13,10 @@ Rectangle {
     id: sysMonWidgetRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetX: 0
     property bool showLayout: false
 
@@ -38,16 +40,15 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    y: barWindow.baseOffsetY
-    height: barWindow.barHeight
-    radius: Math.min(ThemeBackend.borderRadius, height / 2)
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
+    radius: ThemeBackend.borderRadius
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
     layer.enabled: true
 
-    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(10) : 10)) : 0
+    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
     width: targetWidth
 
     opacity: (showLayout && moduleActive) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -93,8 +94,8 @@ Rectangle {
         height: sysLayout.pillHeight
         width: sysLayout.pillWidth
         radius: Math.min(Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2)), height / 2)
-        color: ThemeBackend.surface0
-        border.color: ThemeBackend.surface1
+        color: sysMonWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+        border.color: sysMonWidgetRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1
         border.width: 1
         clip: true
 
@@ -178,20 +179,20 @@ Rectangle {
         Row {
             id: baseContentRow
             anchors.centerIn: parent
-            spacing: barWindow ? barWindow.s(6) : 6
+            spacing: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 3 : 4) : (sysMonWidgetRoot.isCompact ? 3 : 4)
 
             Text {
                 text: icon
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(11.55) : 11.55
-                color: ThemeBackend.subtext0
+                font.pixelSize: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 13.5 : 14.5) : (sysMonWidgetRoot.isCompact ? 13.5 : 14.5)
+                color: sysMonWidgetRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0
                 anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
                 text: textVal
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(12.6) : 12.6
+                font.pixelSize: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 12 : 13) : (sysMonWidgetRoot.isCompact ? 12 : 13)
                 font.bold: true
                 color: ThemeBackend.text
                 anchors.verticalCenter: parent.verticalCenter
@@ -215,12 +216,12 @@ Rectangle {
 
                 Row {
                     anchors.centerIn: parent
-                    spacing: barWindow ? barWindow.s(6) : 6
+                    spacing: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 3 : 4) : (sysMonWidgetRoot.isCompact ? 3 : 4)
 
                     Text {
                         text: icon
                         font.family: ThemeBackend.fontFamily
-                        font.pixelSize: barWindow ? barWindow.s(11.55) : 11.55
+                        font.pixelSize: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 13.5 : 14.5) : (sysMonWidgetRoot.isCompact ? 13.5 : 14.5)
                         color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.75)
                         anchors.verticalCenter: parent.verticalCenter
                     }
@@ -228,7 +229,7 @@ Rectangle {
                     Text {
                         text: textVal
                         font.family: ThemeBackend.fontFamily
-                        font.pixelSize: barWindow ? barWindow.s(12.6) : 12.6
+                        font.pixelSize: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 12 : 13) : (sysMonWidgetRoot.isCompact ? 12 : 13)
                         font.bold: true
                         color: ThemeBackend.crust
                         anchors.verticalCenter: parent.verticalCenter
@@ -241,9 +242,9 @@ Rectangle {
     Row {
         id: sysLayout
         anchors.centerIn: parent
-        spacing: barWindow ? barWindow.s(6) : 6
-        property int pillHeight: barWindow ? barWindow.s(30) : 30
-        property int pillWidth: barWindow ? barWindow.s(62) : 62
+        spacing: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 5 : 6) : (sysMonWidgetRoot.isCompact ? 5 : 6)
+        property int pillHeight: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 28 : 30) : (sysMonWidgetRoot.isCompact ? 28 : 30)
+        property int pillWidth: barWindow ? barWindow.s(sysMonWidgetRoot.isCompact ? 48 : 52) : (sysMonWidgetRoot.isCompact ? 48 : 52)
 
         SysMonPill {
             value: isNaN(SysData.cpu) ? 0 : SysData.cpu / 100.0
@@ -255,7 +256,7 @@ Rectangle {
         SysMonPill {
             value: isNaN(SysData.ramPercent) ? 0 : SysData.ramPercent / 100.0
             textVal: (isNaN(SysData.ramPercent) ? 0 : Math.round(SysData.ramPercent)) + "%"
-            icon: "\uF538"
+            icon: "󰍛"
             accentColor: ThemeBackend.sapphire
         }
 

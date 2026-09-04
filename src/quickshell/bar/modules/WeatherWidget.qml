@@ -13,8 +13,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     readonly property bool isBottomBar: barWindow ? (barWindow.barPosition === "bottom") : false
 
     property string weatherIcon: Weather.currentIcon
@@ -31,9 +33,9 @@ Rectangle {
         NumberAnimation { duration: weatherWidgetRoot.animDuration; easing.type: Easing.OutQuint }
     }
 
-    property real horizontalPadding: barWindow ? barWindow.s(14) : 14
+    property real horizontalPadding: barWindow ? barWindow.s(isCompact ? 12 : 14) : (isCompact ? 12 : 14)
     property real baseWidth: weatherRow.implicitWidth + (horizontalPadding * 2)
-    property real baseHeight: barWindow ? barWindow.barHeight : 30
+    property real baseHeight: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
 
     property real targetHeight: baseHeight
     property real targetWidth: moduleActive ? baseWidth : 0
@@ -53,7 +55,7 @@ Rectangle {
     property bool isHovered: bgMouse.containsMouse
     property bool showLayout: false
 
-    property real targetY: barWindow ? barWindow.baseOffsetY : 0
+    property real targetY: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - targetHeight) / 2 : 0
     y: targetY
 
     Behavior on y {
@@ -63,10 +65,6 @@ Rectangle {
 
     width: targetWidth
     height: targetHeight
-
-    readonly property bool isBarOpaque: (barWindow && barWindow.barOpacity !== undefined) ? (barWindow.barOpacity >= 1.0) : true
-    readonly property bool paintOwnBackground: (!isGrouped && !isSolid)
-    readonly property bool paintBaseBackground: (!isGrouped && !isSolid) || isBarOpaque
 
     color: "transparent"
     border.width: 0
@@ -80,11 +78,9 @@ Rectangle {
         width: parent.width
         height: parent.height
         radius: ThemeBackend.borderRadius
-        color: weatherWidgetRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base
-        property bool showBorder: (!weatherWidgetRoot.isGrouped && !weatherWidgetRoot.isSolid)
-        border.width: showBorder ? 1 : 0
-        border.color: showBorder ? (weatherWidgetRoot.isHovered ? ThemeBackend.surface1 : ThemeBackend.surface0) : "transparent"
-        visible: weatherWidgetRoot.paintOwnBackground && height > 0
+        color: weatherWidgetRoot.isGrouped ? "transparent" : (weatherWidgetRoot.isSolid ? (weatherWidgetRoot.distinctPills ? (weatherWidgetRoot.isHovered ? ThemeBackend.surface0 : Qt.darker(ThemeBackend.surface0, 1.15)) : "transparent") : (weatherWidgetRoot.isHovered ? ThemeBackend.surface0 : ThemeBackend.base))
+        border.width: 0
+        visible: height > 0
 
         Behavior on color { enabled: barWindow ? !barWindow.positionChanging : true; ColorAnimation { duration: 250 } }
     }
@@ -119,19 +115,19 @@ Rectangle {
     Item {
         id: topArea
         width: parent.width
-        height: barWindow ? barWindow.barHeight : 30
-        y: weatherWidgetRoot.isBottomBar ? (parent.height - height) : 0
+        height: parent.height
+        anchors.centerIn: parent
 
         Row {
             id: weatherRow
             anchors.centerIn: parent
-            spacing: barWindow ? barWindow.s(8) : 8
+            spacing: barWindow ? barWindow.s(weatherWidgetRoot.isCompact ? 6 : 8) : (weatherWidgetRoot.isCompact ? 6 : 8)
 
             LoaderIcon {
                 id: weatherLoader
                 anchors.verticalCenter: parent.verticalCenter
-                width: barWindow ? barWindow.s(22) : 22
-                height: barWindow ? barWindow.s(22) : 22
+                width: barWindow ? barWindow.s(weatherWidgetRoot.isCompact ? 20 : 22) : (weatherWidgetRoot.isCompact ? 20 : 22)
+                height: barWindow ? barWindow.s(weatherWidgetRoot.isCompact ? 20 : 22) : (weatherWidgetRoot.isCompact ? 20 : 22)
                 accentColor: ThemeBackend.mauve
                 running: weatherWidgetRoot.isWeatherLoading
                 visible: weatherWidgetRoot.isWeatherLoading
@@ -141,17 +137,17 @@ Rectangle {
                 text: weatherIcon
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: "Iosevka Nerd Font"
-                font.pixelSize: barWindow ? barWindow.s(20) : 20
-                color: Qt.tint(weatherHex, Qt.rgba(ThemeBackend.mauve.r, ThemeBackend.mauve.g, ThemeBackend.mauve.b, 0.4))
+                font.pixelSize: barWindow ? barWindow.s(weatherWidgetRoot.isCompact ? 18 : 20) : (weatherWidgetRoot.isCompact ? 18 : 20)
+                color: Qt.tint(weatherHex, Qt.rgba(ThemeBackend.mauve.r, ThemeBackend.mauve.g, ThemeBackend.mauve.b, weatherWidgetRoot.isCompact ? 0.3 : 0.4))
                 visible: !weatherWidgetRoot.isWeatherLoading && weatherIcon !== ""
             }
             Text {
                 text: weatherTemp
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(15) : 15
+                font.pixelSize: barWindow ? barWindow.s(weatherWidgetRoot.isCompact ? 14 : 15) : (weatherWidgetRoot.isCompact ? 14 : 15)
                 font.weight: Font.Black
-                color: ThemeBackend.peach
+                color: weatherWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.peach, 1.1) : ThemeBackend.peach
                 visible: !weatherWidgetRoot.isWeatherLoading
             }
         }

@@ -15,32 +15,33 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetY: 0
 
     readonly property string displayText: CurrentFocus.displayText
     readonly property bool isFocused: CurrentFocus.isFocused
 
-    property real topPadding: isSolid ? 0 : (barWindow ? barWindow.s(6) : 6)
-    property real bottomPadding: isSolid ? 0 : (barWindow ? barWindow.s(12) : 12)
+    property real topPadding: (isSolid && !distinctPills) ? 0 : (barWindow ? barWindow.s(6) : 6)
+    property real bottomPadding: (isSolid && !distinctPills) ? 0 : (barWindow ? barWindow.s(12) : 12)
     property real targetHeight: (moduleActive && isFocused) ? (topPadding + focusIconButton.height + innerLayout.spacing + titleTextMain.implicitWidth + bottomPadding) : 0
 
-    x: barWindow ? barWindow.baseOffsetX : 0
+    x: barWindow ? (barWindow.baseOffsetX !== undefined ? barWindow.baseOffsetX + Math.round((barWindow.barHeight - width) / 2) : 0) : 0
     y: targetY
     Behavior on y {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
     }
 
-    width: barWindow ? barWindow.barHeight : 30
+    width: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
     height: targetHeight
     Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
     radius: ThemeBackend.borderRadius
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
+    border.width: 0
     clip: true
 
     opacity: (moduleActive && isFocused) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -52,7 +53,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: sideFocusRoot.topPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: isSolid ? 0 : (barWindow ? barWindow.s(6) : 6)
+        spacing: (isSolid && !distinctPills) ? 0 : (barWindow ? barWindow.s(sideFocusRoot.isCompact ? 5 : 6) : (sideFocusRoot.isCompact ? 5 : 6))
 
         property bool initAnimTrigger: !barWindow || barWindow.startupCascadeFinished
 
@@ -65,13 +66,13 @@ Rectangle {
 
         IconButton {
             id: focusIconButton
-            width: barWindow ? barWindow.s(30) : 30
-            height: barWindow ? barWindow.s(30) : 30
-            cornerRadius: barWindow ? barWindow.s(10) : 10
+            width: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 28 : 30) : (sideFocusRoot.isCompact ? 28 : 30)
+            height: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 28 : 30) : (sideFocusRoot.isCompact ? 28 : 30)
+            cornerRadius: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 9 : 10) : (sideFocusRoot.isCompact ? 9 : 10)
             buttonIcon: "✦"
-            iconFontSize: barWindow ? barWindow.s(15) : 15
-            accentColor: isSolid ? "transparent" : ThemeBackend.surface0
-            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+            iconFontSize: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 14 : 15) : (sideFocusRoot.isCompact ? 14 : 15)
+            accentColor: sideFocusRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ((isSolid && !distinctPills) ? "transparent" : ThemeBackend.surface0)
+            textColor: isHoveredOrHighlighted ? ThemeBackend.text : (sideFocusRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 if (Caching.serpantinumDir) {
@@ -108,7 +109,7 @@ Rectangle {
                             id: titleTextMain
                             text: sideFocusRoot.displayText
                             color: ThemeBackend.text
-                            font.pixelSize: barWindow ? barWindow.s(12) : 12
+                            font.pixelSize: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 11 : 12) : (sideFocusRoot.isCompact ? 11 : 12)
 
                             onTextChanged: {
                                 titleAnim.stop();
@@ -123,7 +124,7 @@ Rectangle {
                             id: titleTextClone
                             text: titleTextMain.text
                             color: ThemeBackend.text
-                            font.pixelSize: barWindow ? barWindow.s(12) : 12
+                            font.pixelSize: barWindow ? barWindow.s(sideFocusRoot.isCompact ? 11 : 12) : (sideFocusRoot.isCompact ? 11 : 12)
                             visible: titleTextMain.implicitWidth > titleClipRect.height
                         }
                     }

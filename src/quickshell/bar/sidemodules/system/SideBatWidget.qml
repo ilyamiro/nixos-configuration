@@ -12,8 +12,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetY: 0
     property bool showLayout: false
     property alias batPill: batBtn
@@ -23,20 +25,33 @@ Rectangle {
     readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
     readonly property string batIcon: isDesktop ? "󰐥" : (isCharging ? "󰂄" : (batCap > 20 ? "󰁹" : "󰂃"))
 
-    x: barWindow ? barWindow.baseOffsetX : 0
+    property color batDynamicColor: {
+        if (isDesktop) return ThemeBackend.red;
+        if (isCharging) return ThemeBackend.green;
+        if (batCap <= 15) return ThemeBackend.red;
+        if (batCap <= 25) return ThemeBackend.peach;
+        return ThemeBackend.teal;
+    }
+
+    property real targetWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    property real targetHeight: (moduleActive && batBtn.height > 0) ? (batBtn.height + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
+
+    width: targetWidth
+    height: targetHeight
+
+    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+    Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+
+    x: barWindow ? ((barWindow.baseOffsetX !== undefined ? barWindow.baseOffsetX : 0) + (barWindow.barHeight - width) / 2) : 0
     y: targetY
     Behavior on y {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    width: barWindow ? barWindow.barHeight : 40
-    height: barWindow ? barWindow.barHeight : 40
-
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
     radius: Math.min(ThemeBackend.borderRadius, width / 2)
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
     layer.enabled: true
 
@@ -67,16 +82,16 @@ Rectangle {
     Rectangle {
         id: batBtn
         anchors.centerIn: parent
-        width: barWindow ? barWindow.s(28) : 28
-        height: barWindow ? barWindow.s(28) : 28
+        width: barWindow ? barWindow.s(sideBatRoot.isCompact ? 26 : 28) : (sideBatRoot.isCompact ? 26 : 28)
+        height: barWindow ? barWindow.s(sideBatRoot.isCompact ? 26 : 28) : (sideBatRoot.isCompact ? 26 : 28)
         radius: Math.min(Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2)), width / 2)
-        color: ThemeBackend.surface0
-        border.color: ThemeBackend.surface1
+        color: sideBatRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+        border.color: sideBatRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1
         border.width: 1
         clip: true
 
         property real value: sideBatRoot.isDesktop ? 0.0 : (UPower.displayDevice.ready ? UPower.displayDevice.percentage : 0.0)
-        property color accentColor: sideBatRoot.isDesktop ? ThemeBackend.red : (sideBatRoot.isCharging ? ThemeBackend.green : (sideBatRoot.batCap <= 20 ? ThemeBackend.red : ThemeBackend.teal))
+        property color accentColor: sideBatRoot.batDynamicColor
         property bool initAnimTrigger: false
 
         property real animValue: value
@@ -170,8 +185,8 @@ Rectangle {
             anchors.centerIn: parent
             text: sideBatRoot.batIcon
             font.family: ThemeBackend.fontFamily
-            font.pixelSize: sideBatRoot.isDesktop ? (barWindow ? barWindow.s(16) : 16) : (barWindow ? barWindow.s(13.5) : 13.5)
-            color: sideBatRoot.isDesktop ? ThemeBackend.red : ThemeBackend.subtext0
+            font.pixelSize: sideBatRoot.isDesktop ? (barWindow ? barWindow.s(sideBatRoot.isCompact ? 15 : 16) : (sideBatRoot.isCompact ? 15 : 16)) : (barWindow ? barWindow.s(sideBatRoot.isCompact ? 12 : 13.5) : (sideBatRoot.isCompact ? 12 : 13.5))
+            color: sideBatRoot.isDesktop ? ThemeBackend.red : (sideBatRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0)
         }
 
         Item {
@@ -193,8 +208,8 @@ Rectangle {
                     anchors.centerIn: parent
                     text: sideBatRoot.batIcon
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: sideBatRoot.isDesktop ? (barWindow ? barWindow.s(16) : 16) : (barWindow ? barWindow.s(13.5) : 13.5)
-                    color: ThemeBackend.crust
+                    font.pixelSize: sideBatRoot.isDesktop ? (barWindow ? barWindow.s(sideBatRoot.isCompact ? 15 : 16) : (sideBatRoot.isCompact ? 15 : 16)) : (barWindow ? barWindow.s(sideBatRoot.isCompact ? 12 : 13.5) : (sideBatRoot.isCompact ? 12 : 13.5))
+                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.75)
                 }
             }
         }

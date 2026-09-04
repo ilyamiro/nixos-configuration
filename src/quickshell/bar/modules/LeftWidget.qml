@@ -14,13 +14,15 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
 
     property alias helpButton: helpButton
 
     property real targetX: 0
-    property bool showLayout: false
+    property bool showLayout: barWindow ? Boolean(barWindow.isStartupReady) : true
 
     x: targetX
     Behavior on x {
@@ -28,15 +30,14 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    y: barWindow.baseOffsetY
-    height: barWindow.barHeight
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     radius: ThemeBackend.borderRadius
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
 
-    property real targetWidth: moduleActive ? (leftLayout.width + barWindow.s(16)) : 0
+    property real targetWidth: moduleActive ? (leftLayout.width + (barWindow ? barWindow.s(isCompact ? 6 : 8) : (isCompact ? 6 : 8))) : 0
     width: targetWidth
     Behavior on width { NumberAnimation { duration: 450; easing.type: Easing.OutQuint } }
 
@@ -47,42 +48,37 @@ Rectangle {
     Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
     transform: Translate {
-        x: leftWidgetRoot.showLayout ? 0 : barWindow.s(-60)
+        x: leftWidgetRoot.showLayout ? 0 : (barWindow ? barWindow.s(-60) : -60)
         Behavior on x { NumberAnimation { duration: 750; easing.type: Easing.OutQuint } }
-    }
-
-    Timer {
-        running: leftWidgetRoot.moduleActive && barWindow.isStartupReady
-        interval: 50
-        onTriggered: leftWidgetRoot.showLayout = true
     }
 
     Row {
         id: leftLayout
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: barWindow.s(8)
-        spacing: barWindow.s(6)
+        anchors.leftMargin: barWindow ? barWindow.s(leftWidgetRoot.isCompact ? 3 : 4) : (leftWidgetRoot.isCompact ? 3 : 4)
+        spacing: barWindow ? barWindow.s(leftWidgetRoot.isCompact ? 5 : 6) : (leftWidgetRoot.isCompact ? 5 : 6)
 
-        property int pillHeight: barWindow.s(30)
+        property int pillHeight: barWindow ? barWindow.s(leftWidgetRoot.isCompact ? 28 : 30) : (leftWidgetRoot.isCompact ? 28 : 30)
 
         IconButton {
             id: helpButton
-            property bool initAnimTrigger: false
             height: leftLayout.pillHeight
-            width: barWindow.s(32)
+            width: barWindow ? barWindow.s(leftWidgetRoot.isCompact ? 30 : 32) : (leftWidgetRoot.isCompact ? 30 : 32)
             visible: true
             iconOffsetX: -2
 
             cornerRadius: Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2))
             buttonIcon: "󰒓"
-            iconFontSize: barWindow.s(15)
-            accentColor: ThemeBackend.surface0
-            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+            iconFontSize: barWindow ? barWindow.s(leftWidgetRoot.isCompact ? 14 : 15) : (leftWidgetRoot.isCompact ? 14 : 15)
+            accentColor: leftWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+            textColor: isHoveredOrHighlighted ? ThemeBackend.text : (leftWidgetRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
 
-            Timer { running: leftWidgetRoot.moduleActive && leftWidgetRoot.showLayout && !helpButton.initAnimTrigger; interval: 70; onTriggered: helpButton.initAnimTrigger = true }
-            opacity: initAnimTrigger ? 1.0 : 0.0
-            transform: Translate { y: helpButton.initAnimTrigger ? 0 : barWindow.s(15); Behavior on y { NumberAnimation { duration: 620; easing.type: Easing.OutQuint } } }
+            opacity: leftWidgetRoot.showLayout ? 1.0 : 0.0
+            transform: Translate {
+                y: leftWidgetRoot.showLayout ? 0 : (barWindow ? barWindow.s(15) : 15)
+                Behavior on y { NumberAnimation { duration: 620; easing.type: Easing.OutQuint } }
+            }
             Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
 
             onClicked: Quickshell.execDetached(["bash", "-c", Caching.serpantinumDir + "/scripts/qs_manager.sh toggle guide"])

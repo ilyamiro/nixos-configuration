@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Controls
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
@@ -13,8 +14,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property bool layoutAnimationsEnabled: true
 
     property var playerList: {
@@ -57,8 +60,9 @@ Rectangle {
         return "file://" + rawArtUrl;
     }
 
-    property real baseWidth: barWindow ? barWindow.barHeight : 40
-    property real baseHeight: barWindow ? barWindow.s(140) : 140
+    property real targetWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    property real baseWidth: targetWidth
+    property real baseHeight: barWindow ? barWindow.s(isCompact ? 118 : 130) : (isCompact ? 118 : 130)
     property real targetHeight: baseHeight
 
     property real targetX: isRightBar ? (parent ? (parent.width - baseWidth) : 0) : 0
@@ -66,7 +70,7 @@ Rectangle {
 
     x: targetX
     y: targetY
-    width: baseWidth
+    width: targetWidth
     height: targetHeight
     z: 1
     clip: true
@@ -98,10 +102,9 @@ Rectangle {
         id: bgRect
         anchors.fill: parent
         z: -1
-        color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
         radius: ThemeBackend.borderRadius
+        color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
         border.width: 0
-        border.color: "transparent"
         clip: true
     }
 
@@ -127,48 +130,68 @@ Rectangle {
         }
     }
 
-    Item {
+    Column {
         id: baseCol
-        width: sideMediaRoot.baseWidth
-        height: parent.height
-        x: sideMediaRoot.isRightBar ? (parent.width - width) : 0
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
+        spacing: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 4 : 5) : (sideMediaRoot.isCompact ? 4 : 5)
 
         Rectangle {
             id: thumbBox
-            anchors.top: parent.top
-            anchors.topMargin: barWindow ? barWindow.s(8) : 8
             anchors.horizontalCenter: parent.horizontalCenter
-            width: barWindow ? barWindow.s(28) : 28
-            height: barWindow ? barWindow.s(28) : 28
-            radius: ThemeBackend.borderRadius
-            color: ThemeBackend.surface1
+            width: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 26 : 28) : (sideMediaRoot.isCompact ? 26 : 28)
+            height: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 26 : 28) : (sideMediaRoot.isCompact ? 26 : 28)
+            radius: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 7 : 8) : (sideMediaRoot.isCompact ? 7 : 8)
+            color: sideMediaRoot.isCompact ? Qt.lighter(ThemeBackend.surface1, 1.1) : ThemeBackend.surface1
             border.width: 1
-            border.color: (isMediaActive && isPlaying) ? ThemeBackend.mauve : ThemeBackend.surface1
+            border.color: (isMediaActive && isPlaying) ? ThemeBackend.mauve : (sideMediaRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1)
             clip: true
 
             Text {
                 anchors.centerIn: parent
                 text: "󰎈"
                 font.family: ThemeBackend.fontFamily
-                font.pixelSize: barWindow ? barWindow.s(13) : 13
-                color: ThemeBackend.subtext0
+                font.pixelSize: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 12 : 13) : (sideMediaRoot.isCompact ? 12 : 13)
+                color: sideMediaRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0
                 visible: !isMediaActive || sideMediaRoot.activeArtUrl === ""
             }
 
             Image {
+                id: sideArtImg
                 anchors.fill: parent
                 source: isMediaActive ? sideMediaRoot.activeArtUrl : ""
                 fillMode: Image.PreserveAspectCrop
-                visible: isMediaActive && sideMediaRoot.activeArtUrl !== "" && status === Image.Ready
+                visible: false
+            }
+
+            MultiEffect {
+                anchors.fill: sideArtImg
+                source: sideArtImg
+                maskEnabled: true
+                maskSource: sideArtMask
+                visible: isMediaActive && sideMediaRoot.activeArtUrl !== "" && sideArtImg.status === Image.Ready
+            }
+
+            Item {
+                id: sideArtMask
+                anchors.fill: parent
+                layer.enabled: true
+                visible: false
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: thumbBox.radius
+                    color: "black"
+                }
             }
 
             Rectangle {
                 anchors.fill: parent
+                radius: parent.radius
                 color: ThemeBackend.surface0
                 opacity: 0.15
+                visible: isMediaActive && sideMediaRoot.activeArtUrl !== "" && sideArtImg.status === Image.Ready
             }
-            
+
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
@@ -181,43 +204,41 @@ Rectangle {
         }
 
         Column {
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: barWindow ? barWindow.s(8) : 8
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: barWindow ? barWindow.s(4) : 4
+            spacing: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 3 : 4) : (sideMediaRoot.isCompact ? 3 : 4)
 
             IconButton {
-                width: barWindow ? barWindow.s(26) : 26
-                height: barWindow ? barWindow.s(26) : 26
-                cornerRadius: barWindow ? barWindow.s(8) : 8
+                width: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 24 : 26) : (sideMediaRoot.isCompact ? 24 : 26)
+                height: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 24 : 26) : (sideMediaRoot.isCompact ? 24 : 26)
+                cornerRadius: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 7 : 8) : (sideMediaRoot.isCompact ? 7 : 8)
                 buttonIcon: "󰒮"
-                iconFontSize: barWindow ? barWindow.s(13) : 13
-                accentColor: ThemeBackend.surface0
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+                iconFontSize: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 12 : 13) : (sideMediaRoot.isCompact ? 12 : 13)
+                accentColor: sideMediaRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (sideMediaRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: if (targetPlayer && targetPlayer.canGoPrevious) targetPlayer.previous()
             }
 
             IconButton {
-                width: barWindow ? barWindow.s(28) : 28
-                height: barWindow ? barWindow.s(28) : 28
-                cornerRadius: barWindow ? barWindow.s(8) : 8
+                width: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 26 : 28) : (sideMediaRoot.isCompact ? 26 : 28)
+                height: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 26 : 28) : (sideMediaRoot.isCompact ? 26 : 28)
+                cornerRadius: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 7 : 8) : (sideMediaRoot.isCompact ? 7 : 8)
                 buttonIcon: (isMediaActive && isPlaying) ? "󰏤" : "󰐊"
-                iconFontSize: barWindow ? barWindow.s(15) : 15
-                accentColor: ThemeBackend.surface0
-                textColor: isHoveredOrHighlighted ? ThemeBackend.green : ThemeBackend.text
+                iconFontSize: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 14 : 15) : (sideMediaRoot.isCompact ? 14 : 15)
+                accentColor: sideMediaRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.green : (sideMediaRoot.isCompact ? Qt.lighter(ThemeBackend.text, 1.1) : ThemeBackend.text)
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: if (targetPlayer && targetPlayer.canTogglePlaying) targetPlayer.togglePlaying()
             }
 
             IconButton {
-                width: barWindow ? barWindow.s(26) : 26
-                height: barWindow ? barWindow.s(26) : 26
-                cornerRadius: barWindow ? barWindow.s(8) : 8
+                width: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 24 : 26) : (sideMediaRoot.isCompact ? 24 : 26)
+                height: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 24 : 26) : (sideMediaRoot.isCompact ? 24 : 26)
+                cornerRadius: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 7 : 8) : (sideMediaRoot.isCompact ? 7 : 8)
                 buttonIcon: "󰒭"
-                iconFontSize: barWindow ? barWindow.s(13) : 13
-                accentColor: ThemeBackend.surface0
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+                iconFontSize: barWindow ? barWindow.s(sideMediaRoot.isCompact ? 12 : 13) : (sideMediaRoot.isCompact ? 12 : 13)
+                accentColor: sideMediaRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (sideMediaRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: if (targetPlayer && targetPlayer.canGoNext) targetPlayer.next()
             }

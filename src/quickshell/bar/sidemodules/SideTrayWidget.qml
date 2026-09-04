@@ -13,8 +13,10 @@ Rectangle {
     id: sideTrayWidgetRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property bool suppressAnimation: false
 
     property real targetY: 0
@@ -23,13 +25,13 @@ Rectangle {
     property bool isRightBar: barWindow ? (barWindow.barPosition === "right") : false
     property bool isBottomAligned: true
 
-    readonly property real iconSize: barWindow ? barWindow.s(16) : 16
-    readonly property real itemSpacing: barWindow ? barWindow.s(10) : 10
-    readonly property real iconPadding: barWindow ? barWindow.s(12) : 12
+    readonly property real iconSize: barWindow ? barWindow.s(isCompact ? 15 : 16) : (isCompact ? 15 : 16)
+    readonly property real itemSpacing: barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10)
+    readonly property real iconPadding: barWindow ? barWindow.s(isCompact ? 10 : 12) : (isCompact ? 10 : 12)
     readonly property real totalPadding: iconPadding * 2
     readonly property int itemCount: (moduleActive && trayRepeater.count > 0) ? trayRepeater.count : 0
 
-    property real baseWidth: barWindow ? barWindow.barHeight : 40
+    property real baseWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
     property real targetWidth: baseWidth
     width: targetWidth
     Behavior on width {
@@ -87,10 +89,6 @@ Rectangle {
         }
     }
 
-    readonly property bool isBarOpaque: (barWindow && barWindow.barOpacity !== undefined) ? (barWindow.barOpacity >= 1.0) : true
-    readonly property bool paintOwnBackground: (!isGrouped && !isSolid)
-    readonly property bool paintBaseBackground: (!isGrouped && !isSolid) || isBarOpaque
-
     color: "transparent"
     border.width: 0
     border.color: "transparent"
@@ -100,11 +98,10 @@ Rectangle {
         id: bgRect
         z: -1
         anchors.fill: parent
-        color: ThemeBackend.base
         radius: ThemeBackend.borderRadius
         border.width: 0
-        border.color: "transparent"
-        visible: sideTrayWidgetRoot.paintOwnBackground && height > 0
+        color: sideTrayWidgetRoot.isGrouped ? "transparent" : (sideTrayWidgetRoot.isSolid ? (sideTrayWidgetRoot.distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
+        visible: height > 0
     }
 
     opacity: (showLayout && targetHeight > 0) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -159,7 +156,7 @@ Rectangle {
 
                 property bool isHovered: trayMouse.containsMouse
                 property bool initAnimTrigger: false
-                opacity: initAnimTrigger ? (isHovered ? 1.0 : 0.8) : 0.0
+                opacity: initAnimTrigger ? (isHovered ? 1.0 : (sideTrayWidgetRoot.isCompact ? 0.9 : 0.8)) : 0.0
                 scale: initAnimTrigger ? (isHovered ? 1.15 : 1.0) : 0.0
 
                 Component.onCompleted: {

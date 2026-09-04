@@ -12,20 +12,24 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetY: 0
-    property bool showLayout: false
+    property bool showLayout: barWindow ? Boolean(barWindow.isStartupReady) : true
     property alias helpButton: helpBtn
 
     y: targetY
-    width: barWindow ? barWindow.barHeight : 40
-    height: barWindow ? barWindow.barHeight : 40
+    property real targetWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    property real targetHeight: targetWidth
 
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    width: targetWidth
+    height: targetHeight
+
     radius: ThemeBackend.borderRadius
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
 
     opacity: (showLayout && moduleActive) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -34,23 +38,17 @@ Rectangle {
 
     Behavior on opacity { NumberAnimation { duration: 140; easing.type: Easing.OutCubic } }
 
-    Timer {
-        running: sideTopRoot.moduleActive && barWindow && barWindow.isStartupReady
-        interval: 50
-        onTriggered: sideTopRoot.showLayout = true
-    }
-
     IconButton {
         id: helpBtn
         anchors.centerIn: parent
-        width: barWindow ? barWindow.s(30) : 30
-        height: barWindow ? barWindow.s(30) : 30
-        cornerRadius: Math.max(0, ThemeBackend.borderRadius - 2)
+        width: barWindow ? barWindow.s(sideTopRoot.isCompact ? 28 : 30) : (sideTopRoot.isCompact ? 28 : 30)
+        height: barWindow ? barWindow.s(sideTopRoot.isCompact ? 28 : 30) : (sideTopRoot.isCompact ? 28 : 30)
+        cornerRadius: Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2))
         buttonIcon: "󰒓"
         iconOffsetX: -2
-        iconFontSize: barWindow ? barWindow.s(15) : 15
-        accentColor: ThemeBackend.surface0
-        textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.overlay2
+        iconFontSize: barWindow ? barWindow.s(sideTopRoot.isCompact ? 14 : 15) : (sideTopRoot.isCompact ? 14 : 15)
+        accentColor: sideTopRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+        textColor: isHoveredOrHighlighted ? ThemeBackend.text : (sideTopRoot.isCompact ? ThemeBackend.subtext0 : ThemeBackend.overlay2)
         onClicked: Quickshell.execDetached(["bash", "-c", Caching.serpantinumDir + "/scripts/qs_manager.sh toggle guide"])
     }
 }

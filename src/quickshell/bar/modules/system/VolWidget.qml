@@ -14,8 +14,10 @@ Rectangle {
     id: volWidgetRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
 
     property real sysVolume: Audio.defaultSink && Audio.defaultSink.audio ? Math.round(Audio.defaultSink.audio.volume * 100) : 0
     property bool isMuted: Audio.defaultSink && Audio.defaultSink.audio ? Audio.defaultSink.audio.muted : false
@@ -34,15 +36,14 @@ Rectangle {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
-    y: barWindow.baseOffsetY
-    height: barWindow.barHeight
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     radius: ThemeBackend.borderRadius
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
 
-    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + barWindow.s(10)) : 0
+    property real targetWidth: (moduleActive && sysLayout.implicitWidth > 0) ? (sysLayout.implicitWidth + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
     width: targetWidth
 
     opacity: (showLayout && moduleActive) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
@@ -63,7 +64,7 @@ Rectangle {
     Row {
         id: sysLayout
         anchors.centerIn: parent
-        property int pillHeight: barWindow.s(30)
+        property int pillHeight: barWindow ? barWindow.s(volWidgetRoot.isCompact ? 28 : 30) : (volWidgetRoot.isCompact ? 28 : 30)
 
         ClickButton {
             id: volPill
@@ -71,16 +72,16 @@ Rectangle {
             property bool isActive: isSoundActive
 
             height: sysLayout.pillHeight
-            maxWidth: barWindow.s(100)
+            maxWidth: barWindow ? barWindow.s(volWidgetRoot.isCompact ? 96 : 100) : (volWidgetRoot.isCompact ? 96 : 100)
             cornerRadius: Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2))
-            horizontalPadding: barWindow.s(12)
+            horizontalPadding: barWindow ? barWindow.s(volWidgetRoot.isCompact ? 10 : 12) : (volWidgetRoot.isCompact ? 10 : 12)
             buttonIcon: volIcon
-            iconFontSize: barWindow.s(15)
+            iconFontSize: barWindow ? barWindow.s(volWidgetRoot.isCompact ? 14 : 15) : (volWidgetRoot.isCompact ? 14 : 15)
             buttonText: volPercent
-            textFontSize: barWindow.s(12)
+            textFontSize: barWindow ? barWindow.s(volWidgetRoot.isCompact ? 11 : 12) : (volWidgetRoot.isCompact ? 11 : 12)
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            accentColor: isActive ? ThemeBackend.mauve : ThemeBackend.surface1
-            textColor: isActive ? ThemeBackend.base : ThemeBackend.subtext0
+            accentColor: isActive ? (volWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.08) : ThemeBackend.mauve) : (volWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface1, 1.12) : ThemeBackend.surface1)
+            textColor: isActive ? ThemeBackend.base : (volWidgetRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0)
 
             property real targetWidth: implicitWidth
             width: targetWidth

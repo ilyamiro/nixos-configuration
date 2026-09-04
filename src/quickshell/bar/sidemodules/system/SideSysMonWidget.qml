@@ -13,8 +13,10 @@ Rectangle {
     id: sideSysMonRoot
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetY: 0
     property bool showLayout: false
 
@@ -32,23 +34,27 @@ Rectangle {
     Component.onDestruction: SysData.unsubscribe()
     onIsSysVisibleChanged: updateSubscription()
 
-    x: (barWindow && barWindow.baseOffsetX !== undefined) ? barWindow.baseOffsetX : 0
+    property real targetWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    property real targetHeight: (moduleActive && sysCol.implicitHeight > 0) ? (sysCol.implicitHeight + (barWindow ? barWindow.s(isCompact ? 8 : 10) : (isCompact ? 8 : 10))) : 0
+
+    width: targetWidth
+    height: targetHeight
+
+    Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+    Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+
+    x: barWindow ? ((barWindow.baseOffsetX !== undefined ? barWindow.baseOffsetX : 0) + (barWindow.barHeight - width) / 2) : 0
     y: targetY
     Behavior on y {
         enabled: barWindow && barWindow.startupCascadeFinished
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    width: barWindow ? barWindow.barHeight : 40
     radius: Math.min(ThemeBackend.borderRadius, width / 2)
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
     layer.enabled: true
-
-    property real targetHeight: (moduleActive && sysCol.implicitHeight > 0) ? (sysCol.implicitHeight + (barWindow ? barWindow.s(10) : 10)) : 0
-    height: targetHeight
 
     opacity: (showLayout && moduleActive) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
     visible: opacity > 0
@@ -86,14 +92,14 @@ Rectangle {
 
         property real fillRatio: Math.max(0.0, Math.min(1.0, isNaN(animValue) ? 0.0 : animValue))
         property real fillY: height * (1.0 - fillRatio)
-        property real waveAmp: (fillRatio < 0.99 && fillRatio > 0.01) ? (barWindow ? barWindow.s(2.5) : 2.5) * Math.sin(fillRatio * Math.PI) : 0
+        property real waveAmp: (fillRatio < 0.99 && fillRatio > 0.01) ? (barWindow ? barWindow.s(sideSysMonRoot.isCompact ? 2.0 : 2.5) : (sideSysMonRoot.isCompact ? 2.0 : 2.5)) * Math.sin(fillRatio * Math.PI) : 0
         property real waveCenterOffset: 0.375 * waveAmp * (Math.sin(sideSysMonRoot.globalWavePhase) - Math.cos(sideSysMonRoot.globalWavePhase))
 
         height: sysCol.pillHeight
         width: sysCol.pillWidth
         radius: Math.min(Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2)), width / 2)
-        color: ThemeBackend.surface0
-        border.color: ThemeBackend.surface1
+        color: sideSysMonRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
+        border.color: sideSysMonRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1
         border.width: 1
         clip: true
 
@@ -178,8 +184,8 @@ Rectangle {
             anchors.centerIn: parent
             text: icon
             font.family: ThemeBackend.fontFamily
-            font.pixelSize: barWindow ? barWindow.s(11.55) : 11.55
-            color: ThemeBackend.subtext0
+            font.pixelSize: barWindow ? barWindow.s(sideSysMonRoot.isCompact ? 13 : 14.5) : (sideSysMonRoot.isCompact ? 13 : 14.5)
+            color: sideSysMonRoot.isCompact ? ThemeBackend.text : ThemeBackend.subtext0
         }
 
         Item {
@@ -201,8 +207,8 @@ Rectangle {
                     anchors.centerIn: parent
                     text: icon
                     font.family: ThemeBackend.fontFamily
-                    font.pixelSize: barWindow ? barWindow.s(11.55) : 11.55
-                    color: ThemeBackend.crust
+                    font.pixelSize: barWindow ? barWindow.s(sideSysMonRoot.isCompact ? 13 : 14.5) : (sideSysMonRoot.isCompact ? 13 : 14.5)
+                    color: Qt.rgba(ThemeBackend.crust.r, ThemeBackend.crust.g, ThemeBackend.crust.b, 0.75)
                 }
             }
         }
@@ -211,9 +217,9 @@ Rectangle {
     Column {
         id: sysCol
         anchors.centerIn: parent
-        spacing: barWindow ? barWindow.s(6) : 6
-        property int pillHeight: barWindow ? barWindow.s(28) : 28
-        property int pillWidth: barWindow ? barWindow.s(28) : 28
+        spacing: barWindow ? barWindow.s(sideSysMonRoot.isCompact ? 3 : 4) : (sideSysMonRoot.isCompact ? 3 : 4)
+        property int pillHeight: barWindow ? barWindow.s(sideSysMonRoot.isCompact ? 26 : 28) : (sideSysMonRoot.isCompact ? 26 : 28)
+        property int pillWidth: pillHeight
 
         SysMonPill {
             value: isNaN(SysData.cpu) ? 0 : SysData.cpu / 100.0
@@ -223,7 +229,7 @@ Rectangle {
 
         SysMonPill {
             value: isNaN(SysData.ramPercent) ? 0 : SysData.ramPercent / 100.0
-            icon: "\uF538"
+            icon: "󰍛"
             accentColor: ThemeBackend.sapphire
         }
 

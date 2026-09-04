@@ -15,8 +15,10 @@ Rectangle {
     property var barWindow
     property var paths
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property bool isNiri: false
     property bool isSway: false
 
@@ -226,20 +228,19 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
-    radius: ThemeBackend.borderRadius
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    clip: true
-
-    property real targetHeight: (moduleActive && workspaceCount > 0) ? wsCol.implicitHeight + (barWindow ? barWindow.s(22) : 22) : 0
-    property real targetWidth: barWindow ? barWindow.barHeight : 40
+    property real targetWidth: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    property real targetHeight: (moduleActive && workspaceCount > 0) ? wsCol.implicitHeight + (barWindow ? barWindow.s(isCompact ? 18 : 22) : (isCompact ? 18 : 22)) : 0
 
     width: targetWidth
     height: targetHeight
 
     Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
     Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
+
+    radius: ThemeBackend.borderRadius
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
+    border.width: 0
+    clip: true
 
     opacity: (moduleActive && workspaceCount > 0) ? ((barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0) : 0.0
     visible: opacity > 0
@@ -295,8 +296,8 @@ Rectangle {
     Rectangle {
         id: activeHighlight
         z: 3
-        radius: barWindow ? barWindow.s(10) : 10
-        color: ThemeBackend.mauve
+        radius: barWindow ? barWindow.s(sideWsRoot.isCompact ? 7 : 8) : (sideWsRoot.isCompact ? 7 : 8)
+        color: sideWsRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.05) : ThemeBackend.mauve
 
         property int prevIdx: 0
         property int curIdx: sideWsRoot.activeIndex
@@ -319,15 +320,17 @@ Rectangle {
         function getY(index, activeIndex) {
             if (index < 0) return 0;
             let yPos = 0;
-            let spacing = barWindow ? barWindow.s(8) : 8;
+            let spacing = barWindow ? barWindow.s(sideWsRoot.isCompact ? 7 : 8) : (sideWsRoot.isCompact ? 7 : 8);
+            let activeH = barWindow ? barWindow.s(sideWsRoot.isCompact ? 34 : 36) : (sideWsRoot.isCompact ? 34 : 36);
+            let inactiveH = barWindow ? barWindow.s(sideWsRoot.isCompact ? 16 : 18) : (sideWsRoot.isCompact ? 16 : 18);
             for (let i = 0; i < index; i++) {
-                yPos += (i === activeIndex ? (barWindow ? barWindow.s(36) : 36) : (barWindow ? barWindow.s(18) : 18)) + spacing;
+                yPos += (i === activeIndex ? activeH : inactiveH) + spacing;
             }
             return yPos;
         }
 
         property real targetTop: curIdx >= 0 ? getY(curIdx, curIdx) : 0
-        property real targetBottom: curIdx >= 0 ? targetTop + (barWindow ? barWindow.s(36) : 36) : 0
+        property real targetBottom: curIdx >= 0 ? targetTop + (barWindow ? barWindow.s(sideWsRoot.isCompact ? 34 : 36) : (sideWsRoot.isCompact ? 34 : 36)) : 0
         property real actualTop: targetTop
         property real actualBottom: targetBottom
 
@@ -336,7 +339,7 @@ Rectangle {
 
         x: wsCol.x + (wsCol.width - width) / 2
         y: wsCol.y + actualTop
-        width: barWindow ? barWindow.s(18) : 18
+        width: barWindow ? barWindow.s(sideWsRoot.isCompact ? 16 : 18) : (sideWsRoot.isCompact ? 16 : 18)
         height: actualBottom - actualTop
         opacity: (sideWsRoot.workspaceCount > 0 && sideWsRoot.activeIndex >= 0) ? 1.0 : 0.0
         Behavior on opacity { NumberAnimation { duration: 180 } }
@@ -346,7 +349,7 @@ Rectangle {
         id: wsCol
         z: 2
         anchors.centerIn: parent
-        spacing: barWindow ? barWindow.s(8) : 8
+        spacing: barWindow ? barWindow.s(sideWsRoot.isCompact ? 7 : 8) : (sideWsRoot.isCompact ? 7 : 8)
 
         Repeater {
             model: sideWsRoot.workspaceCount
@@ -359,7 +362,7 @@ Rectangle {
                 property var ws: sideWsRoot.wsForId(wsId)
                 property bool isOccupied: {
                     if (sideWsRoot.isNiri) {
-                        return !sideWsRoot.niriOccupiedMap[index];
+                        return !!sideWsRoot.niriOccupiedMap[index];
                     }
                     if (sideWsRoot.isSway) {
                         return !!sideWsRoot.swayOccupiedMap[index];
@@ -369,8 +372,8 @@ Rectangle {
                 property bool isActive: index === sideWsRoot.activeIndex
                 property bool initAnimTrigger: false
 
-                width: barWindow ? barWindow.s(18) : 18
-                height: isActive ? (barWindow ? barWindow.s(36) : 36) : (barWindow ? barWindow.s(18) : 18)
+                width: barWindow ? barWindow.s(sideWsRoot.isCompact ? 16 : 18) : (sideWsRoot.isCompact ? 16 : 18)
+                height: isActive ? (barWindow ? barWindow.s(sideWsRoot.isCompact ? 34 : 36) : (sideWsRoot.isCompact ? 34 : 36)) : (barWindow ? barWindow.s(sideWsRoot.isCompact ? 16 : 18) : (sideWsRoot.isCompact ? 16 : 18))
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Behavior on height { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
@@ -378,13 +381,11 @@ Rectangle {
                 Rectangle {
                     id: wsVisualShape
                     anchors.fill: parent
-                    radius: barWindow ? barWindow.s(10) : 10
-                    color: wsPill.isActive ? "transparent" : (wsPill.isOccupied ? ThemeBackend.surface2 : ThemeBackend.surface0)
+                    radius: barWindow ? barWindow.s(sideWsRoot.isCompact ? 8 : 10) : (sideWsRoot.isCompact ? 8 : 10)
+                    color: wsPill.isActive ? "transparent" : (wsPill.isOccupied ? ThemeBackend.surface2 : (sideWsRoot.isCompact ? ThemeBackend.surface1 : ThemeBackend.surface0))
                     border.width: 0
-                    border.color: wsPillMouse.containsMouse ? ThemeBackend.overlay2 : ThemeBackend.surface1
 
                     Behavior on color { ColorAnimation { duration: 250 } }
-                    Behavior on border.color { ColorAnimation { duration: 250 } }
 
                     scale: wsPillMouse.pressed ? 0.88 : (wsPillMouse.containsMouse ? 1.08 : 1.0)
                     Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutQuint } }

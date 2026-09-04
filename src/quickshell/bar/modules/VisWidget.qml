@@ -12,8 +12,10 @@ Rectangle {
 
     property var barWindow
     property bool isSolid: false
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property bool moduleActive: true
     property bool isGrouped: false
+    property bool isCompact: isGrouped || (isSolid && distinctPills)
     property real targetX: 0
     property bool showLayout: !barWindow || barWindow.isStartupReady
     property int barCount: 16
@@ -87,15 +89,14 @@ Rectangle {
         NumberAnimation { duration: 600; easing.type: Easing.OutQuint }
     }
 
-    y: barWindow ? barWindow.baseOffsetY : 0
-    height: barWindow ? barWindow.barHeight : 30
+    height: barWindow ? (isGrouped ? barWindow.barHeight - 8 : ((isSolid && distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight)) : (isGrouped ? 22 : ((isSolid && distinctPills) ? 24 : 30))
+    y: barWindow ? barWindow.baseOffsetY + (barWindow.barHeight - height) / 2 : 0
     radius: ThemeBackend.borderRadius
-    border.color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.surface0
-    border.width: (isGrouped || isSolid) ? 0 : 1
-    color: (isGrouped || isSolid) ? "transparent" : ThemeBackend.base
+    border.width: 0
+    color: isGrouped ? "transparent" : (isSolid ? (distinctPills ? Qt.darker(ThemeBackend.surface0, 1.15) : "transparent") : ThemeBackend.base)
     clip: true
 
-    property real targetWidth: (moduleActive && innerLayout.implicitWidth > 0) ? (innerLayout.implicitWidth + (barWindow ? barWindow.s(24) : 24)) : 0
+    property real targetWidth: (moduleActive && innerLayout.implicitWidth > 0) ? (innerLayout.implicitWidth + (barWindow ? barWindow.s(isCompact ? 20 : 24) : (isCompact ? 20 : 24))) : 0
     width: targetWidth
     Behavior on width { NumberAnimation { duration: 400; easing.type: Easing.OutQuint } }
 
@@ -116,18 +117,18 @@ Rectangle {
     Row {
         id: innerLayout
         anchors.centerIn: parent
-        spacing: barWindow ? barWindow.s(4) : 4
+        spacing: barWindow ? barWindow.s(visWidgetRoot.isCompact ? 3 : 4) : (visWidgetRoot.isCompact ? 3 : 4)
 
         Repeater {
             model: visWidgetRoot.barCount
             delegate: Rectangle {
-                width: barWindow ? barWindow.s(5) : 5
+                width: barWindow ? barWindow.s(visWidgetRoot.isCompact ? 4 : 5) : (visWidgetRoot.isCompact ? 4 : 5)
                 property real level: (visWidgetRoot.barLevels && index < visWidgetRoot.barLevels.length) ? visWidgetRoot.barLevels[index] : 0.0
-                property real minH: barWindow ? barWindow.s(4) : 4
+                property real minH: barWindow ? barWindow.s(visWidgetRoot.isCompact ? 3 : 4) : (visWidgetRoot.isCompact ? 3 : 4)
                 property real maxH: visWidgetRoot.height * 0.65
                 height: Math.max(minH, level * maxH)
                 radius: width * 0.5
-                color: ThemeBackend.mauve
+                color: visWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.mauve, 1.08) : ThemeBackend.mauve
                 opacity: 0.45 + (level * 0.55)
                 anchors.verticalCenter: parent.verticalCenter
 
