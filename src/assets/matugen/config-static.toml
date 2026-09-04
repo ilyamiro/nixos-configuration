@@ -11,4 +11,4 @@ output_path = "~/.config/cava/config"
 
 [templates.fastfetch]
 input_path = "templates/fastfetch.jsonc.template"
-output_path = "~/.config/fastfetch/fastfetch.jsonc"
+output_path = "~/.config/fastfetch/config.jsonc"
