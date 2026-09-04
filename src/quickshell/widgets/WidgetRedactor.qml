@@ -125,6 +125,17 @@ PanelWindow {
         property real safeWidth: redactorMode.width
         property real safeHeight: redactorMode.height
 
+        Timer {
+            id: toolbarCheckTimer
+            interval: 100
+            repeat: false
+            onTriggered: redactorMode.updateToolbarObscured()
+        }
+
+        function queueUpdateToolbarObscured() {
+            toolbarCheckTimer.restart();
+        }
+
         function removeAllWidgets() {
             redactorMode.selectedId = "";
             activeWidgetsModel.clear();
@@ -151,24 +162,47 @@ PanelWindow {
             let zY2 = redactorMode.height;
 
             let obscured = false;
-            for (let i = 0; i < activeWidgetsModel.count; i++) {
-                let item = activeWidgetsModel.get(i);
-                if (!item) continue;
-                let rot = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? Math.abs(Math.round(item.wRotation)) : 0;
-                let bw = (rot % 180 === 0) ? item.wWidth : item.wHeight;
-                let bh = (rot % 180 === 0) ? item.wHeight : item.wWidth;
-                let isSel = (redactorMode.selectedId === item.wId);
-                let gap = isSel ? s(20) : 0;
-                let chromeH = isSel ? s(90) : 0;
+            let repCount = widgetRepeater.count;
 
-                let wX1 = item.wX - gap;
-                let wY1 = item.wY - gap;
-                let wX2 = item.wX + bw + gap;
-                let wY2 = item.wY + bh + gap + chromeH;
+            if (repCount > 0) {
+                for (let i = 0; i < repCount; i++) {
+                    let proxy = widgetRepeater.itemAt(i);
+                    if (!proxy) continue;
 
-                if (wX1 < zX2 && wX2 > zX1 && wY1 < zY2 && wY2 > zY1) {
-                    obscured = true;
-                    break;
+                    let isSel = (redactorMode.selectedId === proxy.wId);
+                    let gap = isSel ? s(20) : 0;
+                    let chromeH = isSel ? s(90) : 0;
+
+                    let wX1 = proxy.x - gap;
+                    let wY1 = proxy.y - gap;
+                    let wX2 = proxy.x + proxy.width + gap;
+                    let wY2 = proxy.y + proxy.height + gap + chromeH;
+
+                    if (wX1 < zX2 && wX2 > zX1 && wY1 < zY2 && wY2 > zY1) {
+                        obscured = true;
+                        break;
+                    }
+                }
+            } else {
+                for (let i = 0; i < activeWidgetsModel.count; i++) {
+                    let item = activeWidgetsModel.get(i);
+                    if (!item) continue;
+                    let rot = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? Math.abs(Math.round(item.wRotation)) : 0;
+                    let bw = (rot % 180 === 0) ? item.wWidth : item.wHeight;
+                    let bh = (rot % 180 === 0) ? item.wHeight : item.wWidth;
+                    let isSel = (redactorMode.selectedId === item.wId);
+                    let gap = isSel ? s(20) : 0;
+                    let chromeH = isSel ? s(90) : 0;
+
+                    let wX1 = item.wX - gap;
+                    let wY1 = item.wY - gap;
+                    let wX2 = item.wX + bw + gap;
+                    let wY2 = item.wY + bh + gap + chromeH;
+
+                    if (wX1 < zX2 && wX2 > zX1 && wY1 < zY2 && wY2 > zY1) {
+                        obscured = true;
+                        break;
+                    }
                 }
             }
             toolbarObscured = obscured;
@@ -344,59 +378,35 @@ PanelWindow {
             return { x: finalX, y: finalY, w: clamped.w, h: clamped.h };
         }
 
-        function calculateResize(loaderItem, startX, startY, startW, startH, dx, dy, edges, isCorner) {
-            let L = startX;
-            let R = startX + startW;
-            let T = startY;
-            let B = startY + startH;
+        function calculateResize(loaderItem, startX, startY, startW, startH, dx, dy, edges, isCorner, rot) {
+            let rawW = startW;
+            let rawH = startH;
 
-            if (edges.left) L += dx;
-            if (edges.right) R += dx;
-            if (edges.top) T += dy;
-            if (edges.bottom) B += dy;
+            if (edges.left) rawW = startW - dx;
+            else if (edges.right) rawW = startW + dx;
+
+            if (edges.top) rawH = startH - dy;
+            else if (edges.bottom) rawH = startH + dy;
 
             let gridStep = s(20);
             if (gridEnabled) {
-                if (edges.left) L = Math.round(L / gridStep) * gridStep;
-                if (edges.right) R = Math.round(R / gridStep) * gridStep;
-                if (edges.top) T = Math.round(T / gridStep) * gridStep;
-                if (edges.bottom) B = Math.round(B / gridStep) * gridStep;
+                if (edges.left || edges.right) rawW = Math.round(rawW / gridStep) * gridStep;
+                if (edges.top || edges.bottom) rawH = Math.round(rawH / gridStep) * gridStep;
             }
 
-            L = Math.max(0, Math.min(safeWidth, L));
-            T = Math.max(0, Math.min(safeHeight, T));
-            R = Math.max(0, Math.min(safeWidth, R));
-            B = Math.max(0, Math.min(safeHeight, B));
+            let normRot = ((Math.round(rot || 0) % 360) + 360) % 360;
+            let isRot90 = (normRot % 180 !== 0);
+            let maxAllowedW = isRot90 ? safeHeight : safeWidth;
+            let maxAllowedH = isRot90 ? safeWidth : safeHeight;
 
-            if (R <= L) {
-                if (edges.left) L = R - (gridEnabled ? gridStep : 10);
-                else R = L + (gridEnabled ? gridStep : 10);
-            }
-            if (B <= T) {
-                if (edges.top) T = B - (gridEnabled ? gridStep : 10);
-                else B = T + (gridEnabled ? gridStep : 10);
-            }
-
-            let rawW = R - L;
-            let rawH = B - T;
+            rawW = Math.max(10, Math.min(maxAllowedW, rawW));
+            rawH = Math.max(10, Math.min(maxAllowedH, rawH));
 
             let clamped = clampResize(loaderItem, rawW, rawH, dx, dy, isCorner);
-            let finalW = clamped.w;
-            let finalH = clamped.h;
+            let finalW = Math.max(10, Math.min(maxAllowedW, clamped.w));
+            let finalH = Math.max(10, Math.min(maxAllowedH, clamped.h));
 
-            if (gridEnabled) {
-                let reSnapped = snapBoxToGrid(loaderItem,
-                    edges.left ? (R - finalW) : L,
-                    edges.top ? (B - finalH) : T,
-                    finalW, finalH);
-                finalW = reSnapped.w;
-                finalH = reSnapped.h;
-            }
-
-            let finalX = edges.left ? (R - finalW) : L;
-            let finalY = edges.top ? (B - finalH) : T;
-
-            return { x: finalX, y: finalY, w: finalW, h: finalH };
+            return { x: startX, y: startY, w: finalW, h: finalH };
         }
 
         function snapAllWidgetsToGrid() {
@@ -630,6 +640,15 @@ PanelWindow {
 
                     property var savedAspects: ({})
 
+                    Connections {
+                        target: baseSelectMa
+                        function onPressedChanged() {
+                            if (!baseSelectMa.pressed) {
+                                bottomChrome.posMode = bottomChrome.calculatedPosMode;
+                            }
+                        }
+                    }
+
                     function applyResize(mouse, startMouseX, startMouseY, startWidth, startHeight, startWidgetX, startWidgetY, mouseArea, edges, isCorner) {
                         let localPos = mouseArea.mapToItem(workspaceArea, mouse.x, mouse.y);
                         let dx = localPos.x - startMouseX;
@@ -646,7 +665,7 @@ PanelWindow {
                         let passLdx = isCorner ? ldx : (edges.left || edges.right ? ldx : 0);
                         let passLdy = isCorner ? ldy : (edges.top || edges.bottom ? ldy : 0);
 
-                        let res = redactorMode.calculateResize(preview.item, startWidgetX, startWidgetY, startWidth, startHeight, passLdx, passLdy, edges, isCorner);
+                        let res = redactorMode.calculateResize(preview.item, startWidgetX, startWidgetY, startWidth, startHeight, passLdx, passLdy, edges, isCorner, widgetProxy.wRotation);
                         let finalW = res.w;
                         let finalH = res.h;
 
@@ -870,7 +889,7 @@ PanelWindow {
 
                     function triggerSync() {
                         if (redactorMode.isInitializing) return;
-                        redactorMode.updateToolbarObscured();
+                        redactorMode.queueUpdateToolbarObscured();
                         widgetProxy.hasUnsyncedChanges = true;
                         if (!syncTimer.running) {
                             syncTimer.restart();
@@ -878,6 +897,7 @@ PanelWindow {
                     }
 
                     function finalizeSync() {
+                        toolbarCheckTimer.stop();
                         syncTimer.stop();
                         widgetProxy.hasUnsyncedChanges = false;
                         let curOp = widgetProxy.wOpacity;
@@ -895,6 +915,7 @@ PanelWindow {
 
                     MouseArea {
                         id: baseSelectMa
+                        z: 0
                         anchors.fill: parent
                         hoverEnabled: true
                         preventStealing: true
@@ -911,8 +932,8 @@ PanelWindow {
                             let localPos = mapToItem(workspaceArea, mouse.x, mouse.y);
                             startDragX = localPos.x;
                             startDragY = localPos.y;
-                            startWidgetX = model.wX;
-                            startWidgetY = model.wY;
+                            startWidgetX = widgetProxy.x;
+                            startWidgetY = widgetProxy.y;
                         }
 
                         onPositionChanged: (mouse) => {
@@ -951,11 +972,11 @@ PanelWindow {
 
                     Item {
                         id: rotatableContainer
+                        z: 1
                         width: model.wWidth
                         height: model.wHeight
                         anchors.centerIn: parent
                         rotation: widgetProxy.wRotation
-                        Behavior on rotation { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
 
                         Loader {
                             id: preview
@@ -1222,9 +1243,9 @@ PanelWindow {
                             MouseArea {
                                 id: resizeTop
                                 z: 20
-                                height: s(12)
+                                height: s(16)
                                 anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top
-                                anchors.leftMargin: s(18); anchors.rightMargin: s(18); anchors.topMargin: -s(6)
+                                anchors.leftMargin: s(18); anchors.rightMargin: s(18); anchors.topMargin: -s(8)
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
@@ -1267,9 +1288,9 @@ PanelWindow {
                             MouseArea {
                                 id: resizeBottom
                                 z: 20
-                                height: s(12)
+                                height: s(16)
                                 anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
-                                anchors.leftMargin: s(18); anchors.rightMargin: s(18); anchors.bottomMargin: -s(6)
+                                anchors.leftMargin: s(18); anchors.rightMargin: s(18); anchors.bottomMargin: -s(8)
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
@@ -1312,9 +1333,9 @@ PanelWindow {
                             MouseArea {
                                 id: resizeLeft
                                 z: 20
-                                width: s(12)
+                                width: s(16)
                                 anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.left: parent.left
-                                anchors.topMargin: s(18); anchors.bottomMargin: s(18); anchors.leftMargin: -s(6)
+                                anchors.topMargin: s(18); anchors.bottomMargin: s(18); anchors.leftMargin: -s(8)
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
@@ -1357,9 +1378,9 @@ PanelWindow {
                             MouseArea {
                                 id: resizeRight
                                 z: 20
-                                width: s(12)
+                                width: s(16)
                                 anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.right: parent.right
-                                anchors.topMargin: s(18); anchors.bottomMargin: s(18); anchors.rightMargin: -s(6)
+                                anchors.topMargin: s(18); anchors.bottomMargin: s(18); anchors.rightMargin: -s(8)
                                 visible: !selectionUI.isAspectLocked
                                 enabled: visible && preview.status === Loader.Ready && widgetProxy.isSelected
                                 hoverEnabled: true
@@ -1404,7 +1425,7 @@ PanelWindow {
                     ColumnLayout {
                         id: bottomChrome
                         z: 40
-                        opacity: widgetProxy.isSelected ? 1.0 : 0.0
+                        opacity: (widgetProxy.isSelected && !baseSelectMa.pressed) ? 1.0 : 0.0
                         visible: opacity > 0
                         Behavior on opacity { NumberAnimation { duration: 150 } }
                         spacing: s(6)
@@ -1417,12 +1438,24 @@ PanelWindow {
                         readonly property bool fitsRight: (widgetProxy.x + widgetProxy.width + widgetProxy.selectionGap + implicitWidth + s(8)) <= redactorMode.safeWidth
                         readonly property bool fitsLeft: (widgetProxy.x - widgetProxy.selectionGap - implicitWidth - s(8)) >= 0
 
-                        readonly property int posMode: {
+                        readonly property int calculatedPosMode: {
                             if (fitsBelow) return 0;
                             if (fitsAbove) return 1;
                             if (fitsRight) return 2;
                             if (fitsLeft) return 3;
                             return 4;
+                        }
+
+                        property int posMode: 0
+
+                        onCalculatedPosModeChanged: {
+                            if (!baseSelectMa.pressed) {
+                                posMode = calculatedPosMode;
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            posMode = calculatedPosMode;
                         }
 
                         x: {
