@@ -34,6 +34,8 @@ Item {
         for (let i = 0; i < widgetsModel.count; i++) {
             let item = widgetsModel.get(i);
             if (item.isRemoving) continue;
+            let rawRot = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? parseFloat(item.wRotation) : 0;
+            let normRot = ((Math.round(rawRot) % 360) + 360) % 360;
             data.push({
                 type: item.wType || "time",
                 wType: item.wType || "time",
@@ -43,6 +45,7 @@ Item {
                 wWidth: item.wWidth,
                 wHeight: item.wHeight,
                 wOpacity: item.wOpacity !== undefined ? item.wOpacity : 1.0,
+                wRotation: normRot,
                 wImagePath: item.wImagePath || "",
                 imagePath: item.wImagePath || "",
                 wId: item.wId
@@ -94,6 +97,9 @@ Item {
                         let x = item.wX !== undefined ? parseFloat(item.wX) : 100;
                         let y = item.wY !== undefined ? parseFloat(item.wY) : 100;
                         let op = item.wOpacity !== undefined ? parseFloat(item.wOpacity) : 1.0;
+                        let rot = (item.wRotation !== undefined) ? parseFloat(item.wRotation) : (item.rotation !== undefined ? parseFloat(item.rotation) : 0);
+                        if (isNaN(rot)) rot = 0;
+                        rot = ((Math.round(rot) % 360) + 360) % 360;
                         let imgPath = item.wImagePath || item.imagePath || item.path || "";
 
                         widgetsModel.append({
@@ -104,6 +110,7 @@ Item {
                             wWidth: w,
                             wHeight: h,
                             wOpacity: op,
+                            wRotation: rot,
                             wImagePath: imgPath,
                             wId: String(itemId),
                             isRemoving: false
@@ -146,9 +153,11 @@ Item {
             return "ok";
         }
 
-        function add(id: string, type: string, x: string, y: string, w: string, h: string, op: string, imgPath: string): string {
+        function add(id: string, type: string, x: string, y: string, w: string, h: string, op: string, imgPath: string, rot: string): string {
             let defSize = WidgetRegistry.defaultSize(type);
             let variant = WidgetRegistry.defaultVariant(type);
+            let rotVal = (rot !== undefined && rot !== "") ? parseFloat(rot) : 0;
+            if (isNaN(rotVal)) rotVal = 0;
 
             widgetsModel.append({
                 wType: type,
@@ -158,6 +167,7 @@ Item {
                 wWidth: w !== undefined ? parseFloat(w) : defSize.w,
                 wHeight: h !== undefined ? parseFloat(h) : defSize.h,
                 wOpacity: op !== undefined ? parseFloat(op) : 1.0,
+                wRotation: rotVal,
                 wImagePath: imgPath !== undefined ? imgPath : "",
                 wId: String(id).trim(),
                 isRemoving: false
@@ -166,7 +176,7 @@ Item {
             return "ok";
         }
 
-        function geometry(id: string, x: string, y: string, w: string, h: string, op: string): string {
+        function geometry(id: string, x: string, y: string, w: string, h: string, op: string, rot: string): string {
             let target = String(id).trim();
             for (let i = 0; i < widgetsModel.count; i++) {
                 let item = widgetsModel.get(i);
@@ -178,6 +188,25 @@ Item {
                     if (op !== undefined) {
                         widgetsModel.setProperty(i, "wOpacity", parseFloat(op));
                     }
+                    if (rot !== undefined && rot !== "") {
+                        let r = parseFloat(rot);
+                        if (!isNaN(r)) widgetsModel.setProperty(i, "wRotation", r);
+                    }
+                    saveTimer.restart();
+                    return "ok";
+                }
+            }
+            return "not_found";
+        }
+
+        function rotate(id: string, rot: string): string {
+            let target = String(id).trim();
+            for (let i = 0; i < widgetsModel.count; i++) {
+                let item = widgetsModel.get(i);
+                if (String(item.wId).trim() === target) {
+                    let r = (rot !== undefined && rot !== "") ? parseFloat(rot) : 0;
+                    if (isNaN(r)) r = 0;
+                    widgetsModel.setProperty(i, "wRotation", r);
                     saveTimer.restart();
                     return "ok";
                 }
@@ -270,6 +299,7 @@ Item {
                 let item = widgetsModel.get(i);
                 if (String(item.wId).trim() === target) {
                     if (i < widgetsModel.count - 1) {
+                        let rotVal = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? item.wRotation : 0;
                         let obj = {
                             wType: item.wType || "time",
                             wVariant: item.wVariant || WidgetRegistry.defaultVariant(item.wType || "time"),
@@ -278,6 +308,7 @@ Item {
                             wWidth: item.wWidth,
                             wHeight: item.wHeight,
                             wOpacity: item.wOpacity !== undefined ? item.wOpacity : 1.0,
+                            wRotation: rotVal,
                             wImagePath: item.wImagePath || "",
                             imagePath: item.wImagePath || "",
                             wId: item.wId,
@@ -306,6 +337,7 @@ Item {
             for (let i = 0; i < widgetsModel.count; i++) {
                 let item = widgetsModel.get(i);
                 if (item.isRemoving) continue;
+                let rotVal = (item.wRotation !== undefined && !isNaN(item.wRotation)) ? item.wRotation : 0;
                 data.push({
                     type: item.wType || "time",
                     wType: item.wType || "time",
@@ -315,6 +347,7 @@ Item {
                     wWidth: item.wWidth,
                     wHeight: item.wHeight,
                     wOpacity: item.wOpacity !== undefined ? item.wOpacity : 1.0,
+                    wRotation: rotVal,
                     wImagePath: item.wImagePath || "",
                     imagePath: item.wImagePath || "",
                     wId: item.wId
@@ -338,6 +371,7 @@ Item {
             wWidth: model.wWidth
             wHeight: model.wHeight
             wOpacity: model.wOpacity !== undefined ? model.wOpacity : 1.0
+            wRotation: (model.wRotation !== undefined && !isNaN(model.wRotation)) ? model.wRotation : 0
             wImagePath: model.wImagePath || ""
         }
     }

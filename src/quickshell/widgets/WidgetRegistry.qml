@@ -1,6 +1,7 @@
 pragma Singleton
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import "../"
 import "../reusables"
 
@@ -53,11 +54,34 @@ QtObject {
     }
 
     readonly property var types: ({
+        "visualizer": {
+            name: "Visualizer",
+            icon: "󰎈",
+            iconOffsetX: 0,
+            defaultWidth: Math.round((Quickshell.screens && Quickshell.screens.length > 0 ? Quickshell.screens[0].width : 1920) / 2),
+            defaultHeight: 180,
+            defaultVariant: "bars",
+            variants: {
+                "bars": { file: "faces/VisualizerFace.qml", icon: "1", label: "Bars" },
+                "continuous": { file: "faces/VisualizerFaceContinuous.qml", icon: "2", label: "Continuous" }
+            },
+            additionalSettings: [
+                {
+                    id: "stretchWidth",
+                    icon: "󰊓",
+                    iconFontSize: 16,
+                    action: "stretchWidth",
+                    row: "top",
+                    accentColor: "surface0",
+                    textColor: "mauve"
+                }
+            ]
+        },
         "time": {
             name: I18n.t("widgets.types.clock"),
             icon: "󰥔",
-	    defaultWidth: 250,
-	    iconOffsetX: -1,
+            defaultWidth: 250,
+            iconOffsetX: -1,
             defaultHeight: 120,
             defaultVariant: "digital",
             variants: {
@@ -65,7 +89,17 @@ QtObject {
                 "analog":  { file: "faces/ClockFaceAnalog.qml",  icon: "2", label: I18n.t("widgets.variants.analog")  },
                 "minimal": { file: "faces/ClockFaceMinimal.qml", icon: "3", label: I18n.t("widgets.variants.minimal") }
             },
-            additionalSettings: []
+            additionalSettings: [
+                {
+                    id: "stretchWidth",
+                    icon: "󰊓",
+                    iconFontSize: 16,
+                    action: "stretchWidth",
+                    row: "top",
+                    accentColor: "surface0",
+                    textColor: "mauve"
+                }
+            ]
         },
         "music": {
             name: I18n.t("widgets.types.music"),
@@ -77,7 +111,17 @@ QtObject {
                 "full": { file: "faces/MusicFace.qml", icon: "1", label: I18n.t("widgets.variants.full") },
                 "round": { file: "faces/MusicFaceRound.qml", icon: "2", label: I18n.t("widgets.variants.round") }
             },
-            additionalSettings: []
+            additionalSettings: [
+                {
+                    id: "stretchWidth",
+                    icon: "󰊓",
+                    iconFontSize: 16,
+                    action: "stretchWidth",
+                    row: "top",
+                    accentColor: "surface0",
+                    textColor: "mauve"
+                }
+            ]
         },
         "weather": {
             name: I18n.t("widgets.types.weather"),
@@ -91,7 +135,17 @@ QtObject {
                 "full": { file: "faces/WeatherFaceFull.qml", icon: "2", label: I18n.t("widgets.variants.full") },
                 "round": { file: "faces/WeatherFaceRound.qml", icon: "3", label: I18n.t("widgets.variants.round") }
             },
-            additionalSettings: []
+            additionalSettings: [
+                {
+                    id: "stretchWidth",
+                    icon: "󰊓",
+                    iconFontSize: 16,
+                    action: "stretchWidth",
+                    row: "top",
+                    accentColor: "surface0",
+                    textColor: "mauve"
+                }
+            ]
         },
         "image": {
             name: I18n.t("widgets.types.image"),
@@ -112,6 +166,15 @@ QtObject {
                     icon: "󰋩",
                     iconFontSize: 16,
                     action: "pickImage",
+                    row: "top",
+                    accentColor: "surface0",
+                    textColor: "mauve"
+                },
+                {
+                    id: "stretchWidth",
+                    icon: "󰊓",
+                    iconFontSize: 16,
+                    action: "stretchWidth",
                     row: "top",
                     accentColor: "surface0",
                     textColor: "mauve"

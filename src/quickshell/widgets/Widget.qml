@@ -16,6 +16,7 @@ PanelWindow {
     property real wWidth: 250
     property real wHeight: 120
     property real wOpacity: 1.0
+    property real wRotation: 0
 
     property real animX: wX
     property real animY: wY
@@ -42,8 +43,8 @@ PanelWindow {
     margins.left: animX
     margins.top: animY
 
-    implicitWidth: effectiveWidth
-    implicitHeight: effectiveHeight
+    implicitWidth: (Math.round(wRotation || 0) % 180 === 0) ? effectiveWidth : effectiveHeight
+    implicitHeight: (Math.round(wRotation || 0) % 180 === 0) ? effectiveHeight : effectiveWidth
 
     Component.onDestruction: visible = false
 
@@ -95,9 +96,13 @@ PanelWindow {
         property string imagePath: root.wImagePath
         property string path: root.wImagePath
         source: WidgetRegistry.faceFile(root.wType, root.wVariant)
-        anchors.fill: parent
+        width: root.effectiveWidth
+        height: root.effectiveHeight
+        anchors.centerIn: parent
+        rotation: root.wRotation || 0
         opacity: root.wOpacity
         Behavior on opacity { NumberAnimation { duration: 150 } }
+        Behavior on rotation { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
         onLoaded: {
             if (item) {
                 if (item.imagePath !== undefined) {
