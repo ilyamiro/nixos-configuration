@@ -2,7 +2,7 @@ bindsym $mod+Return exec $terminal
 bindsym $mod+F exec firefox
 bindsym $mod+E exec nautilus
 bindsym $mod+BackSpace scratchpad show
-bindsym Mod1+F4 kill
+bindsym $mod+Q kill
 bindsym $mod+Shift+F floating toggle
 
 bindsym XF86MonBrightnessDown exec serpantinum brightness lower
@@ -27,7 +27,7 @@ bindsym XF86AudioRaiseVolume exec serpantinum volume raise
 bindsym $mod+R exec serpantinum reload
 bindsym $mod+C exec serpantinum msg toggle clipboard
 bindsym $mod+D exec serpantinum msg toggle launcher
-bindsym $mod+Q exec serpantinum msg toggle music
+bindsym $mod+M exec serpantinum msg toggle music
 bindsym $mod+B exec serpantinum msg toggle system
 bindsym $mod+W exec serpantinum msg toggle wallpaper
 bindsym $mod+S exec serpantinum msg toggle calendar

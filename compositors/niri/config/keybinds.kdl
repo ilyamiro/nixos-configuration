@@ -3,7 +3,7 @@ binds {
     Mod+F { spawn "firefox"; }
     Mod+E { spawn "nautilus"; }
     Mod+Backspace { toggle-overview; }
-    Alt+F4 { close-window; }
+    Mod+Q { close-window; }
     Mod+Shift+F { toggle-window-floating; }
 
     XF86MonBrightnessDown { spawn "serpantinum" "brightness" "lower"; }
@@ -28,7 +28,7 @@ binds {
     Mod+R { spawn "serpantinum" "reload"; }
     Mod+C { spawn "serpantinum" "msg" "toggle" "clipboard"; }
     Mod+D { spawn "serpantinum" "msg" "toggle" "launcher"; }
-    Mod+Q { spawn "serpantinum" "msg" "toggle" "music"; }
+    Mod+M { spawn "serpantinum" "msg" "toggle" "music"; }
     Mod+B { spawn "serpantinum" "msg" "toggle" "system"; }
     Mod+W { spawn "serpantinum" "msg" "toggle" "wallpaper"; }
     Mod+S { spawn "serpantinum" "msg" "toggle" "calendar"; }
