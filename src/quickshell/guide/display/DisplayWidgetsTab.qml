@@ -104,34 +104,52 @@ Item {
     }
 
     function reloadAllWidgetFiles() {
-        let newMap = {};
+        if (monitorsList.length === 0) {
+            displayWidgetsRoot.monitorWidgetsMap = {};
+            return;
+        }
+        let paths = [];
         for (let i = 0; i < monitorsList.length; i++) {
             let mName = monitorsList[i].name;
             let safeM = (mName || "default").replace(/[^a-zA-Z0-9_-]/g, "_");
-            let p = Caching.getStateDir("widgets/" + safeM) + "/layout.json";
-            newMap[mName] = [];
-            readWidgetsProcess.exec(mName, p);
+            paths.push(Caching.getStateDir("widgets/" + safeM) + "/layout.json");
         }
+        readWidgetsProcess.exec(paths);
     }
 
     Process {
         id: readWidgetsProcess
-        property string currentMon: ""
-        function exec(mon, path) {
-            currentMon = mon;
-            command = ["bash", "-c", "cat '" + path + "' 2>/dev/null || echo '[]'"];
+        property var monitorNames: []
+
+        function exec(paths) {
+            monitorNames = displayWidgetsRoot.monitorsList.map(m => m.name);
+
+            let script = "";
+            for (let i = 0; i < paths.length; i++) {
+                script += "echo '___WSPLIT___'; cat '" + paths[i] + "' 2>/dev/null || echo '[]'; ";
+            }
+
+            command = ["bash", "-c", script];
             running = false;
             running = true;
         }
+
         stdout: StdioCollector {
             onStreamFinished: {
-                let txt = this.text ? this.text.trim() : "[]";
-                try {
-                    let arr = JSON.parse(txt);
-                    let m = Object.assign({}, displayWidgetsRoot.monitorWidgetsMap);
-                    m[readWidgetsProcess.currentMon] = Array.isArray(arr) ? arr : [];
-                    displayWidgetsRoot.monitorWidgetsMap = m;
-                } catch(e) {}
+                let raw = this.text || "";
+                let chunks = raw.split("___WSPLIT___");
+                let m = {};
+                for (let i = 0; i < readWidgetsProcess.monitorNames.length; i++) {
+                    let mon = readWidgetsProcess.monitorNames[i];
+                    let txt = (chunks[i + 1] || "[]").trim();
+                    try {
+                        let arr = JSON.parse(txt);
+                        m[mon] = Array.isArray(arr) ? arr : [];
+                    } catch (e) {
+                        m[mon] = [];
+                    }
+                }
+                displayWidgetsRoot.monitorWidgetsMap = m;
             }
         }
     }
