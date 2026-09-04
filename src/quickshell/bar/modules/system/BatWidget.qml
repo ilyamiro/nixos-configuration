@@ -103,7 +103,7 @@ Rectangle {
             width: targetWidth
             Behavior on width { NumberAnimation { duration: 480; easing.type: Easing.OutQuint } }
 
-            radius: Math.min(Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2)), height / 2)
+            radius: Math.max(0, ThemeBackend.borderRadius - (barWindow ? barWindow.s(2) : 2))
             color: batWidgetRoot.isCompact ? Qt.lighter(ThemeBackend.surface0, 1.18) : ThemeBackend.surface0
             border.color: batWidgetRoot.isCompact ? ThemeBackend.surface2 : ThemeBackend.surface1
             border.width: 1
@@ -128,13 +128,16 @@ Rectangle {
                 renderTarget: Canvas.FramebufferObject
                 renderStrategy: Canvas.Cooperative
 
+                onWidthChanged: requestPaint()
+                onHeightChanged: requestPaint()
+
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.clearRect(0, 0, width, height);
                     if (batPill.fillRatio <= 0) return;
 
                     ctx.save();
-                    var r = batPill.radius;
+                    var r = Math.max(0, Math.min(batPill.radius, Math.min(width / 2, height / 2)));
                     ctx.beginPath();
                     ctx.moveTo(r, 0);
                     ctx.lineTo(width - r, 0);
@@ -181,6 +184,7 @@ Rectangle {
                 Connections {
                     target: batPill
                     enabled: batWidgetRoot.showLayout && batWidgetRoot.moduleActive
+                    function onRadiusChanged() { pillCanvas.requestPaint(); }
                     function onFillRatioChanged() { pillCanvas.requestPaint(); }
                     function onWaveAmpChanged() { pillCanvas.requestPaint(); }
                 }
