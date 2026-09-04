@@ -159,9 +159,16 @@ Item {
                                 I18n.t("guide.launcher.position.top", "Top"),
                                 I18n.t("guide.launcher.position.bottom", "Bottom"),
                                 I18n.t("guide.launcher.position.left", "Left"),
-                                I18n.t("guide.launcher.position.right", "Right")
+                                I18n.t("guide.launcher.position.right", "Right"),
+                                I18n.t("guide.launcher.position.center", "Center")
                             ]
-                            currentIndex: launcherTabRoot.currentPosition === "bottom" ? 1 : (launcherTabRoot.currentPosition === "left" ? 2 : (launcherTabRoot.currentPosition === "right" ? 3 : 0))
+                            currentIndex: {
+                                if (launcherTabRoot.currentPosition === "bottom") return 1;
+                                if (launcherTabRoot.currentPosition === "left") return 2;
+                                if (launcherTabRoot.currentPosition === "right") return 3;
+                                if (launcherTabRoot.currentPosition === "center") return 4;
+                                return 0;
+                            }
                             accentColor: ThemeBackend.mauve
                             baseColor: ThemeBackend.surface0
                             hoverColor: ThemeBackend.surface1
@@ -175,6 +182,7 @@ Item {
                                 if (index === 1) pos = "bottom";
                                 else if (index === 2) pos = "left";
                                 else if (index === 3) pos = "right";
+                                else if (index === 4) pos = "center";
                                 launcherTabRoot.currentPosition = pos;
                                 launcherTabRoot.updateLauncherSetting("position", pos);
                             }
