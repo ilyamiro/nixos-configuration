@@ -35,18 +35,44 @@ Rectangle {
         return Hyprland.workspaces.values.find(w => w.id === id) ?? null;
     }
 
+    // Workspaces split into one block of workspaceCount per monitor (1-N, N+1-2N, ...).
+    // Without this, a bar on the second monitor never lights up and switching on the
+    // primary makes both bars look like they moved. Monitor order comes from screen X.
+    property bool workspaceGroupsPerMonitor: (typeof Config !== "undefined" && Config.rawSettings
+        && Config.rawSettings.bar) ? (Config.rawSettings.bar.workspaceGroupsPerMonitor === true) : false
+
+    readonly property int groupOffset: {
+        if (!workspaceGroupsPerMonitor) return 0;
+        if (!barWindow || !barWindow.screen) return 0;
+        let xs = Quickshell.screens.map(sc => sc.x).sort((a, b) => a - b);
+        let i = xs.indexOf(barWindow.screen.x);
+        return (i < 0 ? 0 : i) * workspaceCount;
+    }
+
+    // Index inside this bar's own group, or -1 when another monitor is focused.
+    readonly property int hlLocalIndex: {
+        const fw = Hyprland.focusedWorkspace;
+        if (!fw) return -1;
+        const l = fw.id - groupOffset - 1;
+        return (l >= 0 && l < workspaceCount) ? l : -1;
+    }
+    // When focus is on the other screen we keep the last local one, so an unfocused
+    // monitor's bar still shows where that monitor stands instead of going blank.
+    property int lastLocalIndex: -1
+    onHlLocalIndexChanged: if (hlLocalIndex >= 0) lastLocalIndex = hlLocalIndex;
+
     property int activeIndex: {
-        let idx = -1;
         if (isNiri) {
-            idx = niriActiveIndex;
-        } else if (isSway) {
-            idx = swayActiveIndex;
-        } else {
-            const fw = Hyprland.focusedWorkspace;
-            if (!fw) return -1;
-            idx = fw.id - 1;
+            let idx = niriActiveIndex;
+            return (idx >= 0 && idx < workspaceCount) ? idx : -1;
         }
-        return (idx >= 0 && idx < workspaceCount) ? idx : -1;
+        if (isSway) {
+            let idx = swayActiveIndex;
+            return (idx >= 0 && idx < workspaceCount) ? idx : -1;
+        }
+        // Sticky only makes sense with per-monitor groups; without them an
+        // out-of-range workspace means "nothing active", as before.
+        return workspaceGroupsPerMonitor ? lastLocalIndex : hlLocalIndex;
     }
 
     Component.onCompleted: {
@@ -282,7 +308,7 @@ Rectangle {
                             workspacesWidgetRoot.swayActiveIndex = nextIndex;
                             Quickshell.execDetached(["swaymsg", "workspace", "number", (nextIndex + 1).toString()]);
                         } else {
-                            Hyprland.dispatch("hl.dsp.focus({ workspace = " + (nextIndex + 1) + " })");
+                            Hyprland.dispatch("hl.dsp.focus({ workspace = " + (nextIndex + 1 + workspacesWidgetRoot.groupOffset) + " })");
                         }
                     }
                 }
@@ -355,7 +381,7 @@ Rectangle {
                 id: wsPill
 
                 required property int index
-                property int wsId: index + 1
+                property int wsId: index + 1 + workspacesWidgetRoot.groupOffset
                 property var ws: workspacesWidgetRoot.wsForId(wsId)
                 property bool isOccupied: {
                     if (workspacesWidgetRoot.isNiri) {

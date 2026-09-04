@@ -40,6 +40,7 @@ Item {
         "autohide": false,
         "autohideTimeout": 1000,
         "workspaceCount": 8,
+        "workspaceGroupsPerMonitor": false,
         "groupColors": {},
         "modules": {
             "left": ["left", "workspaces", "media"],
@@ -66,6 +67,7 @@ Item {
     property bool autohide: barSettings.autohide !== undefined ? barSettings.autohide : false
     property int autohideTimeout: barSettings.autohideTimeout !== undefined ? barSettings.autohideTimeout : 1000
     property int workspaceCount: barSettings.workspaceCount !== undefined ? barSettings.workspaceCount : 8
+    property bool workspaceGroupsPerMonitor: barSettings.workspaceGroupsPerMonitor !== undefined ? barSettings.workspaceGroupsPerMonitor : false
 
     ListModel { id: leftModel }
     ListModel { id: centerModel }
@@ -421,9 +423,11 @@ Item {
         current.modules = JSON.parse(JSON.stringify(barTabRoot.defaultBarSettings.modules));
         current.groupColors = {};
         current.workspaceCount = barTabRoot.defaultBarSettings.workspaceCount;
+        current.workspaceGroupsPerMonitor = barTabRoot.defaultBarSettings.workspaceGroupsPerMonitor;
         current.distinctPills = barTabRoot.defaultBarSettings.distinctPills;
         barTabRoot.assignedGroupColors = {};
         barTabRoot.workspaceCount = barTabRoot.defaultBarSettings.workspaceCount;
+        barTabRoot.workspaceGroupsPerMonitor = barTabRoot.defaultBarSettings.workspaceGroupsPerMonitor;
         barTabRoot.distinctPills = barTabRoot.defaultBarSettings.distinctPills;
         barTabRoot.lastSavedModulesString = barTabRoot.getModulesString(current.modules);
         Config.setSetting("bar", current);
@@ -721,6 +725,7 @@ Item {
         barTabRoot.autohide = ts.autohide !== undefined ? ts.autohide : false;
         barTabRoot.autohideTimeout = ts.autohideTimeout !== undefined ? ts.autohideTimeout : 1000;
         barTabRoot.workspaceCount = ts.workspaceCount !== undefined ? ts.workspaceCount : 8;
+        barTabRoot.workspaceGroupsPerMonitor = ts.workspaceGroupsPerMonitor !== undefined ? ts.workspaceGroupsPerMonitor : false;
         if (ts.groupColors) {
             barTabRoot.assignedGroupColors = ts.groupColors;
         }
@@ -759,6 +764,7 @@ Item {
         current.autohide = barTabRoot.autohide;
         current.autohideTimeout = barTabRoot.autohideTimeout;
         current.workspaceCount = barTabRoot.workspaceCount;
+        current.workspaceGroupsPerMonitor = barTabRoot.workspaceGroupsPerMonitor;
         if (!current.modules) current.modules = barTabRoot.defaultBarSettings.modules;
         current.groupColors = barTabRoot.assignedGroupColors;
 
@@ -1645,6 +1651,45 @@ Item {
                                 onTriggered: {
                                     barTabRoot.clearPendingGroup();
                                     barTabRoot.workspaceCount = Math.round(workspaceCountSelector.value);
+                                    barTabRoot.updateBarSettings();
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Qt.alpha(ThemeBackend.surface1, 0.4); Layout.topMargin: rootObj.s(5); Layout.bottomMargin: rootObj.s(5) }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: rowWorkspaceGroupsLayout.implicitHeight + rootObj.s(18)
+                        color: "transparent"
+
+                        RowLayout {
+                            id: rowWorkspaceGroupsLayout
+                            anchors.left: parent.left
+                            anchors.leftMargin: rootObj.s(12)
+                            anchors.right: parent.right
+                            anchors.rightMargin: rootObj.s(12)
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: rootObj.s(16)
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: rootObj.s(2)
+                                Text { text: I18n.t("guide.bar.workspace_groups.title") || "Workspace group per monitor"; font.family: ThemeBackend.fontFamily; font.pixelSize: rootObj.s(13); color: ThemeBackend.text }
+                                Text { text: I18n.t("guide.bar.workspace_groups.desc") || "Each bar shows its own monitor's block of workspaces (1-N, N+1-2N, ...)"; font.family: ThemeBackend.fontFamily; font.pixelSize: rootObj.s(11); color: ThemeBackend.subtext0 }
+                            }
+
+                            Toggle {
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                checked: barTabRoot.workspaceGroupsPerMonitor
+                                accentColor: ThemeBackend.mauve
+                                baseColor: ThemeBackend.surface1
+                                handleColor: ThemeBackend.crust
+                                handleOffColor: ThemeBackend.text
+                                onToggled: function(c) {
+                                    barTabRoot.clearPendingGroup();
+                                    barTabRoot.workspaceGroupsPerMonitor = c;
                                     barTabRoot.updateBarSettings();
                                 }
                             }
