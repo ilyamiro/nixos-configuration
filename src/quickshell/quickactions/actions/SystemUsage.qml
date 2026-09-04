@@ -450,24 +450,38 @@ Item {
 
             ColumnLayout {
                 anchors.centerIn: parent
-                spacing: root.s(8)
+                spacing: root.s(6)
+
+                ClickButton {
+                    Layout.alignment: Qt.AlignHCenter
+                    buttonText: SysData.isScanningNet ? "Scanning..." : "Scan"
+                    buttonIcon: SysData.isScanningNet ? "\uF110" : "\uF021"
+                    iconFontSize: Math.round(root.s(14))
+                    textFontSize: Math.round(root.s(12))
+                    accentColor: root.alpha(root.cSurface1, 0.7)
+                    textColor: root.cText
+                    cornerRadius: Math.round(root.s(8))
+                    horizontalPadding: Math.round(root.s(10))
+                    enabled: !SysData.isScanningNet
+                    onClicked: SysData.scanNetwork()
+                }
 
                 Rectangle {
-                    Layout.preferredHeight: root.s(36)
+                    Layout.preferredHeight: root.s(28)
                     Layout.preferredWidth: root.s(125)
-                    radius: root.s(18)
+                    radius: root.s(14)
                     color: root.alpha(root.cSurface1, 0.5)
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: root.s(4)
-                        spacing: root.s(8)
-                        
+                        anchors.margins: root.s(3)
+                        spacing: root.s(6)
+
                         IconButton {
-                            size: Math.round(root.s(28))
-                            cornerRadius: Math.round(root.s(14))
+                            size: Math.round(root.s(22))
+                            cornerRadius: Math.round(root.s(11))
                             buttonIcon: "\uF063"
-                            iconFontSize: Math.round(root.s(16))
+                            iconFontSize: Math.round(root.s(12))
                             accentColor: root.alpha(root.cGreen, 0.2)
                             textColor: root.cGreen
                             enabled: false
@@ -478,28 +492,28 @@ Item {
                             text: root.rxSpeedStr
                             color: root.textPrimary
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: root.s(15)
+                            font.pixelSize: root.s(12)
                             font.weight: Font.DemiBold
                         }
                     }
                 }
 
                 Rectangle {
-                    Layout.preferredHeight: root.s(36)
+                    Layout.preferredHeight: root.s(28)
                     Layout.preferredWidth: root.s(125)
-                    radius: root.s(18)
+                    radius: root.s(14)
                     color: root.alpha(root.cSurface1, 0.5)
 
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: root.s(4)
-                        spacing: root.s(8)
-                        
+                        anchors.margins: root.s(3)
+                        spacing: root.s(6)
+
                         IconButton {
-                            size: Math.round(root.s(28))
-                            cornerRadius: Math.round(root.s(14))
+                            size: Math.round(root.s(22))
+                            cornerRadius: Math.round(root.s(11))
                             buttonIcon: "\uF062"
-                            iconFontSize: Math.round(root.s(16))
+                            iconFontSize: Math.round(root.s(12))
                             accentColor: root.alpha(root.cPeach, 0.2)
                             textColor: root.cPeach
                             enabled: false
@@ -510,7 +524,7 @@ Item {
                             text: root.txSpeedStr
                             color: root.textPrimary
                             font.family: ThemeBackend.fontFamily
-                            font.pixelSize: root.s(15)
+                            font.pixelSize: root.s(12)
                             font.weight: Font.DemiBold
                         }
                     }
