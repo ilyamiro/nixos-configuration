@@ -219,6 +219,10 @@
         "title": "Copy settings",
         "desc": "Copy configuration JSON to clipboard",
         "button": "Copy settings"
+      },
+      "screenshot_on_release": {
+        "title": "Capture region on mouse release",
+        "desc": "Take the screenshot as soon as you finish dragging, without clicking the shutter"
       }
     },
     "display": {
