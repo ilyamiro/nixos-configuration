@@ -77,6 +77,10 @@ Variants {
             }
             property bool isFill: barStyle === "fill"
             property bool isSolid: barStyle === "solid" || barStyle === "fill"
+            property bool distinctPills: {
+                let dummy = configRevision;
+                return (typeof Config !== "undefined" && Config.rawSettings && Config.rawSettings.bar && Config.rawSettings.bar.distinctPills !== undefined) ? Config.rawSettings.bar.distinctPills : false;
+            }
 
             property bool barConfigReady: {
                 let dummy = configRevision;
@@ -297,7 +301,32 @@ Variants {
                 onFileChanged: reload()
                 onLoaded: {
                     let txt = text().trim();
-                    if (barWindow.activeWidget !== txt) barWindow.activeWidget = txt;
+                    let widget = "";
+                    let targetScreen = "";
+
+                    try {
+                        let parsed = JSON.parse(txt);
+                        if (parsed && typeof parsed === "object") {
+                            widget = parsed.widget || "";
+                            targetScreen = parsed.screen || "";
+                        } else if (typeof parsed === "string") {
+                            widget = parsed;
+                        }
+                    } catch (e) {
+                        widget = txt;
+                    }
+
+                    let myScreenName = (barWindow.screen && barWindow.screen.name) ? barWindow.screen.name : "";
+                    let effectiveWidget = "";
+                    if (widget === "notifications" || widget === "system") {
+                        if (!targetScreen || targetScreen === myScreenName) {
+                            effectiveWidget = widget;
+                        }
+                    }
+
+                    if (barWindow.activeWidget !== effectiveWidget) {
+                        barWindow.activeWidget = effectiveWidget;
+                    }
                 }
             }
 

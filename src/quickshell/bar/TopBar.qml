@@ -28,6 +28,7 @@ Item {
     }
     property bool isFill: barStyle === "fill"
     property bool isSolid: barStyle === "solid" || barStyle === "fill"
+    property bool distinctPills: barWindow ? (barWindow.distinctPills !== undefined ? barWindow.distinctPills : false) : false
     property real cornerRadius: barWindow ? barWindow.cornerRadius : 12
 
     property bool suppressAnimation: false
@@ -143,7 +144,7 @@ Item {
 
     property string layoutState: {
         if (isFill) return "default";
-        if (barWindow && (barWindow.isLeftOpen || barWindow.isNotifOpen)) return "settings";
+        if (barWindow && barWindow.isNotifOpen) return "settings";
         if (barWindow && barWindow.isSysOpen) return "sys";
         return "default";
     }
@@ -271,16 +272,17 @@ Item {
     property real lcGap: (lWidthTarget > 0 && cWidthTarget > 0) ? gap8 : 0
     property real crGap: (cWidthTarget > 0 && rWidthTarget > 0) ? gap8 : 0
 
-    property real fillInset: 0
+    property real distinctEdgePadding: (isSolid && distinctPills) ? (barWindow ? barWindow.s(4) : 4) : 4
+    property real fillInset: distinctEdgePadding
 
-    property real baseMinLeft: isFill ? fillInset : (barWindow ? (barWindow.horizontalOffset + barWindow.s(1)) : 0)
-    property real baseMaxRight: isFill ? (contentWrapper.width - fillInset) : (barWindow ? (contentWrapper.width - barWindow.horizontalOffset - barWindow.s(1)) : contentWrapper.width)
+    property real baseMinLeft: isFill ? fillInset : (barWindow ? (barWindow.horizontalOffset + barWindow.s(1) + distinctEdgePadding) : distinctEdgePadding)
+    property real baseMaxRight: isFill ? (contentWrapper.width - fillInset) : (barWindow ? (contentWrapper.width - barWindow.horizontalOffset - barWindow.s(1) - distinctEdgePadding) : (contentWrapper.width - distinctEdgePadding))
 
-    property real screenMinLeft: isFill ? fillInset : (barWindow ? barWindow.s(1) : 0)
-    property real screenMaxRight: isFill ? (contentWrapper.width - fillInset) : (barWindow ? (contentWrapper.width - barWindow.s(1)) : contentWrapper.width)
+    property real screenMinLeft: isFill ? fillInset : (barWindow ? (barWindow.s(1) + distinctEdgePadding) : distinctEdgePadding)
+    property real screenMaxRight: isFill ? (contentWrapper.width - fillInset) : (barWindow ? (contentWrapper.width - barWindow.s(1) - distinctEdgePadding) : (contentWrapper.width - distinctEdgePadding))
 
     property real rawCNaturalX: {
-        if (layoutState === "settings" || layoutState === "left") return screenMaxRight - rWidthTarget - crGap - cWidthTarget;
+        if (layoutState === "settings") return screenMaxRight - rWidthTarget - crGap - cWidthTarget;
         if (layoutState === "sys") return screenMinLeft + lWidthTarget + lcGap;
         return (contentWrapper.width - cWidthTarget) / 2;
     }
@@ -299,7 +301,7 @@ Item {
 
     property real lFinalX: {
         if (lWidthTarget <= 0) return baseMinLeft;
-        if (layoutState === "settings" || layoutState === "left") {
+        if (layoutState === "settings") {
             return Math.max(screenMinLeft, cFinalX - lcGap - lWidthTarget);
         }
         let pushedX = Math.min(baseMinLeft, cFinalX - lcGap - lWidthTarget);
@@ -314,15 +316,15 @@ Item {
         let pushedX = Math.max(baseMaxRight - rWidthTarget, cFinalX + cWidthTarget + crGap);
         return Math.min(screenMaxRight - rWidthTarget, pushedX);
     }
-    property real rFinalClampedX: Math.max(0, Math.min(contentWrapper.width - rWidthTarget, rFinalX))
+    property real rFinalClampedX: Math.max(screenMinLeft, Math.min(screenMaxRight - rWidthTarget, rFinalX))
 
     property real dynamicMinX: {
         if (isFill) return 0;
         let m = contentWrapper.width;
         let hasModules = (lWidthTarget > 0 || cWidthTarget > 0 || rWidthTarget > 0);
-        if (lWidthTarget > 0) m = Math.min(m, lFinalX - (barWindow ? barWindow.s(1) : 0));
-        if (cWidthTarget > 0) m = Math.min(m, cFinalX - (barWindow ? barWindow.s(1) : 0));
-        if (rWidthTarget > 0) m = Math.min(m, rFinalClampedX - (barWindow ? barWindow.s(1) : 0));
+        if (lWidthTarget > 0) m = Math.min(m, lFinalX - (barWindow ? barWindow.s(1) : 0) - distinctEdgePadding);
+        if (cWidthTarget > 0) m = Math.min(m, cFinalX - (barWindow ? barWindow.s(1) : 0) - distinctEdgePadding);
+        if (rWidthTarget > 0) m = Math.min(m, rFinalClampedX - (barWindow ? barWindow.s(1) : 0) - distinctEdgePadding);
         if (layoutState !== "default") {
             return hasModules ? Math.max(0, m) : contentWrapper.width / 2;
         }
@@ -333,9 +335,9 @@ Item {
         if (isFill) return contentWrapper.width;
         let m = 0;
         let hasModules = (lWidthTarget > 0 || cWidthTarget > 0 || rWidthTarget > 0);
-        if (lWidthTarget > 0) m = Math.max(m, lFinalX + lWidthTarget + (barWindow ? barWindow.s(1) : 0));
-        if (cWidthTarget > 0) m = Math.max(m, cFinalX + cWidthTarget + (barWindow ? barWindow.s(1) : 0));
-        if (rWidthTarget > 0) m = Math.max(m, rFinalClampedX + rWidthTarget + (barWindow ? barWindow.s(1) : 0));
+        if (lWidthTarget > 0) m = Math.max(m, lFinalX + lWidthTarget + (barWindow ? barWindow.s(1) : 0) + distinctEdgePadding);
+        if (cWidthTarget > 0) m = Math.max(m, cFinalX + cWidthTarget + (barWindow ? barWindow.s(1) : 0) + distinctEdgePadding);
+        if (rWidthTarget > 0) m = Math.max(m, rFinalClampedX + rWidthTarget + (barWindow ? barWindow.s(1) : 0) + distinctEdgePadding);
         if (layoutState !== "default") {
             return hasModules ? Math.min(contentWrapper.width, m) : contentWrapper.width / 2;
         }
@@ -443,6 +445,17 @@ Item {
         else if (widgetName === "system" || widgetName === "pills") return systemWidget;
         else if (widgetName === "record") return infoWidget ? infoWidget.recRow : null;
         return null;
+    }
+
+    function getModuleY(widget) {
+        if (!barWindow) return 0;
+        let base = barWindow.baseOffsetY;
+        let bHeight = barWindow.barHeight;
+        let h = widget ? widget.height : 0;
+        if (h > 0 && h < bHeight) {
+            return base + Math.round((bHeight - h) / 2);
+        }
+        return base;
     }
 
     anchors.fill: parent
@@ -613,7 +626,7 @@ Item {
                 let firstX = -1;
                 let lastX = -1;
                 let lastW = 0;
-                let maxH = barWindow ? barWindow.barHeight : 0;
+                let groupH = barWindow ? ((contentWrapper.isSolid && contentWrapper.distinctPills) ? barWindow.barHeight - 6 : barWindow.barHeight) : ((contentWrapper.isSolid && contentWrapper.distinctPills) ? 24 : 30);
                 for (let i = 0; i < groupIds.length; i++) {
                     let id = groupIds[i];
                     let widget = contentWrapper.getPositionedWidget(id);
@@ -628,30 +641,25 @@ Item {
                     if (firstX === -1) firstX = mx;
                     lastX = mx;
                     lastW = mw;
-
-                    if (id === "timedate" || id === "info" || id === "weather") continue;
-
-                    if (widget.height > maxH) {
-                        maxH = widget.height;
-                    }
                 }
-                if (firstX === -1) return { x: 0, w: 0, h: barWindow ? barWindow.barHeight : 0, v: false };
-                return { x: firstX, w: (lastX + lastW - firstX), h: maxH, v: true };
+                if (firstX === -1) return { x: 0, w: 0, h: groupH, v: false };
+                return { x: firstX, w: (lastX + lastW - firstX), h: groupH, v: true };
             }
 
             property var metrics: getGroupMetrics()
 
             x: metrics.x
-            y: barWindow ? barWindow.baseOffsetY : 0
-            width: metrics.w
             height: metrics.h
-            visible: metrics.v && (barWindow ? !barWindow.positionChanging : true) && width > 0 && !contentWrapper.isSolid && !contentWrapper.isFill
+            y: barWindow ? (barWindow.baseOffsetY + (barWindow.barHeight - height) / 2) : 0
+            width: metrics.w
+            visible: metrics.v && (barWindow ? !barWindow.positionChanging : true) && width > 0 && (!contentWrapper.isSolid || contentWrapper.distinctPills)
             opacity: visible ? 1.0 : 0.0
 
-            color: Qt.alpha(ThemeBackend.base, (barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0)
+            color: (contentWrapper.isSolid && contentWrapper.distinctPills)
+                ? Qt.alpha(Qt.darker(ThemeBackend.surface0, 1.15), (barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0)
+                : Qt.alpha(ThemeBackend.base, (barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0)
             radius: ThemeBackend.borderRadius
-            border.width: 1
-            border.color: Qt.alpha(ThemeBackend.surface0, (barWindow && barWindow.barOpacity !== undefined) ? barWindow.barOpacity : 1.0)
+            border.width: 0
 
             Behavior on x {
                 enabled: contentWrapper.layoutAnimationsEnabled
@@ -674,10 +682,11 @@ Item {
         id: leftWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(leftWidget)
         visible: contentWrapper.isModuleActive("left")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("left")
         isGrouped: contentWrapper.isModuleGrouped("left")
         targetX: contentWrapper.getModuleX("left", contentWrapper.layoutState)
@@ -696,10 +705,11 @@ Item {
         id: workspacesWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(workspacesWidget)
         visible: contentWrapper.isModuleActive("workspaces")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("workspaces")
         isGrouped: contentWrapper.isModuleGrouped("workspaces")
         targetX: contentWrapper.getModuleX("workspaces", contentWrapper.layoutState)
@@ -718,10 +728,11 @@ Item {
         id: focusWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(focusWidget)
         visible: contentWrapper.isModuleActive("focus")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("focus")
         isGrouped: contentWrapper.isModuleGrouped("focus")
         targetX: contentWrapper.getModuleX("focus", contentWrapper.layoutState)
@@ -740,10 +751,11 @@ Item {
         id: mediaWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(mediaWidget)
         visible: contentWrapper.isModuleActive("media")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         contentWrapperWidth: contentWrapper.width
         moduleActive: contentWrapper.isModuleActive("media")
         isGrouped: contentWrapper.isModuleGrouped("media")
@@ -764,10 +776,11 @@ Item {
         id: visWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(visWidget)
         visible: contentWrapper.isModuleActive("vis")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("vis")
         isGrouped: contentWrapper.isModuleGrouped("vis")
         targetX: contentWrapper.getModuleX("vis", contentWrapper.layoutState)
@@ -786,9 +799,11 @@ Item {
         id: trayWidget
         z: 1
         x: targetX
+        y: contentWrapper.getModuleY(trayWidget)
         visible: contentWrapper.isModuleActive("tray")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("tray")
         isGrouped: contentWrapper.isModuleGrouped("tray")
         suppressAnimation: contentWrapper.suppressAnimation
@@ -809,10 +824,11 @@ Item {
         id: sysMonWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(sysMonWidget)
         visible: contentWrapper.isModuleActive("sysmon")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("sysmon")
         isGrouped: contentWrapper.isModuleGrouped("sysmon")
         targetX: contentWrapper.getModuleX("sysmon", contentWrapper.layoutState)
@@ -831,10 +847,11 @@ Item {
         id: kbWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(kbWidget)
         visible: contentWrapper.isModuleActive("kb")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("kb")
         isGrouped: contentWrapper.isModuleGrouped("kb")
         targetX: contentWrapper.getModuleX("kb", contentWrapper.layoutState)
@@ -853,10 +870,11 @@ Item {
         id: wifiWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(wifiWidget)
         visible: contentWrapper.isModuleActive("wifi")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("wifi")
         isGrouped: contentWrapper.isModuleGrouped("wifi")
         targetX: contentWrapper.getModuleX("wifi", contentWrapper.layoutState)
@@ -875,10 +893,11 @@ Item {
         id: btWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(btWidget)
         visible: contentWrapper.isModuleActive("bt")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("bt")
         isGrouped: contentWrapper.isModuleGrouped("bt")
         targetX: contentWrapper.getModuleX("bt", contentWrapper.layoutState)
@@ -897,10 +916,11 @@ Item {
         id: volWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(volWidget)
         visible: contentWrapper.isModuleActive("vol")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("vol")
         isGrouped: contentWrapper.isModuleGrouped("vol")
         targetX: contentWrapper.getModuleX("vol", contentWrapper.layoutState)
@@ -919,10 +939,11 @@ Item {
         id: batWidget
         z: 1
         x: targetX
-        y: barWindow ? barWindow.baseOffsetY : 0
+        y: contentWrapper.getModuleY(batWidget)
         visible: contentWrapper.isModuleActive("bat")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("bat")
         isGrouped: contentWrapper.isModuleGrouped("bat")
         targetX: contentWrapper.getModuleX("bat", contentWrapper.layoutState)
@@ -973,9 +994,11 @@ Item {
         id: timeDateWidget
         z: 10
         x: targetX
+        y: contentWrapper.getModuleY(timeDateWidget)
         visible: contentWrapper.isModuleActive("timedate")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("timedate")
         isGrouped: contentWrapper.isModuleGrouped("timedate")
         targetX: contentWrapper.getModuleX("timedate", contentWrapper.layoutState)
@@ -994,9 +1017,11 @@ Item {
         id: infoWidget
         z: 10
         x: targetX
+        y: contentWrapper.getModuleY(infoWidget)
         visible: contentWrapper.isModuleActive("info")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("info")
         isGrouped: contentWrapper.isModuleGrouped("info")
         targetX: contentWrapper.getModuleX("info", contentWrapper.layoutState)
@@ -1015,9 +1040,11 @@ Item {
         id: weatherWidget
         z: 10
         x: targetX
+        y: contentWrapper.getModuleY(weatherWidget)
         visible: contentWrapper.isModuleActive("weather")
         barWindow: contentWrapper.barWindow
         isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        distinctPills: contentWrapper.distinctPills
         moduleActive: contentWrapper.isModuleActive("weather")
         isGrouped: contentWrapper.isModuleGrouped("weather")
         targetX: contentWrapper.getModuleX("weather", contentWrapper.layoutState)
