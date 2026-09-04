@@ -57,7 +57,7 @@ Item {
                 window.ethDevice = d;
             } else if (!window.wifiDevice && window.isWifiDevice(d)) {
                 window.wifiDevice = d;
-                d.scannerEnabled = true;
+                window.startWifiScan();
             }
         }
     }
@@ -101,6 +101,7 @@ Item {
             focusTimer.restart();
             resetAndPlayIntro();
             window.startBtScan();
+            window.startWifiScan();
             window.findDevices();
             window.rebuildEthData();
             window.rebuildWifiData();
@@ -110,6 +111,7 @@ Item {
             if (window.activeMode === "bt" && !btProfilePoller.running) btProfilePoller.running = true;
         } else {
             window.stopBtScan();
+            window.stopWifiScan();
             btProfilePoller.running = false;
             ipFetcher.running = false;
             freqFetcher.running = false;
@@ -131,7 +133,10 @@ Item {
         }
     }
 
-    Component.onDestruction: window.stopBtScan()
+    Component.onDestruction: {
+        window.stopBtScan();
+        window.stopWifiScan();
+    }
 
     property int disconnectHoverCount: 0
     readonly property bool isDisconnectHovered: disconnectHoverCount > 0
@@ -247,7 +252,7 @@ Item {
                         window.ethDevice = device;
                     } else if (window.isWifiDevice(device)) {
                         window.wifiDevice = device;
-                        device.scannerEnabled = true;
+                        window.startWifiScan();
                     }
                     window.rebuildEthData();
                     window.rebuildWifiData();
@@ -371,6 +376,18 @@ Item {
 
     function stopBtScan() {
         if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.discovering = false;
+    }
+
+    function startWifiScan() {
+        if (window.wifiDevice && window.visible && window.activeMode === "wifi" && window.wifiPower === "on") {
+            window.wifiDevice.scannerEnabled = true;
+        }
+    }
+
+    function stopWifiScan() {
+        if (window.wifiDevice) {
+            window.wifiDevice.scannerEnabled = false;
+        }
     }
 
     function s(val) { return Scaler.s(val); }
@@ -530,6 +547,7 @@ Item {
             focusTimer.restart();
             resetAndPlayIntro();
             window.startBtScan();
+            window.startWifiScan();
         }
     }
 
@@ -748,9 +766,16 @@ Item {
         syncCores();
         window.showInfoView = window.currentConn;
 
-        if (window.activeMode === "wifi") window.rebuildWifiData();
-        else if (window.activeMode === "bt") window.rebuildBtData(false);
-        else if (window.activeMode === "eth") window.rebuildEthData();
+        if (window.activeMode === "wifi") {
+            window.startWifiScan();
+            window.rebuildWifiData();
+        } else if (window.activeMode === "bt") {
+            window.stopWifiScan();
+            window.rebuildBtData(false);
+        } else if (window.activeMode === "eth") {
+            window.stopWifiScan();
+            window.rebuildEthData();
+        }
 
         if (window.showInfoView) window.updateInfoNodes();
     }
@@ -2682,6 +2707,7 @@ Item {
                                 wifiPendingReset.restart();
                                 window.wifiPower = window.expectedWifiPower;
                                 Networking.wifiEnabled = (window.expectedWifiPower === "on");
+                                if (window.expectedWifiPower === "on") window.startWifiScan(); else window.stopWifiScan();
                             } else {
                                 if (window.btPowerPending) return;
                                 window.expectedBtPower = window.btPower === "on" ? "off" : "on";
