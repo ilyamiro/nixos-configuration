@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
@@ -70,7 +69,12 @@ Item {
             let prev = i > 0 ? out[i - 1] : out[i];
             let curr = out[i];
             let next = i < count - 1 ? out[i + 1] : out[i];
-            smoothed.push(prev * 0.25 + curr * 0.5 + next * 0.25);
+            let sm = prev * 0.25 + curr * 0.5 + next * 0.25;
+
+            let edgeNorm = Math.sin((i / Math.max(1, count - 1)) * Math.PI);
+            let edgeFactor = Math.min(1.0, edgeNorm * 2.0);
+            edgeFactor = edgeFactor * edgeFactor * (3.0 - 2.0 * edgeFactor);
+            smoothed.push(sm * edgeFactor);
         }
 
         return smoothed;
@@ -104,66 +108,49 @@ Item {
         }
     }
 
-    Rectangle {
-        id: bgMask
+    Canvas {
+        id: waveCanvas
         anchors.fill: parent
-        radius: ThemeBackend.borderRadius
-        visible: false
-        layer.enabled: true
-    }
 
-    Item {
-        anchors.fill: parent
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            maskEnabled: true
-            maskSource: bgMask
-        }
+        onPaint: {
+            let ctx = getContext("2d");
+            let w = width;
+            let h = height;
 
-        Canvas {
-            id: waveCanvas
-            anchors.fill: parent
+            ctx.reset();
+            ctx.clearRect(0, 0, w, h);
 
-            onPaint: {
-                let ctx = getContext("2d");
-                let w = width;
-                let h = height;
+            let levels = root.smoothLevels;
+            if (!levels || levels.length === 0) return;
 
-                ctx.reset();
-                ctx.clearRect(0, 0, w, h);
-
-                let levels = root.smoothLevels;
-                if (!levels || levels.length === 0) return;
-
-                let count = levels.length;
-                let pts = [];
-                for (let i = 0; i < count; i++) {
-                    let px = (i / (count - 1)) * w;
-                    let py = h - (levels[i] * h * 0.92) - Scaler.s(2);
-                    pts.push({ x: px, y: py });
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(0, h);
-                ctx.lineTo(pts[0].x, pts[0].y);
-
-                for (let i = 0; i < pts.length - 1; i++) {
-                    let p0 = pts[i];
-                    let p1 = pts[i + 1];
-                    let mx = (p0.x + p1.x) / 2;
-                    let my = (p0.y + p1.y) / 2;
-                    ctx.quadraticCurveTo(p0.x, p0.y, mx, my);
-                }
-
-                let last = pts[pts.length - 1];
-                ctx.lineTo(last.x, last.y);
-                ctx.lineTo(w, h);
-                ctx.closePath();
-
-                let c = ThemeBackend.mauve;
-                ctx.fillStyle = Qt.rgba(c.r, c.g, c.b, 1.0);
-                ctx.fill();
+            let count = levels.length;
+            let pts = [];
+            for (let i = 0; i < count; i++) {
+                let px = (i / (count - 1)) * w;
+                let py = h - (levels[i] * h * 0.92);
+                pts.push({ x: px, y: py });
             }
+
+            ctx.beginPath();
+            ctx.moveTo(0, h);
+            ctx.lineTo(pts[0].x, pts[0].y);
+
+            for (let i = 0; i < pts.length - 1; i++) {
+                let p0 = pts[i];
+                let p1 = pts[i + 1];
+                let mx = (p0.x + p1.x) / 2;
+                let my = (p0.y + p1.y) / 2;
+                ctx.quadraticCurveTo(p0.x, p0.y, mx, my);
+            }
+
+            let last = pts[pts.length - 1];
+            ctx.lineTo(last.x, last.y);
+            ctx.lineTo(w, h);
+            ctx.closePath();
+
+            let c = ThemeBackend.mauve;
+            ctx.fillStyle = Qt.rgba(c.r, c.g, c.b, 1.0);
+            ctx.fill();
         }
     }
 }
