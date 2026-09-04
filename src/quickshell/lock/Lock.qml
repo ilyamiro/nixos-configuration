@@ -198,6 +198,7 @@ Scope {
 
     function startAuth() {
         lockUI.failed = false;
+        lockUI.authenticating = true;
         lockUI.statusText = I18n.t("lock.status.authenticating");
         pam.start();
     }
@@ -254,13 +255,13 @@ Scope {
         id: pam
 
         onPamMessage: {
-            if (message !== "") {
-                if (message.toLowerCase().includes("failed to match") || message.toLowerCase().includes("no match")) {
+            if (pam.message !== "") {
+                if (pam.messageIsError) {
                     lockUI.statusText = I18n.t("lock.status.fingerprint_retry");
                 } else {
-                    lockUI.statusText = message;
+                    lockUI.statusText = pam.message;
                 }
-                lockUI.failed = messageIsError;
+                lockUI.failed = pam.messageIsError;
             }
         }
 
