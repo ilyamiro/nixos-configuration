@@ -21,7 +21,7 @@ noise_reduction = 77
 5 = 1.5
 
 [color]
-background = '{{colors.surface_container_lowest.default.hex}}'
+background = '{{colors.surface_container.default.hex}}'
 foreground = '{{colors.primary.default.hex}}'
 
 gradient = 1
