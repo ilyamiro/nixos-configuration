@@ -703,11 +703,41 @@ PanelWindow {
 
                         let curBW = (currentRot % 180 === 0) ? model.wWidth : model.wHeight;
                         let curBH = (currentRot % 180 === 0) ? model.wHeight : model.wWidth;
-                        let nextBW = (nextRot % 180 === 0) ? model.wWidth : model.wHeight;
-                        let nextBH = (nextRot % 180 === 0) ? model.wHeight : model.wWidth;
 
                         let centerX = model.wX + curBW / 2.0;
                         let centerY = model.wY + curBH / 2.0;
+
+                        let unscaledBW = (nextRot % 180 === 0) ? model.wWidth : model.wHeight;
+                        let unscaledBH = (nextRot % 180 === 0) ? model.wHeight : model.wWidth;
+
+                        let limitX = redactorMode.safeWidth;
+                        let limitY = redactorMode.safeHeight;
+
+                        if (toolbar && toolbar.visible && toolbar.opacity > 0.1 && toolbar.y > centerY) {
+                            limitY = toolbar.y;
+                        }
+
+                        let maxBW = Math.max(20, 2.0 * Math.min(centerX, limitX - centerX));
+                        let maxBH = Math.max(20, 2.0 * Math.min(centerY, limitY - centerY));
+
+                        let scaleX = (maxBW > 0 && unscaledBW > maxBW) ? (maxBW / unscaledBW) : 1.0;
+                        let scaleY = (maxBH > 0 && unscaledBH > maxBH) ? (maxBH / unscaledBH) : 1.0;
+                        let scale = Math.min(scaleX, scaleY);
+
+                        let targetW = model.wWidth;
+                        let targetH = model.wHeight;
+
+                        if (scale < 1.0) {
+                            targetW = model.wWidth * scale;
+                            targetH = model.wHeight * scale;
+                        }
+
+                        let clamped = redactorMode.clampResize(preview.item, targetW, targetH, 0, 0, true);
+                        let finalW = clamped.w;
+                        let finalH = clamped.h;
+
+                        let nextBW = (nextRot % 180 === 0) ? finalW : finalH;
+                        let nextBH = (nextRot % 180 === 0) ? finalH : finalW;
 
                         let newX = centerX - nextBW / 2.0;
                         let newY = centerY - nextBH / 2.0;
@@ -725,6 +755,8 @@ PanelWindow {
                             newY = Math.max(0, Math.min(mY, newY));
                         }
 
+                        model.wWidth = finalW;
+                        model.wHeight = finalH;
                         model.wRotation = nextRot;
                         model.wX = newX;
                         model.wY = newY;
