@@ -35,6 +35,7 @@ Item {
         "width": 100,
         "opacity": 100,
         "style": "modular",
+        "distinctPills": false,
         "time": {"format": "HH:mm:ss"},
         "autohide": false,
         "autohideTimeout": 1000,
@@ -60,6 +61,7 @@ Item {
         }
         return "modular";
     }
+    property bool distinctPills: barSettings.distinctPills !== undefined ? barSettings.distinctPills : false
     property string timeFormat: barSettings.time && barSettings.time.format !== undefined ? barSettings.time.format : "HH:mm:ss"
     property bool autohide: barSettings.autohide !== undefined ? barSettings.autohide : false
     property int autohideTimeout: barSettings.autohideTimeout !== undefined ? barSettings.autohideTimeout : 1000
@@ -419,8 +421,10 @@ Item {
         current.modules = JSON.parse(JSON.stringify(barTabRoot.defaultBarSettings.modules));
         current.groupColors = {};
         current.workspaceCount = barTabRoot.defaultBarSettings.workspaceCount;
+        current.distinctPills = barTabRoot.defaultBarSettings.distinctPills;
         barTabRoot.assignedGroupColors = {};
         barTabRoot.workspaceCount = barTabRoot.defaultBarSettings.workspaceCount;
+        barTabRoot.distinctPills = barTabRoot.defaultBarSettings.distinctPills;
         barTabRoot.lastSavedModulesString = barTabRoot.getModulesString(current.modules);
         Config.setSetting("bar", current);
         barTabRoot.barSettings = current;
@@ -712,6 +716,7 @@ Item {
         } else {
             barTabRoot.barStyle = "modular";
         }
+        barTabRoot.distinctPills = ts.distinctPills !== undefined ? ts.distinctPills : false;
         barTabRoot.timeFormat = ts.time && ts.time.format !== undefined ? ts.time.format : "HH:mm:ss";
         barTabRoot.autohide = ts.autohide !== undefined ? ts.autohide : false;
         barTabRoot.autohideTimeout = ts.autohideTimeout !== undefined ? ts.autohideTimeout : 1000;
@@ -748,6 +753,7 @@ Item {
         current.width = barTabRoot.currentBarWidth;
         current.opacity = barTabRoot.currentBarOpacity;
         current.style = barTabRoot.barStyle;
+        current.distinctPills = barTabRoot.distinctPills;
         if (!current.time) current.time = {};
         current.time.format = barTabRoot.timeFormat;
         current.autohide = barTabRoot.autohide;
@@ -1158,6 +1164,82 @@ Item {
                                 else if (index === 1) barTabRoot.barStyle = "solid";
                                 else if (index === 2) barTabRoot.barStyle = "fill";
                                 barTabRoot.updateBarSettings();
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    id: distinctPillsSectionWrapper
+                    Layout.fillWidth: true
+                    property bool isOpen: barTabRoot.barStyle === "solid" || barTabRoot.barStyle === "fill"
+                    clip: true
+                    visible: implicitHeight > 0
+                    opacity: isOpen ? 1.0 : 0.0
+                    implicitHeight: isOpen ? distinctPillsInnerCol.implicitHeight : 0
+
+                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                    Behavior on implicitHeight { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+
+                    ColumnLayout {
+                        id: distinctPillsInnerCol
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        spacing: 0
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 1
+                            color: Qt.alpha(ThemeBackend.surface1, 0.2)
+                            Layout.topMargin: rootObj.s(5)
+                            Layout.bottomMargin: rootObj.s(5)
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            implicitHeight: rowDistinctPillsLayout.implicitHeight + rootObj.s(18)
+                            color: "transparent"
+
+                            RowLayout {
+                                id: rowDistinctPillsLayout
+                                anchors.left: parent.left
+                                anchors.leftMargin: rootObj.s(12)
+                                anchors.right: parent.right
+                                anchors.rightMargin: rootObj.s(12)
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: rootObj.s(16)
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: rootObj.s(2)
+                                    Text {
+                                        text: I18n.t("guide.bar.distinct_pills.title")
+                                        font.family: ThemeBackend.fontFamily
+                                        font.pixelSize: rootObj.s(13)
+                                        color: ThemeBackend.text
+                                    }
+                                    Text {
+                                        text: I18n.t("guide.bar.distinct_pills.desc")
+                                        font.family: ThemeBackend.fontFamily
+                                        font.pixelSize: rootObj.s(11)
+                                        color: ThemeBackend.subtext0
+                                    }
+                                }
+
+                                Toggle {
+                                    Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                    checked: barTabRoot.distinctPills
+                                    accentColor: ThemeBackend.mauve
+                                    baseColor: ThemeBackend.surface1
+                                    handleColor: ThemeBackend.crust
+                                    handleOffColor: ThemeBackend.text
+                                    onToggled: function(c) {
+                                        barTabRoot.clearPendingGroup();
+                                        barTabRoot.distinctPills = c;
+                                        barTabRoot.updateBarSettings();
+                                    }
+                                }
                             }
                         }
                     }
