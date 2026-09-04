@@ -69,8 +69,8 @@ Item {
         return path;
     }
 
-    property var languageCodes: ["en", "ru", "de", "es", "it", "hy", "vi"]
-    property var languageNames: ["English", "Русский", "Deutsch", "Español", "Italiano", "Հայերեն", "Tiếng Việt"]
+    property var languageCodes: ["en", "ru", "de", "es", "it", "hy", "vi", "ko"]
+    property var languageNames: ["English", "Русский", "Deutsch", "Español", "Italiano", "Հայերեն", "Tiếng Việt", "한국어"]
 
     property var weatherUnitCodes: ["metric", "imperial", "standard"]
     property var weatherUnitNames: ["Celsius", "Fahrenheit", "Kelvin"]

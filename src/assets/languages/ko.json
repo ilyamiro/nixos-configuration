@@ -1,0 +1,1038 @@
+{
+  "guide": {
+    "about": {
+      "title": "Serpantinum",
+      "loading": "불러오는 중...",
+      "unknown": "알 수 없음",
+      "version_by": "v{version} • {author} 제작",
+      "hardware": {
+        "device_name": "장치 이름",
+        "processor": "프로세서",
+        "graphics": "그래픽",
+        "memory": "메모리",
+        "disk_capacity": "디스크 용량",
+        "integrated_graphics": "내장 그래픽"
+      },
+      "system": {
+        "os_name": "운영체제 이름",
+        "kernel_version": "커널 버전",
+        "desktop": "데스크톱",
+        "shell": "셸",
+        "uptime": "가동 시간",
+        "default_os": "Linux"
+      },
+      "github_repo": "ilyamiro/serpantinum"
+    },
+    "tabs": {
+      "welcome": "시작",
+      "general": "일반",
+      "display": "디스플레이",
+      "bar": "바",
+      "launcher": "런처",
+      "theme": "테마",
+      "notifications": "알림",
+      "idle": "유휴",
+      "wellbeing": "사용 시간",
+      "tutorial": "튜토리얼",
+      "update": "업데이트",
+      "about": "정보",
+      "display_widgets": "위젯",
+      "display_general": "일반"
+    },
+    "launcher": {
+      "position": {
+        "title": "화면 위치",
+        "desc": "런처가 붙을 화면 가장자리를 선택합니다",
+        "top": "위",
+        "bottom": "아래",
+        "left": "왼쪽",
+        "right": "오른쪽"
+      },
+      "width": {
+        "title": "런처 너비",
+        "desc": "런처 창의 전체 너비(픽셀)"
+      },
+      "items": {
+        "title": "표시 항목 수",
+        "desc": "한 번에 표시할 검색 결과 개수"
+      },
+      "terminal": {
+        "title": "터미널 명령",
+        "desc": "> 실행에 사용할 명령 접두사 (예: kitty -e, alacritty -e, foot -e)"
+      },
+      "smart_ranking": {
+        "title": "런처 항목 스마트 정렬",
+        "desc": "사용 빈도와 사용 시간을 기준으로 앱을 정렬합니다"
+      },
+      "test": "런처 열기"
+    },
+    "notifications": {
+      "dnd": {
+        "title": "방해 금지",
+        "desc": "긴급 알림을 제외한 팝업 알림을 음소거합니다"
+      },
+      "position": {
+        "title": "팝업 위치",
+        "desc": "알림 팝업이 화면에 나타날 위치를 선택합니다",
+        "top_right": "오른쪽 위",
+        "top_left": "왼쪽 위",
+        "bottom_right": "오른쪽 아래",
+        "bottom_left": "왼쪽 아래",
+        "top_center": "위쪽 가운데",
+        "bottom_center": "아래쪽 가운데"
+      },
+      "sound": {
+        "title": "알림음",
+        "desc": "알림이 도착하면 소리를 재생합니다"
+      },
+      "sound_file": {
+        "title": "효과음",
+        "desc": "수신 알림에 재생할 소리를 선택합니다"
+      },
+      "empty_graphic": {
+        "title": "빈 알림 센터 애니메이션",
+        "desc": "알림 센터가 비어 있을 때 잠자는 고양이 그래픽을 표시합니다"
+      }
+    },
+    "idle": {
+      "enabled": {
+        "title": "유휴 시스템 사용",
+        "desc": "전원 관리와 잠금 시간 초과를 활성화합니다"
+      },
+      "manual_inhibit": {
+        "title": "방해 금지 (화면 유지)",
+        "desc": "시스템이 유휴 상태로 전환되지 않도록 직접 막습니다"
+      },
+      "mpris_inhibit": {
+        "title": "미디어 재생 중 방지",
+        "desc": "미디어가 재생되는 동안 유휴 동작을 실행하지 않습니다"
+      },
+      "respect_inhibitors": {
+        "title": "앱 방지 요청 존중",
+        "desc": "애플리케이션의 wayland 유휴 방지 잠금을 따릅니다"
+      },
+      "pipeline_notice": "순서: 화면 어둡게 < 세션 잠금 < 화면 끄기 < 절전. 이 순서를 어기는 동작은 제외됩니다.",
+      "order_violation": "제외됨",
+      "actions_header": {
+        "title": "유휴 시간 초과 항목",
+        "desc": "시간 초과, 기본 제공 트리거, 사용자 지정 명령을 설정합니다"
+      },
+      "action_name_placeholder": "동작 이름",
+      "command_placeholder": "실행할 명령",
+      "custom_action_default": "사용자 지정 유휴 동작",
+      "custom_action_fallback": "유휴 동작",
+      "warning_command": {
+        "title": "경고 명령",
+        "desc": "동작 실행 전 오프셋과 실행할 명령",
+        "placeholder": "예: notify-send 'warning'"
+      },
+      "before_command": {
+        "title": "사전 명령",
+        "desc": "동작이 실행되기 직전에 실행됩니다",
+        "placeholder": "예: playerctl pause"
+      },
+      "resume_command": {
+        "title": "복귀 명령",
+        "desc": "사용자 활동이 재개될 때 실행됩니다",
+        "placeholder": "예: notify-send 'resumed'"
+      },
+      "dim": {
+        "title": "화면 어둡게",
+        "desc": "화면을 어둡게 하기까지의 시간"
+      },
+      "dpms": {
+        "title": "화면 끄기 (DPMS)",
+        "desc": "화면을 완전히 끄기까지의 시간"
+      },
+      "lock": {
+        "title": "세션 잠금",
+        "desc": "비밀번호를 요구하기까지의 시간"
+      },
+      "suspend": {
+        "title": "시스템 절전",
+        "desc": "시스템을 절전 모드로 전환하기까지의 시간"
+      },
+      "hooks": {
+        "title": "훅 (셸 명령)"
+      }
+    },
+    "welcome": {
+      "by_author": "@{author} 제작",
+      "about": "정보",
+      "hold_for_tutorial": "길게 눌러 튜토리얼 보기",
+      "start_tutorial": "튜토리얼 시작"
+    },
+    "tutorial": {
+      "section_title": "{section} 튜토리얼",
+      "default_desc": "클릭하면 튜토리얼이 시작됩니다",
+      "start": "시작"
+    },
+    "general": {
+      "language": {
+        "title": "언어",
+        "desc": "시스템 인터페이스 언어를 선택합니다"
+      },
+      "uiscale": {
+        "title": "UI 배율",
+        "desc": "전체 인터페이스 배율을 설정합니다"
+      },
+      "avatar": {
+        "title": "프로필 사진",
+        "desc": "프로필 사진을 선택합니다",
+        "select": "선택",
+        "select_image_path": "이미지 경로 선택..."
+      },
+      "mutesfx": {
+        "title": "효과음 음소거",
+        "desc": "사용자 인터페이스 효과음을 끕니다"
+      },
+      "sfxvolume": {
+        "title": "효과음 볼륨 조절",
+        "desc": "시스템 오디오 출력에는 영향을 주지 않습니다"
+      },
+      "quickactions": {
+        "title": "퀵액션",
+        "desc": "떠 있는 퀵액션 오버레이를 활성화합니다"
+      },
+      "location": {
+        "title": "위치",
+        "desc": "자동 일출·일몰 일정과 날씨에 사용할 위치를 설정합니다",
+        "popup_title": "위치 상세 정보",
+        "autodetect": "자동 감지",
+        "latitude": "위도",
+        "longitude": "경도",
+        "apply": "적용"
+      },
+      "weatherinterval": {
+        "title": "날씨 갱신 주기",
+        "desc": "갱신 주기(분)"
+      },
+      "weatherunit": {
+        "title": "온도 단위",
+        "desc": "날씨 표시에 사용할 온도 단위",
+        "celsius": "섭씨",
+        "fahrenheit": "화씨",
+        "kelvin": "켈빈"
+      },
+      "copysettings": {
+        "title": "설정 복사",
+        "desc": "설정 JSON을 클립보드에 복사합니다",
+        "button": "설정 복사"
+      }
+    },
+    "display": {
+      "bluelight": {
+        "title": "블루라이트 필터",
+        "desc": "따뜻한 화면 조명을 켜거나 끕니다"
+      },
+      "enable": {
+        "title": "이 모니터 사용",
+        "desc": "이 설정을 끄면 해당 모니터가 비활성화됩니다"
+      },
+      "schedule": {
+        "title": "자동 일정",
+        "desc": "다음 위치의 일출·일몰을 기준으로 색온도를 자동 조절합니다"
+      },
+      "temperature": {
+        "title": "색온도",
+        "desc": "색온도 강도를 조절합니다"
+      },
+      "uiscale": {
+        "title": "UI 배율",
+        "desc": "이 모니터의 화면 배율을 설정합니다"
+      },
+      "widgets": {
+        "title": "데스크톱 위젯",
+        "desc": "이 모니터에 표시할 위젯을 설정하고 배치합니다",
+        "open": "편집기 열기"
+      }
+    },
+    "bar": {
+      "modules": {
+        "vis": "비주얼라이저 (cava)",
+        "actions": "동작",
+        "workspaces": "작업 공간",
+        "media": "미디어",
+        "tray": "트레이",
+        "keyboard": "키보드",
+        "network": "네트워크",
+        "bluetooth": "블루투스",
+        "volume": "볼륨",
+        "battery": "배터리",
+        "focus": "포커스",
+        "sysmon": "시스템 모니터",
+        "timedate": "시간/날짜",
+        "info": "녹화/타이머",
+        "weather": "날씨"
+      },
+      "position": {
+        "title": "바 위치",
+        "desc": "화면에서 바가 놓일 위치",
+        "top": "위",
+        "bottom": "아래",
+        "left": "왼쪽",
+        "right": "오른쪽"
+      },
+      "width": {
+        "title": "바 너비",
+        "desc": "바의 너비를 백분율로 설정합니다"
+      },
+      "workspaces": {
+        "title": "표시할 작업 공간 개수를 선택하세요",
+        "disc": "참고: 이 설정은 컴포지터의 실제 작업 공간 개수에는 영향을 주지 않습니다",
+        "desc": "표시할 작업 공간 개수"
+      },
+      "opacity": {
+        "title": "바 불투명도",
+        "desc": "바의 불투명도를 백분율로 설정합니다"
+      },
+      "style": {
+        "title": "바 스타일",
+        "desc": "모듈형, 단색, 채움 스타일 중에서 선택합니다",
+        "modular": "모듈형",
+        "solid": "단색",
+        "fill": "채움"
+      },
+      "time": {
+        "title": "시간 형식",
+        "desc": "형식 문자열 (예: HH:mm:ss 또는 hh:mm AP)"
+      },
+      "guide_button": {
+        "title": "가이드 버튼",
+        "desc": "상단 바에 가이드 팝업 버튼을 표시합니다"
+      },
+      "autohide": {
+        "title": "자동 숨김",
+        "desc": "마우스를 올리지 않았을 때 바를 숨깁니다"
+      },
+      "timeout": {
+        "title": "자동 숨김 지연 시간",
+        "desc": "바가 숨겨지기까지의 지연 시간"
+      },
+      "config": {
+        "title": "바 구성",
+        "desc": "항목을 우클릭하면 그룹 만들기가 시작되고, 다른 항목을 우클릭하면 그룹에 추가됩니다. 그룹에 속한 항목을 우클릭하면 제거됩니다.",
+        "reset": "초기화",
+        "available": "사용 가능",
+        "left": "왼쪽",
+        "center": "가운데",
+        "right": "오른쪽"
+      }
+    },
+    "theme": {
+      "font": {
+        "title": "글꼴",
+        "desc": "serpantinum이 사용할 기본 글꼴을 선택합니다",
+        "select": "선택..."
+      },
+      "radius": {
+        "title": "모서리 반경",
+        "desc": "UI 요소의 모서리 둥글기"
+      },
+      "colors": {
+        "title": "색상 테마",
+        "desc": "미리 정의된 색상 팔레트를 선택하거나 직접 테마를 만들 수 있습니다.",
+        "search": "테마 검색..."
+      },
+      "delete_theme": "삭제",
+      "wallpaper": {
+        "title": "배경화면 디렉터리",
+        "desc": "배경화면을 검색할 디렉터리",
+        "select_dir": "디렉터리 선택...",
+        "select_wallpaper": "배경화면 선택",
+        "no_wallpaper_selected": "선택된 배경화면 없음"
+      }
+    },
+    "file_picker": {
+      "title": "이미지 선택",
+      "input_placeholder": "검색...",
+      "not_found": "파일을 찾을 수 없습니다",
+      "no_file_selected": "선택된 파일 없음",
+      "root": "루트",
+      "places": {
+        "home": "홈",
+        "downloads": "다운로드",
+        "pictures": "사진"
+      }
+    },
+    "font_picker": {
+      "title": "글꼴 선택",
+      "input_placeholder": "검색...",
+      "not_found": "항목을 찾을 수 없습니다",
+      "places": {
+        "user_fonts": "사용자 글꼴",
+        "system_fonts": "시스템 글꼴"
+      }
+    },
+    "sound_picker": {
+      "title": "알림음 선택",
+      "no_sound_selected": "선택된 소리 없음",
+      "places": {
+        "user_sounds": "사용자 소리",
+        "system_sounds": "시스템 소리"
+      }
+    },
+    "theme_editor": {
+      "title": "새 색상 테마",
+      "name_placeholder": "테마 이름...",
+      "preview": "미리보기",
+      "cancel": "취소",
+      "save": "저장",
+      "default_name": "사용자 지정 테마",
+      "colors": {
+        "base": "Base",
+        "mantle": "Mantle",
+        "crust": "Crust",
+        "text": "텍스트",
+        "sub0": "Sub0",
+        "sub1": "Sub1",
+        "surf0": "Surf0",
+        "surf1": "Surf1",
+        "surf2": "Surf2",
+        "over0": "Over0",
+        "over1": "Over1",
+        "over2": "Over2",
+        "blue": "Blue",
+        "lavender": "Lavender",
+        "sapphire": "Sapphire",
+        "sky": "Sky",
+        "teal": "Teal",
+        "green": "Green",
+        "yellow": "Yellow",
+        "peach": "Peach",
+        "maroon": "Maroon",
+        "red": "Red",
+        "mauve": "Mauve",
+        "pink": "Pink",
+        "flamingo": "Flamingo",
+        "rosewater": "Rosewater"
+      }
+    },
+    "wellbeing": {
+      "desktop": "데스크톱",
+      "not_available": "없음",
+      "am": "오전",
+      "pm": "오후",
+      "today": "오늘",
+      "week_overview": "주간 요약",
+      "daily_average": "일 평균",
+      "no_data": "데이터 없음",
+      "same_time": "동일",
+      "daily_usage": "일일 사용량",
+      "peak_hours": "최다 사용 시간대",
+      "time_hm": "{h}시간 {m}분",
+      "time_m": "{m}분",
+      "months": {
+        "january": "1월",
+        "february": "2월",
+        "march": "3월",
+        "april": "4월",
+        "may": "5월",
+        "june": "6월",
+        "july": "7월",
+        "august": "8월",
+        "september": "9월",
+        "october": "10월",
+        "november": "11월",
+        "december": "12월"
+      },
+      "days": {
+        "monday": "월요일",
+        "tuesday": "화요일",
+        "wednesday": "수요일",
+        "thursday": "목요일",
+        "friday": "금요일",
+        "saturday": "토요일",
+        "sunday": "일요일"
+      },
+      "settings": {
+        "title": "사용 시간 설정",
+        "overall_limit": "전체 일일 한도",
+        "off": "끔",
+        "app_limits": "앱 사용 한도",
+        "app_limits_desc": "애플리케이션별 일일 최대 사용 시간을 설정합니다",
+        "excluded_apps": "제외된 앱",
+        "excluded_apps_desc": "앞으로 전체 사용량 집계에서 제외할 앱을 지정합니다"
+      }
+    },
+    "update_available": "업데이트 있음"
+  },
+  "sysnotif": {
+    "battery": {
+      "app_name": "시스템",
+      "full_title": "배터리 충전 완료",
+      "full_body": "배터리가 완전히 충전되었습니다 (100%).",
+      "low_title": "배터리 부족",
+      "low_body": "배터리 잔량이 {pct}%입니다. 충전기를 연결해 주세요.",
+      "critical_title": "배터리 위험",
+      "critical_body": "배터리 잔량이 {pct}%입니다. 지금 바로 충전기를 연결하세요."
+    }
+  },
+  "updater": {
+    "notification": {
+      "app_name": "업데이트",
+      "action_open_guide": "가이드 열기",
+      "update_available_title": "업데이트 있음: v{remote}",
+      "update_available_body": "현재 버전: v{local}. 클릭하면 변경 사항을 보고 업데이트할 수 있습니다."
+    }
+  },
+  "polkit": {
+    "title": "인증 필요",
+    "default_message": "한 애플리케이션이 관리자 권한을 요청하고 있습니다.",
+    "default_description": "이 작업을 관리자 권한으로 실행하려면 인증이 필요합니다.",
+    "password_placeholder": "비밀번호",
+    "error_failed": "인증에 실패했습니다. 다시 시도해 주세요."
+  },
+  "applauncher": {
+    "search": "검색",
+    "placeholder": "명령을 실행하려면 > 로 시작하세요..."
+  },
+  "calendar": {
+    "loading": "불러오는 중...",
+    "loading_schedule": "일정을 불러오는 중...",
+    "no_events": "예정된 일정이 없습니다.",
+    "open_web": "웹에서 열기",
+    "weather": {
+      "wind": "바람",
+      "humid": "습도",
+      "rain": "강수",
+      "feels": "체감"
+    },
+    "days": {
+      "mo": "월",
+      "tu": "화",
+      "we": "수",
+      "th": "목",
+      "fr": "금",
+      "sa": "토",
+      "su": "일"
+    }
+  },
+  "clipboard": {
+    "search": "검색",
+    "title": "클립보드",
+    "clear": "지우기",
+    "empty": "결과가 없습니다",
+    "recent": "최근",
+    "pinned": "고정됨"
+  },
+  "lock": {
+    "status": {
+      "locked": "잠김",
+      "access_denied": "접근이 거부되었습니다",
+      "authenticating": "인증 중...",
+      "enter_pin": "PIN 입력"
+    },
+    "power": {
+      "suspend": "절전",
+      "reboot": "다시 시작",
+      "power_off": "전원 끄기"
+    },
+    "default_user": "사용자",
+    "unknown": "알 수 없음"
+  },
+  "music": {
+    "nothing_playing": "재생 중인 항목 없음",
+    "loading": "불러오는 중...",
+    "by_artist": "{artist}",
+    "unknown_artist": "알 수 없는 아티스트",
+    "speaker": "스피커",
+    "via_source": "{source} 경유",
+    "offline": "오프라인",
+    "equalizer": "이퀄라이저",
+    "eq": {
+      "apply": "적용",
+      "saved": "저장됨"
+    },
+    "presets": {
+      "flat": "플랫",
+      "bass": "베이스",
+      "treble": "트레블",
+      "vocal": "보컬",
+      "pop": "팝",
+      "rock": "록",
+      "jazz": "재즈",
+      "classic": "클래식",
+      "custom": "사용자 지정"
+    }
+  },
+  "network": {
+    "tabs": {
+      "ethernet": "이더넷",
+      "wifi": "Wi-Fi",
+      "bluetooth": "블루투스"
+    },
+    "status": {
+      "no_ip": "IP 없음",
+      "unknown": "알 수 없음",
+      "calculating": "계산 중...",
+      "open": "개방형",
+      "current_device": "현재 장치",
+      "powering_on": "켜는 중...",
+      "powering_off": "끄는 중...",
+      "disconnected": "연결 끊김",
+      "disconnecting": "연결 해제 중...",
+      "hold": "대기 중...",
+      "connected": "연결됨"
+    },
+    "actions": {
+      "unpair": "페어링 해제",
+      "scan": "검색"
+    }
+  },
+  "notifications": {
+    "center": {
+      "reserved": "향후 업데이트를 위해 예약된 공간입니다"
+    },
+    "types": {
+      "default": {
+        "fallback_summary": "알림",
+        "system": "시스템",
+        "action": "동작"
+      },
+      "weather": {
+        "fallback_summary": "날씨 정보",
+        "fallback_body": "상세 데이터가 없습니다."
+      },
+      "screenshot": {
+        "badge": "스크린샷",
+        "fallback_summary": "화면 캡처됨",
+        "click_to_open": "클릭하면 스크린샷 폴더가 열립니다"
+      }
+    }
+  },
+  "quickactions": {
+    "systemusage": {
+      "cpu": "CPU",
+      "ram": "RAM",
+      "temp": "온도",
+      "disk": "디스크",
+      "net": "네트워크"
+    },
+    "timer": {
+      "tabs": {
+        "timer": "타이머",
+        "stopwatch": "스톱워치",
+        "pomodoro": "뽀모도로"
+      },
+      "stopwatch": {
+        "lap": "랩 {number}"
+      },
+      "pomodoro": {
+        "phases": {
+          "focus": "집중",
+          "short_break": "짧은 휴식",
+          "long_break": "긴 휴식"
+        },
+        "settings": {
+          "work": "작업 (분)",
+          "short_break": "짧은 휴식 (분)",
+          "long_break": "긴 휴식 (분)",
+          "sessions": "세션 수"
+        }
+      },
+      "notification": {
+        "app_name": "Quickshell 타이머",
+        "timer_finished_title": "타이머 종료",
+        "timer_finished_body": "{time} 타이머가 끝났습니다.",
+        "focus_complete_title": "집중 시간 완료",
+        "focus_complete_body": "수고하셨습니다! 이제 잠시 쉬어 가세요.",
+        "break_over_title": "휴식 종료",
+        "break_over_body": "휴식 시간이 끝났습니다. 다시 집중해 볼까요!",
+        "pomo_skipped_title": "뽀모도로 건너뜀",
+        "pomo_skipped_focus_body": "집중 세션을 건너뛰고 휴식으로 넘어갑니다.",
+        "pomo_skipped_break_body": "휴식을 건너뛰고 다시 집중으로 넘어갑니다."
+      }
+    }
+  },
+  "screenshot": {
+    "video_mode": "녹화를 클릭하세요 (영역 선택은 포털이 처리합니다)",
+    "select_region": "캡처할 영역을 선택하세요",
+    "no_microphones": "마이크 없음 (pulseaudio를 설치하세요)",
+    "qr_timeout": "스캔 시간이 초과되었거나 실패했습니다.",
+    "qr_not_found": "QR 코드를 찾을 수 없습니다.",
+    "notifications": {
+      "screenshot_app_name": "스크린샷",
+      "recorder_app_name": "화면 녹화",
+      "system_app_name": "스크린샷 시스템",
+      "missing_deps_title": "의존성 누락",
+      "missing_deps_body": "시작할 수 없습니다. 다음을 설치하세요:\n{cmds}",
+      "open_folder": "폴더 열기",
+      "recording_saved_title": "녹화 저장됨",
+      "recording_saved_body": "파일: {file}\n폴더: {folder}",
+      "recording_error_title": "오류",
+      "recording_error_body": "동영상 파일을 저장하지 못했습니다.",
+      "recording_started_title": "녹화 시작됨",
+      "recording_started_body": "중지하려면 스크린샷 단축키를 다시 누르세요.",
+      "screenshot_saved_title": "스크린샷 저장됨",
+      "screenshot_saved_body": "파일: {file}\n폴더: {folder}"
+    }
+  },
+  "start": {
+    "title": "Serpantinum",
+    "made_by": "@{author} 제작",
+    "welcome": "환영합니다",
+    "tagline": "이런 분을 위해 만든 데스크톱 셸",
+    "you": "바로 당신",
+    "start_preview": "미리보기 시작"
+  },
+  "syspanel": {
+    "user": {
+      "default_name": "사용자",
+      "default_os": "Linux",
+      "logout": "로그아웃"
+    },
+    "notifications": {
+      "title": "알림",
+      "clear": "지우기",
+      "silent": "무음",
+      "mute": "음소거",
+      "empty": "모두 확인했습니다."
+    },
+    "profiles": {
+      "performance": "고성능",
+      "balanced": "균형",
+      "power_saver": "절전"
+    },
+    "battery": {
+      "fully_charged": "충전 완료",
+      "charging": "충전 중",
+      "charging_time": "충전 중 • {hours}시간 {mins}분",
+      "discharging": "방전 중",
+      "left_time": "{hours}시간 {mins}분 남음",
+      "until_full": "완충까지",
+      "remaining": "남음"
+    },
+    "actions": {
+      "system_name": "시스템",
+      "hibernate_error_title": "최대 절전 모드를 사용할 수 없음",
+      "hibernate_error_body": "이 시스템에서는 최대 절전 모드를 사용할 수 없습니다. 스왑 설정을 확인해 주세요."
+    }
+  },
+  "volumepopup": {
+    "no_device": "장치 없음",
+    "mute": "음소거",
+    "master_output_volume": "마스터 출력 볼륨",
+    "no_active_streams": "활성 스트림 없음",
+    "active_default": "현재 기본 장치",
+    "tabs": {
+      "outputs": "출력",
+      "inputs": "입력",
+      "streams": "스트림"
+    }
+  },
+  "wallpaper": {
+    "notifications": {
+      "downloading": "배경화면을 내려받는 중...",
+      "type_to_search": "검색어를 입력하세요...",
+      "search_paused": "검색 일시 중지됨",
+      "searching_ddg": "배경화면을 검색하는 중...",
+      "generating_thumbnails": "미리보기를 만드는 중...",
+      "no_wallpapers_found": "배경화면을 찾을 수 없습니다",
+      "videos": "동영상",
+      "history": "최근 적용됨"
+    },
+    "filters": {
+      "all": "전체",
+      "vid": "영상",
+      "search": "검색",
+      "red": "빨강",
+      "orange": "주황",
+      "yellow": "노랑",
+      "green": "초록",
+      "blue": "파랑",
+      "purple": "보라",
+      "pink": "분홍",
+      "monochrome": "흑백"
+    }
+  },
+  "weather": {
+    "desc": {
+      "sunny": "맑음",
+      "clear": "쾌청",
+      "cloudy": "흐림",
+      "mist": "안개",
+      "rainy": "비",
+      "snow": "눈",
+      "storm": "폭풍",
+      "unknown": "알 수 없음",
+      "offline": "오프라인"
+    },
+    "days": {
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토",
+      "sun": "일",
+      "monday": "월요일",
+      "tuesday": "화요일",
+      "wednesday": "수요일",
+      "thursday": "목요일",
+      "friday": "금요일",
+      "saturday": "토요일",
+      "sunday": "일요일"
+    },
+    "months": {
+      "jan": "1월",
+      "feb": "2월",
+      "mar": "3월",
+      "apr": "4월",
+      "may": "5월",
+      "jun": "6월",
+      "jul": "7월",
+      "aug": "8월",
+      "sep": "9월",
+      "oct": "10월",
+      "nov": "11월",
+      "dec": "12월"
+    }
+  },
+  "widgets": {
+    "wallpaper": {
+      "name": "배경화면 선택기",
+      "desc": "데스크톱 배경화면을 둘러보고 설정합니다"
+    },
+    "network": {
+      "name": "네트워크 설정",
+      "desc": "Wi-Fi, 이더넷, 네트워크 연결을 관리합니다"
+    },
+    "volume": {
+      "name": "볼륨 및 오디오",
+      "desc": "사운드 장치와 볼륨을 관리합니다"
+    },
+    "guide": {
+      "name": "설정",
+      "desc": "Serpantinum 설정"
+    },
+    "calendar": {
+      "name": "달력 및 시계",
+      "desc": "날짜, 시간, 일정을 확인합니다"
+    },
+    "music": {
+      "name": "미디어 플레이어",
+      "desc": "음악과 미디어 재생을 제어합니다"
+    },
+    "notifications": {
+      "name": "알림 센터",
+      "desc": "최근 알림과 기록을 확인합니다"
+    },
+    "system": {
+      "name": "시스템 제어",
+      "desc": "성능 모니터, 전원, 빠른 설정"
+    },
+    "redactor": {
+      "no_widgets_active": "활성화된 위젯 없음",
+      "click_to_add": "아래 도구 모음에서 위젯 아이콘을 클릭해 추가하세요",
+      "done": "완료",
+      "widget_singular": "개 위젯",
+      "widgets_plural": "개 위젯"
+    },
+    "types": {
+      "clock": "시계",
+      "music": "음악",
+      "weather": "날씨",
+      "image": "이미지"
+    },
+    "variants": {
+      "digital": "디지털",
+      "analog": "아날로그",
+      "full": "전체",
+      "minimal": "미니멀",
+      "round": "원형",
+      "compact": "간소",
+      "rect": "사각형",
+      "rounded": "둥근 사각형"
+    }
+  },
+  "cli": {
+    "usage": "사용법: serpantinum [명령] [옵션...]",
+    "description": "wayland 컴포지터용 데스크톱 셸입니다.",
+    "commands": "명령:",
+    "script_commands": "스크립트 명령:",
+    "launch_desc": "독립 실행 컴포넌트를 실행합니다 (start, widgetredactor)",
+    "msg_desc": "UI 관리자에 명령이나 작업 공간 전환을 전달합니다",
+    "ipc_desc": "IPC 호출을 셸로 바로 전달합니다",
+    "kill_desc": "실행 중인 데몬을 정상적으로 종료합니다",
+    "options": "옵션:",
+    "verbose_desc": "상세 로그 출력을 활성화합니다",
+    "version_desc": "버전 정보를 표시하고 종료합니다",
+    "help_desc": "이 도움말을 표시하고 종료합니다",
+    "examples": "예시:",
+    "daemon_stopped": "Serpantinum 데몬이 중지되었습니다.",
+    "starting_daemon": "데몬이 실행 중이 아닙니다. serpantinumd를 백그라운드에서 시작합니다...",
+    "error_missing_qml": "오류: 실행할 대상이 지정되지 않았습니다.",
+    "launch_usage": "사용법: serpantinum launch <start|widgetredactor> [인자...]",
+    "error_qml_not_found": "오류: {DIR}에서 {NAME}.qml을 찾을 수 없습니다",
+    "error_shell_qml_not_found": "오류: {DIR}에서 shell.qml 경로를 찾을 수 없습니다",
+    "error_unknown_command": "오류: 알 수 없는 명령 '{CMD}'.",
+    "error_unknown_target": "오류: 알 수 없는 대상 '{TARGET}'.",
+    "launch_help": {
+      "usage": "사용법: serpantinum launch <start|widgetredactor> [인자...]",
+      "description": "독립 실행 컴포넌트를 러너 모드로 바로 실행합니다.",
+      "available_targets": "사용 가능한 대상:",
+      "target_start": "초기 설정 인터페이스를 실행합니다",
+      "target_widgetredactor": "데스크톱 위젯 편집기를 실행합니다"
+    },
+    "msg_help": {
+      "usage": "사용법: serpantinum msg <명령|작업공간> [인자...]",
+      "description": "레이아웃, 작업 공간, 창 관리 메시지를 직접 전송합니다.",
+      "available_commands": "사용 가능한 메시지:",
+      "cmd_workspace": "<num>번 작업 공간으로 전환합니다 ('move'를 덧붙이면 활성 창도 함께 이동)",
+      "cmd_open": "관리되는 UI 패널을 엽니다 (network, guide, wallpaper, applauncher)",
+      "cmd_toggle": "관리되는 UI 패널을 토글합니다",
+      "cmd_close": "활성화된 셸 오버레이를 닫습니다"
+    },
+    "ipc_help": {
+      "usage": "사용법: serpantinum ipc call <대상> <메서드> [인자...]",
+      "description": "실행 중인 quickshell 인스턴스에 IPC 호출을 직접 전송합니다."
+    },
+    "scripts": {
+      "exit": "그래픽 세션을 종료하고 컴포지터를 빠져나갑니다",
+      "lock": "잠금 화면을 활성화합니다",
+      "volume": "기본 오디오 싱크/소스의 볼륨과 음소거 상태를 제어합니다",
+      "reload": "quickshell 데스크톱 요소를 강제로 다시 불러옵니다",
+      "weather": "날씨 예보 데이터와 캐시를 가져오고 관리합니다",
+      "location": "지리 좌표를 조회하고 갱신합니다",
+      "screenshot": "화면 캡처, 동영상 녹화, QR 코드 인식을 수행합니다",
+      "brightness": "디스플레이 백라이트 밝기를 조절합니다",
+      "current_focus": "활성 창의 포커스 변화를 감시하고 기록합니다",
+      "monitors_detect": "활성 디스플레이 출력과 주사율을 조회합니다",
+      "location_manual": "지리 좌표와 시간대를 직접 설정합니다",
+      "blue_light_filter": "색온도와 자동 주야간 일정을 조절합니다",
+      "translate": "즉시 텍스트 및 선택 영역 번역기"
+    }
+  },
+  "daemon": {
+    "already_running": "데몬이 이미 실행 중입니다. 종료합니다...",
+    "shutting_down": "serpantinum 데몬을 종료하는 중...",
+    "launching": "serpantinum 데몬을 시작하는 중...",
+    "cli": {
+      "usage": "사용법: serpantinumd <명령> [옵션...]",
+      "description": "serpantinum 데스크톱 셸의 백그라운드 서비스 데몬입니다.",
+      "commands": "명령:",
+      "cmd_start": "데몬 서비스를 시작하고 백그라운드 작업자를 실행합니다",
+      "cmd_stop": "실행 중인 데몬 서비스를 중지합니다",
+      "cmd_status": "데몬 서비스의 실행 상태를 확인합니다",
+      "options": "옵션:",
+      "opt_verbose": "상세 로그 출력을 활성화합니다",
+      "opt_version": "버전 정보를 표시하고 종료합니다",
+      "opt_help": "이 도움말을 표시하고 종료합니다",
+      "stopped": "Serpantinum 데몬이 중지되었습니다.",
+      "status_running": "Serpantinum 데몬이 실행 중입니다 (PID: {PID}).",
+      "status_stopped": "Serpantinum 데몬이 실행 중이 아닙니다.",
+      "unknown_arg": "알 수 없는 인자: {ARG}"
+    }
+  },
+  "installer": {
+    "auth": {
+      "enter_code": "설치 액세스 코드를 입력하세요: ",
+      "error_interactive": "오류: 인증하려면 대화형 터미널이 필요합니다.",
+      "error_empty": "인증 실패: 액세스 코드는 비워 둘 수 없습니다.",
+      "error_default": "인증 실패: 액세스 코드가 유효하지 않거나 모두 사용되었습니다.",
+      "error_failed": "인증에 실패했습니다.",
+      "access_granted": "액세스가 허용되었습니다. (이 코드로 {active}/{max}명이 활성화됨)"
+    },
+    "os": {
+      "error_root": "오류: 이 스크립트를 root/sudo로 직접 실행하지 마세요. 일반 사용자로 실행하세요.",
+      "error_unsupported": "지원하지 않는 운영체제({os})입니다. Serpantinum은 arch linux와 그 파생 배포판만 지원합니다.",
+      "error_not_found": "운영체제를 감지할 수 없습니다. /etc/os-release를 찾을 수 없습니다.",
+      "unknown_cpu": "알 수 없는 CPU",
+      "unknown_gpu": "알 수 없음 / 가상 머신",
+      "default_os": "Arch linux"
+    },
+    "ui": {
+      "user": "사용자:",
+      "os": "운영체제:",
+      "cpu": "CPU:",
+      "gpu": "GPU:",
+      "target_version": "대상 버전:",
+      "install_mode": "설치 모드:",
+      "github": "GitHub:",
+      "twitter": "Twitter:",
+      "reddit": "Reddit:",
+      "telegram": "Telegram:",
+      "donate": "후원:",
+      "donate_sub": "(프로젝트를 응원해 주세요!)",
+      "packages_prompt": " 패키지 > ",
+      "packages_header": " esc 또는 enter를 누르면 돌아갑니다 ",
+      "package_missing": "{pkg} (없음 - 설치 예정)",
+      "package_installed": "{pkg} (설치됨)",
+      "compositors_title": "=== 대상 컴포지터 선택 ===",
+      "installed": " (설치됨)",
+      "not_installed": " (설치되지 않음)",
+      "done": "완료",
+      "compositors_prompt": " 컴포지터 설정 > ",
+      "compositors_header": " 지원되는 컴포지터를 선택한 뒤 완료를 고르세요 ",
+      "sddm_title": "=== 디스플레이 관리자(SDDM) 설정 ===",
+      "sddm_detected_active": "활성/사용 설정된 디스플레이 관리자 감지: {dm}",
+      "sddm_detected_none": "활성/사용 설정된 디스플레이 관리자 감지: 없음",
+      "sddm_opt_install": "SDDM 설치 및 설정 (material you 테마)",
+      "sddm_opt_disable": "'{dm}' 비활성화 및 제거",
+      "sddm_opt_wayland": "wayland 백엔드 강제 사용",
+      "sddm_prompt": " SDDM 설정 > ",
+      "sddm_header": " 옵션을 선택한 뒤 완료를 고르세요 ",
+      "target_compositor_none": "대상 컴포지터 [필수 - 선택되지 않음]",
+      "target_compositor_selected": "대상 컴포지터 [{comps}]",
+      "target_compositor_req": "대상 컴포지터 ({label}) [필수]",
+      "target_compositor_label": "대상 컴포지터 ({comps})",
+      "unsupported_compositor": "지원하지 않는 컴포지터",
+      "menu_overview": "패키지 설치 개요 (핵심 패키지 {count}개)",
+      "menu_sddm": "SDDM 로그인 관리자",
+      "menu_wallpapers": "배경화면 팩",
+      "menu_telemetry": "익명 통계 수집",
+      "menu_update": "업데이트",
+      "menu_reinstall": "재설치",
+      "menu_install": "설치",
+      "menu_exit": "종료",
+      "main_menu_prompt": " 메인 메뉴 > ",
+      "main_menu_header": " 방향키로 이동하고 enter로 선택하세요 ",
+      "error_no_compositor": "계속하려면 지원되는 컴포지터를 최소 하나 선택해야 합니다.",
+      "tagline": "당신을 위해 만든 데스크톱 셸",
+      "support_creator": "제작자 후원하기:",
+      "buy_coffee": "이 프로젝트가 마음에 드셨다면 커피 한 잔 사 주세요!",
+      "installed_success": "✔ Serpantinum {ver} ({commit}) 설치가 완료되었습니다.",
+      "failed_packages": "다음 패키지를 설치하는 중 오류가 발생했습니다:",
+      "restart_prompt": "컴포지터를 다시 시작하거나 'serpantinumd start'를 실행해 시작하세요.",
+      "ask_reboot": "다시 시작하시겠습니까? [y/n] "
+    },
+    "deps": {
+      "syncing": "시스템 패키지를 동기화하고 업데이트하는 중 (pacman -syyu)...",
+      "all_installed": "-> 모든 패키지가 이미 설치되어 있습니다! 패키지 다운로드 단계를 건너뜁니다.",
+      "missing_count": "-> 설치할 패키지 {count}개를 찾았습니다.",
+      "installing_title": "시스템 패키지와 의존성을 설치하는 중...",
+      "installing_pkg": "{pkg} 설치 중...",
+      "install_ok": "{pkg} 설치 완료",
+      "install_failed": "{pkg} 설치 실패"
+    },
+    "deploy": {
+      "configuring_sddm": "SDDM 디스플레이 관리자를 설정하는 중...",
+      "disabling_dm": "-> 충돌하는 디스플레이 관리자를 비활성화합니다: {dm}",
+      "sddm_success": "-> SDDM material you 테마 설치 및 서비스 활성화 완료 [ OK ]"
+    }
+  },
+  "translator": {
+    "title": "번역기",
+    "status_translating": "번역 중...",
+    "speed": "속도: ",
+    "detected": "감지된 언어: ",
+    "input_label": "원문",
+    "placeholder": "여기에 입력하거나 붙여넣거나 말하세요...",
+    "chars": "자",
+    "translation_label": "번역",
+    "empty_prompt": "번역 결과가 바로 여기에 표시됩니다...",
+    "recent": "최근:",
+    "failed": "번역 결과가 없습니다",
+    "quick_settings": "빠른 치환 설정",
+    "replace_settings_title": "선택 영역 빠른 치환",
+    "replace_settings_desc": "선택한 텍스트를 번역해 그 자리에 바꿔 넣습니다",
+    "auto_paste": "번역문 자동 붙여넣기",
+    "auto_paste_sub": "끄면 번역문이 클립보드에만 복사됩니다",
+    "keep_clipboard": "번역문을 클립보드에 유지",
+    "keep_clipboard_sub": "끄면 붙여넣기 후 원래 클립보드 내용이 복원됩니다"
+  },
+  "datetime": {
+    "full_date": "MMMM d일 dddd"
+  }
+}
