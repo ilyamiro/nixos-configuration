@@ -14,3 +14,4 @@ BtWidget 1.0 system/BtWidget.qml
 KbWidget 1.0 system/KbWidget.qml
 VolWidget 1.0 system/VolWidget.qml
 WifiWidget 1.0 system/WifiWidget.qml
+NetSpeedWidget 1.0 system/NetSpeedWidget.qml
