@@ -890,7 +890,9 @@
       "clock": "Reloj",
       "music": "Música",
       "weather": "Clima",
-      "image": "Imagen"
+      "image": "Imagen",
+      "visualizer": "Visualizador",
+      "user": "Usuario"
     },
     "variants": {
       "digital": "Digital",
@@ -900,7 +902,10 @@
       "compact": "Compacto",
       "rect": "Rectangular",
       "minimal": "Minimalista",
-      "rounded": "Redondeado"
+      "rounded": "Redondeado",
+      "bars": "Barras",
+      "continuous": "Continuo",
+      "default": "Predeterminado"
     }
   },
   "cli": {

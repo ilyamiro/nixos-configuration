@@ -890,7 +890,9 @@
       "clock": "Uhr",
       "music": "Musik",
       "weather": "Wetter",
-      "image": "Bild"
+      "image": "Bild",
+      "visualizer": "Visualisierer",
+      "user": "Benutzer"
     },
     "variants": {
       "digital": "Digital",
@@ -900,7 +902,10 @@
       "compact": "Kompakt",
       "minimal": "Minimalistisch",
       "rect": "Rechteckig",
-      "rounded": "Abgerundet"
+      "rounded": "Abgerundet",
+      "bars": "Balken",
+      "continuous": "Kontinuierlich",
+      "default": "Standard"
     }
   },
   "cli": {

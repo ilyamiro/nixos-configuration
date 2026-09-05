@@ -55,15 +55,15 @@ QtObject {
 
     readonly property var types: ({
         "visualizer": {
-            name: "Visualizer",
+            name: I18n.t("widgets.types.visualizer"),
             icon: "󰎈",
             iconOffsetX: 0,
             defaultWidth: Math.round((Quickshell.screens && Quickshell.screens.length > 0 ? Quickshell.screens[0].width : 1920) / 2),
             defaultHeight: 180,
             defaultVariant: "bars",
             variants: {
-                "bars": { file: "faces/VisualizerFace.qml", icon: "1", label: "Bars" },
-                "continuous": { file: "faces/VisualizerFaceContinuous.qml", icon: "2", label: "Continuous" }
+                "bars": { file: "faces/VisualizerFace.qml", icon: "1", label: I18n.t("widgets.variants.bars") },
+                "continuous": { file: "faces/VisualizerFaceContinuous.qml", icon: "2", label: I18n.t("widgets.variants.continuous") }
             },
             additionalSettings: [
                 {
@@ -182,14 +182,14 @@ QtObject {
             ]
         },
         "user": {
-            name: "User",
+            name: I18n.t("widgets.types.user"),
             icon: "",
             iconOffsetX: 0,
             defaultWidth: 260,
             defaultHeight: 140,
             defaultVariant: "default",
             variants: {
-                "default": { file: "faces/UserFace.qml", icon: "1", label: "Default" }
+                "default": { file: "faces/UserFace.qml", icon: "1", label: I18n.t("widgets.variants.default") }
             }
         }
     })

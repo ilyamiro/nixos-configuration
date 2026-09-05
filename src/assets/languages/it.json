@@ -845,7 +845,9 @@
       "clock": "Orologio",
       "music": "Musica",
       "weather": "Meteo",
-      "image": "Immagine"
+      "image": "Immagine",
+      "visualizer": "Visualizzatore",
+      "user": "Utente"
     },
     "variants": {
       "digital": "Digitale",
@@ -855,7 +857,10 @@
       "round": "Rotondo",
       "compact": "Compatto",
       "rect": "Rettangolare",
-      "rounded": "Arrotondato"
+      "rounded": "Arrotondato",
+      "bars": "Barre",
+      "continuous": "Continuo",
+      "default": "Predefinito"
     }
   },
   "cli": {

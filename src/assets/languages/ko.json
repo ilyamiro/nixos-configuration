@@ -846,7 +846,9 @@
       "clock": "시계",
       "music": "음악",
       "weather": "날씨",
-      "image": "이미지"
+      "image": "이미지",
+      "visualizer": "시각화 도구",
+      "user": "사용자"
     },
     "variants": {
       "digital": "디지털",
@@ -856,7 +858,10 @@
       "round": "원형",
       "compact": "간소",
       "rect": "사각형",
-      "rounded": "둥근 사각형"
+      "rounded": "둥근 사각형",
+      "bars": "막대",
+      "continuous": "연속형",
+      "default": "기본"
     }
   },
   "cli": {

@@ -846,7 +846,9 @@
       "clock": "Đồng hồ",
       "music": "Nhạc",
       "weather": "Thời tiết",
-      "image": "Hình ảnh"
+      "image": "Hình ảnh",
+      "visualizer": "Trình trực quan hóa",
+      "user": "Người dùng"
     },
     "variants": {
       "digital": "Điện tử",
@@ -856,7 +858,10 @@
       "round": "Tròn",
       "compact": "Gọn nhẹ",
       "rect": "Chữ nhật",
-      "rounded": "Bo tròn"
+      "rounded": "Bo tròn",
+      "bars": "Thanh",
+      "continuous": "Liên tục",
+      "default": "Mặc định"
     }
   },
   "cli": {

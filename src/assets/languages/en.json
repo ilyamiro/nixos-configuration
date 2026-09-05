@@ -846,7 +846,9 @@
       "clock": "Clock",
       "music": "Music",
       "weather": "Weather",
-      "image": "Image"
+      "image": "Image",
+      "visualizer": "Visualizer",
+      "user": "User"
     },
     "variants": {
       "digital": "Digital",
@@ -856,7 +858,10 @@
       "round": "Round",
       "compact": "Compact",
       "rect": "Rect",
-      "rounded": "Rounded"
+      "rounded": "Rounded",
+      "bars": "Bars",
+      "continuous": "Continuous",
+      "default": "Default"
     }
   },
   "cli": {
