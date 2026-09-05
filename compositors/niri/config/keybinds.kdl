@@ -20,6 +20,8 @@ binds {
     Mod+Space { spawn "playerctl" "play-pause"; }
     XF86AudioPause { spawn "playerctl" "play-pause"; }
     XF86AudioPlay { spawn "playerctl" "play-pause"; }
+    XF86AudioPrev { spawn "playerctl" "previous"; }
+    XF86AudioNext { spawn "playerctl" "next"; }
     XF86AudioMicMute { spawn "serpantinum" "volume" "mic-toggle"; }
     XF86AudioMute { spawn "serpantinum" "volume" "mute-toggle"; }
     XF86AudioLowerVolume { spawn "serpantinum" "volume" "lower"; }
