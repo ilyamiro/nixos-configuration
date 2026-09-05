@@ -19,6 +19,7 @@ Rectangle {
     property bool isCompact: isGrouped || (isSolid && distinctPills)
     readonly property bool isRightBar: barWindow ? (barWindow.barPosition === "right") : false
 
+    property bool isCleaningUp: false
     property bool isRecording: false
     property int recSeconds: 0
     property real recStartEpoch: 0
@@ -33,7 +34,7 @@ Rectangle {
     readonly property bool hasActiveContent: isRecording || isTimerActive
 
     function checkRecording() {
-        if (!sideInfoWidgetRoot.moduleActive || sideInfoWidgetRoot.recCacheDir === "") return;
+        if (sideInfoWidgetRoot.isCleaningUp || !sideInfoWidgetRoot.moduleActive || sideInfoWidgetRoot.recCacheDir === "") return;
         recCheckProc.running = false;
         recCheckProc.running = true;
     }
@@ -75,22 +76,22 @@ Rectangle {
 
     Process {
         id: recWatcher
-        running: sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.recCacheDir !== ""
+        running: !sideInfoWidgetRoot.isCleaningUp && sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.recCacheDir !== ""
         command: sideInfoWidgetRoot.recCacheDir ? [
             "bash", "-c",
-            "mkdir -p '" + sideInfoWidgetRoot.recCacheDir + "' && inotifywait -m -e create,delete,modify,moved_to,moved_from '" + sideInfoWidgetRoot.recCacheDir + "' 2>/dev/null"
+            "mkdir -p '" + sideInfoWidgetRoot.recCacheDir + "' && exec inotifywait -m -e create,delete,modify,moved_to,moved_from '" + sideInfoWidgetRoot.recCacheDir + "' 2>/dev/null"
         ] : []
         stdout: SplitParser {
             onRead: data => {
                 sideInfoWidgetRoot.checkRecording();
             }
         }
-        onExited: {
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode === 127 || sideInfoWidgetRoot.isCleaningUp) return;
             if (sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.recCacheDir !== "") {
                 recWatcherRestartTimer.restart();
             }
         }
-        Component.onDestruction: running = false
     }
 
     Timer {
@@ -98,15 +99,16 @@ Rectangle {
         interval: 1000
         repeat: false
         onTriggered: {
-            recWatcher.running = false;
-            recWatcher.running = true;
+            if (!sideInfoWidgetRoot.isCleaningUp && sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.recCacheDir !== "" && !recWatcher.running) {
+                recWatcher.running = true;
+            }
         }
     }
 
     Timer {
         id: recElapsedTimer
         interval: 1000
-        running: sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.isRecording
+        running: !sideInfoWidgetRoot.isCleaningUp && sideInfoWidgetRoot.moduleActive && sideInfoWidgetRoot.isRecording
         repeat: true
         onTriggered: {
             sideInfoWidgetRoot.recSeconds = Math.max(0, Math.floor(Date.now() / 1000 - sideInfoWidgetRoot.recStartEpoch));
@@ -293,5 +295,12 @@ Rectangle {
 
     Component.onCompleted: {
         sideInfoWidgetRoot.checkRecording();
+    }
+
+    Component.onDestruction: {
+        sideInfoWidgetRoot.isCleaningUp = true;
+        recWatcherRestartTimer.stop();
+        recWatcher.running = false;
+        recCheckProc.running = false;
     }
 }

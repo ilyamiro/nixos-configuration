@@ -19,6 +19,7 @@ Rectangle {
     property bool isCompact: isGrouped || (isSolid && distinctPills)
     readonly property bool isBottomBar: barWindow ? (barWindow.barPosition === "bottom") : false
 
+    property bool isCleaningUp: false
     property bool isRecording: false
     property int recSeconds: 0
     property real recStartEpoch: 0
@@ -33,7 +34,7 @@ Rectangle {
     readonly property bool hasActiveContent: isRecording || isTimerActive
 
     function checkRecording() {
-        if (!infoWidgetRoot.moduleActive || infoWidgetRoot.recCacheDir === "") return;
+        if (infoWidgetRoot.isCleaningUp || !infoWidgetRoot.moduleActive || infoWidgetRoot.recCacheDir === "") return;
         recCheckProc.running = false;
         recCheckProc.running = true;
     }
@@ -75,22 +76,22 @@ Rectangle {
 
     Process {
         id: recWatcher
-        running: infoWidgetRoot.moduleActive && infoWidgetRoot.recCacheDir !== ""
+        running: !infoWidgetRoot.isCleaningUp && infoWidgetRoot.moduleActive && infoWidgetRoot.recCacheDir !== ""
         command: infoWidgetRoot.recCacheDir ? [
             "bash", "-c",
-            "mkdir -p '" + infoWidgetRoot.recCacheDir + "' && inotifywait -m -e create,delete,modify,moved_to,moved_from '" + infoWidgetRoot.recCacheDir + "' 2>/dev/null"
+            "mkdir -p '" + infoWidgetRoot.recCacheDir + "' && exec inotifywait -m -e create,delete,modify,moved_to,moved_from '" + infoWidgetRoot.recCacheDir + "' 2>/dev/null"
         ] : []
         stdout: SplitParser {
             onRead: data => {
                 infoWidgetRoot.checkRecording();
             }
         }
-        onExited: {
+        onExited: (exitCode, exitStatus) => {
+            if (exitCode === 127 || infoWidgetRoot.isCleaningUp) return;
             if (infoWidgetRoot.moduleActive && infoWidgetRoot.recCacheDir !== "") {
                 recWatcherRestartTimer.restart();
             }
         }
-        Component.onDestruction: running = false
     }
 
     Timer {
@@ -98,15 +99,16 @@ Rectangle {
         interval: 1000
         repeat: false
         onTriggered: {
-            recWatcher.running = false;
-            recWatcher.running = true;
+            if (!infoWidgetRoot.isCleaningUp && infoWidgetRoot.moduleActive && infoWidgetRoot.recCacheDir !== "" && !recWatcher.running) {
+                recWatcher.running = true;
+            }
         }
     }
 
     Timer {
         id: recElapsedTimer
         interval: 1000
-        running: infoWidgetRoot.moduleActive && infoWidgetRoot.isRecording
+        running: !infoWidgetRoot.isCleaningUp && infoWidgetRoot.moduleActive && infoWidgetRoot.isRecording
         repeat: true
         onTriggered: {
             infoWidgetRoot.recSeconds = Math.max(0, Math.floor(Date.now() / 1000 - infoWidgetRoot.recStartEpoch));
@@ -291,5 +293,12 @@ Rectangle {
 
     Component.onCompleted: {
         infoWidgetRoot.checkRecording();
+    }
+
+    Component.onDestruction: {
+        infoWidgetRoot.isCleaningUp = true;
+        recWatcherRestartTimer.stop();
+        recWatcher.running = false;
+        recCheckProc.running = false;
     }
 }
