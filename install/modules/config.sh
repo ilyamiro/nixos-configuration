@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 CONFIG_DIR="$HOME/.config/serpantinum"
 CONFIG_FILE="$CONFIG_DIR/settings.json"
 
@@ -41,9 +39,11 @@ init_serpantinum_config() {
         echo "{}" > "$CONFIG_FILE"
     fi
 
-    if [ -f "$script_path" ]; then
-        bash "$script_path" --refresh >/dev/null 2>&1 || true
-    elif [ -f "$HOME/.local/share/serpantinum/src/scripts/location.sh" ]; then
-        bash "$HOME/.local/share/serpantinum/src/scripts/location.sh" --refresh >/dev/null 2>&1 || true
+    if [[ "$is_reinstall" == "true" || "$install_state" == "fresh" || "$install_state" == "legacy" ]]; then
+        if [ -f "$script_path" ]; then
+            bash "$script_path" --refresh >/dev/null 2>&1 || true
+        elif [ -f "$HOME/.local/share/serpantinum/src/scripts/location.sh" ]; then
+            bash "$HOME/.local/share/serpantinum/src/scripts/location.sh" --refresh >/dev/null 2>&1 || true
+        fi
     fi
 }
