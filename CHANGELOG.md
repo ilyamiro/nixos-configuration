@@ -1,3 +1,24 @@
+### 2.1.1
+
+- feat/refactor: add a user widget and relocate sysinfo singletons
+- fix: prevent location from auto-updating on re-boots or updates
+- fix: fix inotifywait processes not being killed and being left as orphans
+- style: change the toggle style in the launchertab
+- feat: add a toggle to show the bar in the widget redactor
+- fix: fix resize clamping bug in a widgetredactor
+- fix: duplication bug in the wallpaperpicker
+- style: change the cava template background color to surface
+- i18n: add languages for the new capture setting
+- feat(screenshot): optionally capture the region on mouse release (#239)
+- style: make the visualizer widgets smoothly zero-out on the edges
+- replace widget ipc calls with faster and immidiate singleton calls
+- fix: fix jitter by removing continous background wifi-scanning
+- feat: switch close-window keybind from Alt+f4 to Super + Q, and switch a music keybind to Super+M instead of Super + Q
+- fix: a typo in matugen static config. Replace fastfetch with config
+- feat: make the widgets in the redactor shrink if they become too big after rotation to prevent inaccassible states
+- fix: fix the bug where the redactor toolbar for widgets wouldn't disappear
+- fix: remove automatic network scanning to prevent jitter
+
 ### 2.1.0
 
 - feat: add rotation iconbutton into the widget toolbar, allow to rotate widgets by 90 degrees
