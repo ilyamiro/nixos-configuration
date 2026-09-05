@@ -5,8 +5,6 @@ import Quickshell
 import Quickshell.Io
 import "../../"
 import "../../reusables"
-import "../../info"
-import "../../singletons"
 
 Item {
     id: displayTabRoot

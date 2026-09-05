@@ -3,7 +3,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
 import "../"
-import "../info"
 
 Item {
     id: root
