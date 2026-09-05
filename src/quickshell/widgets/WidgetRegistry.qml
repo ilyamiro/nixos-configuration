@@ -180,6 +180,17 @@ QtObject {
                     textColor: "mauve"
                 }
             ]
+        },
+        "user": {
+            name: "User",
+            icon: "",
+            iconOffsetX: 0,
+            defaultWidth: 260,
+            defaultHeight: 140,
+            defaultVariant: "default",
+            variants: {
+                "default": { file: "faces/UserFace.qml", icon: "1", label: "Default" }
+            }
         }
     })
 

@@ -8,7 +8,6 @@ TrayBase 1.0 popouts/TrayBase.qml
 Osd 1.0 popouts/Osd.qml
 SideMusicPopout popouts/SideMusicPopout.qml
 
-
 singleton Wallpaper 1.0 singletons/Wallpaper.qml 
 singleton Audio 1.0 singletons/Audio.qml
 singleton Caching 1.0 singletons/Caching.qml
@@ -29,6 +28,8 @@ singleton TimerState 1.0 singletons/TimerState.qml
 singleton Updater 1.0 singletons/Updater.qml 
 singleton BlueLight 1.0 singletons/BlueLight.qml
 singleton FirstLaunch 1.0 singletons/FirstLaunch.qml
+singleton SystemInfo 1.0 singletons/info/SystemInfo.qml
+singleton SysData 1.0 singletons/info/SysData.qml
 
 singleton TrayMenuController 1.0 singletons/widgetcontrols/TrayMenuController.qml
 singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qml
@@ -51,9 +52,6 @@ Idle 1.0 idle/Idle.qml
 
 Start 1.0 serp/Start.qml
 Serpantinum 1.0 serp/Serpantinum.qml
-
-singleton SystemInfo 1.0 info/SystemInfo.qml
-singleton SysData 1.0 info/SysData.qml
 
 Lock 1.0 lock/Lock.qml
 
