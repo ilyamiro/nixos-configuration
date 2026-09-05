@@ -16,7 +16,9 @@ for pid in $(pgrep -f "$(basename "$0")"); do
 done
 
 cleanup() {
+    trap - EXIT SIGTERM SIGINT
     pkill -P $$ 2>/dev/null
+    exit 0
 }
 trap cleanup EXIT SIGTERM SIGINT
 
