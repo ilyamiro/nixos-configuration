@@ -422,7 +422,7 @@
     },
     "wellbeing": {
       "desktop": "Desktop",
-      "not_available": "N/a",
+      "not_available": "N/d",
       "am": "AM",
       "pm": "PM",
       "today": "Oggi",
@@ -1012,7 +1012,7 @@
       "installed_success": "✔ Serpantinum {ver} ({commit}) installato con successo.",
       "failed_packages": "Si sono verificati errori durante l'installazione dei seguenti pacchetti:",
       "restart_prompt": "Riavvia il compositor o esegui 'serpantinumd start' per iniziare.",
-      "ask_reboot": "Vuoi riavviare ora? [s/n] "
+      "ask_reboot": "Vuoi riavviare ora? [y/n] "
     },
     "deps": {
       "syncing": "Sincronizzazione e aggiornamento dei pacchetti di sistema (pacman -syyu)...",
