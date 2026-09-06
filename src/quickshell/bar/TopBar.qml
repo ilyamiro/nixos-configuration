@@ -66,7 +66,7 @@ Item {
     property var defaultModuleSettings: {
         "left": ["left", "workspaces", "focus"],
         "center": ["timedate", "info", "weather", "media", "vis"],
-        "right": ["tray", "sysmon", "kb", "wifi", "bt", "vol", "bat"]
+        "right": ["tray", "sysmon", "netspeed", "kb", "wifi", "bt", "vol", "bat"]
     }
 
     function parseModuleSettings(ms) {
@@ -79,13 +79,13 @@ Item {
                 if (Array.isArray(arr[i])) {
                     let group = [];
                     for (let j = 0; j < arr[i].length; j++) {
-                        if (arr[i][j] === "system") group.push("sysmon", "kb", "wifi", "bt", "vol", "bat");
+                        if (arr[i][j] === "system") group.push("sysmon", "netspeed", "kb", "wifi", "bt", "vol", "bat");
                         else group.push(arr[i][j]);
                     }
                     if (group.length === 1) res.push(group[0]);
                     else if (group.length > 1) res.push(group);
                 } else {
-                    if (arr[i] === "system") res.push(["sysmon", "kb", "wifi", "bt", "vol", "bat"]);
+                    if (arr[i] === "system") res.push(["sysmon", "netspeed", "kb", "wifi", "bt", "vol", "bat"]);
                     else res.push(arr[i]);
                 }
             }
@@ -206,6 +206,7 @@ Item {
     property real wVis: isModuleActive("vis") ? (visWidget.targetWidth !== undefined ? visWidget.targetWidth : visWidget.width) : 0
     property real wTray: isModuleActive("tray") ? (trayWidget.targetWidth !== undefined ? trayWidget.targetWidth : trayWidget.width) : 0
     property real wSysmon: isModuleActive("sysmon") ? (sysMonWidget.targetWidth !== undefined ? sysMonWidget.targetWidth : sysMonWidget.width) : 0
+    property real wNetSpeed: isModuleActive("netspeed") ? (netSpeedWidget.targetWidth !== undefined ? netSpeedWidget.targetWidth : netSpeedWidget.width) : 0
     property real wKb: isModuleActive("kb") ? (kbWidget.targetWidth !== undefined ? kbWidget.targetWidth : kbWidget.width) : 0
     property real wWifi: isModuleActive("wifi") ? (wifiWidget.targetWidth !== undefined ? wifiWidget.targetWidth : wifiWidget.width) : 0
     property real wBt: isModuleActive("bt") ? (btWidget.targetWidth !== undefined ? btWidget.targetWidth : btWidget.width) : 0
@@ -223,6 +224,7 @@ Item {
         if (moduleId === "vis") return wVis;
         if (moduleId === "tray") return wTray;
         if (moduleId === "sysmon") return wSysmon;
+        if (moduleId === "netspeed") return wNetSpeed;
         if (moduleId === "kb") return wKb;
         if (moduleId === "wifi") return wWifi;
         if (moduleId === "bt") return wBt;
@@ -414,6 +416,7 @@ Item {
         if (id === "vis") return visWidget;
         if (id === "tray") return trayWidget;
         if (id === "sysmon") return sysMonWidget;
+        if (id === "netspeed") return netSpeedWidget;
         if (id === "kb") return kbWidget;
         if (id === "wifi") return wifiWidget;
         if (id === "bt") return btWidget;
@@ -843,6 +846,28 @@ Item {
         }
     }
 
+    NetSpeedWidget {
+        id: netSpeedWidget
+        z: 1
+        x: targetX
+        y: barWindow ? barWindow.baseOffsetY : 0
+        visible: contentWrapper.isModuleActive("netspeed")
+        barWindow: contentWrapper.barWindow
+        isSolid: contentWrapper.isSolid || contentWrapper.isFill
+        moduleActive: contentWrapper.isModuleActive("netspeed")
+        isGrouped: contentWrapper.isModuleGrouped("netspeed")
+        targetX: contentWrapper.getModuleX("netspeed", contentWrapper.layoutState)
+
+        Behavior on opacity {
+            NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        }
+
+        Behavior on x {
+            enabled: contentWrapper.layoutAnimationsEnabled
+            NumberAnimation { duration: 300; easing.type: Easing.OutCubic }
+        }
+    }
+
     KbWidget {
         id: kbWidget
         z: 1
@@ -967,7 +992,7 @@ Item {
         property alias batPill: batWidget.batPill
 
         function getBounds() {
-            let pills = [sysMonWidget, kbWidget, wifiWidget, btWidget, volWidget, batWidget];
+            let pills = [sysMonWidget, netSpeedWidget, kbWidget, wifiWidget, btWidget, volWidget, batWidget];
             let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             let found = false;
             for (let i = 0; i < pills.length; i++) {
