@@ -228,8 +228,6 @@ try:
                                     max_x = max(max_x, x)
                                     min_y = min(min_y, y)
                                     max_y = max(max_y, y)
-                                    min_y = min(min_y, y)
-                                    max_y = max(max_y, y)
                                 except ValueError:
                                     pass
             if min_x == float('inf'): min_x, min_y, max_x, max_y = 0, 0, 0, 0
