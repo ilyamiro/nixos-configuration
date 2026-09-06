@@ -597,7 +597,7 @@ PanelWindow {
                 opacity: (root.showQrPopup && model.qSuccess && model.qW > 0) ? 1.0 : 0.0
                 property real pad: (root.showQrPopup && model.qSuccess) ? s(5) : 0
                 x: model.qW > 0 ? (model.qX - pad) : model.qX
-                y: model.qH > 0 ? (model.qH - pad) : model.qY
+                y: model.qH > 0 ? (model.qY - pad) : model.qY
                 width: model.qW > 0 ? (model.qW + (pad * 2)) : 0
                 height: model.qH > 0 ? (model.qH + (pad * 2)) : 0
                 color: Qt.alpha(ThemeBackend.green, 0.25)
