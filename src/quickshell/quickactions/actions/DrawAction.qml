@@ -108,7 +108,7 @@ Item {
 
     FileView {
         id: palettesFile
-        path: Caching.getConfigDir("quickactions") + "/palettes.json"
+        path: Caching.getStateDir("quickactions") + "/palettes.json"
         onDataChanged: {
             if (data) {
                 try {

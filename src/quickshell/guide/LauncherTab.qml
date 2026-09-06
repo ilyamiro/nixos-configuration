@@ -4,8 +4,6 @@ import QtQuick.Controls
 import Quickshell
 import "../"
 import "../reusables"
-import "../singletons"
-import "../singletons/widgetcontrols"
 
 Item {
     id: launcherTabRoot

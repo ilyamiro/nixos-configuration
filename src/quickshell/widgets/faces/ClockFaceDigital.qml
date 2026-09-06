@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../"
-import "../../singletons"
 
 Item {
     id: root

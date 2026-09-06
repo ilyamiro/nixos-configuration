@@ -1,7 +1,7 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import "../"
+import "../../"
 
 Item {
     id: root

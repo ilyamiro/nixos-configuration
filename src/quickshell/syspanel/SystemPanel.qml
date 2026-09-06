@@ -11,7 +11,6 @@ import Quickshell.Services.UPower
 import Quickshell.Services.Pipewire
 import "../"
 import "../reusables"
-import "../singletons"
 
 Item {
     id: root

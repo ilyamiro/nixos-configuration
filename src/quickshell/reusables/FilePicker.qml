@@ -5,7 +5,6 @@ import QtQuick.Effects
 import Qt.labs.folderlistmodel
 import Quickshell
 import "../"
-import "../singletons"
 
 Popup {
     id: pickerRoot

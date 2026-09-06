@@ -4,7 +4,6 @@ import Quickshell.Wayland
 import Quickshell.Io
 import QtMultimedia
 import "../"
-import "../singletons"
 
 ShellRoot {
     id: globalRoot
@@ -372,8 +371,8 @@ ShellRoot {
                             asynchronous: true
                             visible: !barWindow.isVideoA && barWindow.pathA !== ""
                             cache: true
-                            sourceSize.width: parent.width > 0 ? parent.width : undefined
-                            sourceSize.height: parent.height > 0 ? parent.height : undefined
+                            sourceSize.width: parent.width > 0 ? parent.width : 0
+                            sourceSize.height: parent.height > 0 ? parent.height : 0
                         }
 
                         Loader {
@@ -415,8 +414,8 @@ ShellRoot {
                             asynchronous: true
                             visible: !barWindow.isVideoB && barWindow.pathB !== ""
                             cache: true
-                            sourceSize.width: parent.width > 0 ? parent.width : undefined
-                            sourceSize.height: parent.height > 0 ? parent.height : undefined
+                            sourceSize.width: parent.width > 0 ? parent.width : 0
+                            sourceSize.height: parent.height > 0 ? parent.height : 0
                         }
 
                         Loader {

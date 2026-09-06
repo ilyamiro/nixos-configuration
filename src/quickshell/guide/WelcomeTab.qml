@@ -3,7 +3,6 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import "../"
-import "../singletons"
 import "../reusables"
 
 Item {

@@ -7,7 +7,6 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.SystemTray
 import "../../reusables"
-import "../../singletons"
 import "../../"
 
 Rectangle {

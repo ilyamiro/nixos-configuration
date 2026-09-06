@@ -1,68 +1,61 @@
-Clipboard 1.0 clipboard/Clipboard.qml
-Launcher 1.0 launcher/Launcher.qml
-
 Dim 1.0 Dim.qml
 Main 1.0 Main.qml
 
-TrayBase 1.0 popouts/TrayBase.qml
-Osd 1.0 popouts/Osd.qml
-SideMusicPopout popouts/SideMusicPopout.qml
-
-singleton Wallpaper 1.0 singletons/Wallpaper.qml 
-singleton Audio 1.0 singletons/Audio.qml
-singleton Caching 1.0 singletons/Caching.qml
-singleton Cava 1.0 singletons/Cava.qml
-singleton Config 1.0 singletons/Config.qml
-singleton I18n 1.0 singletons/I18n.qml
-singleton Scaler 1.0 singletons/Scaler.qml
-singleton Sounds 1.0 singletons/Sounds.qml
-singleton ThemeBackend 1.0 singletons/ThemeBackend.qml
-singleton MprisController 1.0 singletons/MprisController.qml
-singleton CurrentFocus 1.0 singletons/CurrentFocus.qml
-singleton Location 1.0 singletons/Location.qml
-singleton SysNotif 1.0 singletons/SysNotif.qml
-singleton Matugen 1.0 singletons/Matugen.qml
-singleton DateTime 1.0 singletons/DateTime.qml
-singleton Weather 1.0 singletons/Weather.qml
-singleton TimerState 1.0 singletons/TimerState.qml
-singleton Updater 1.0 singletons/Updater.qml 
-singleton BlueLight 1.0 singletons/BlueLight.qml
-singleton FirstLaunch 1.0 singletons/FirstLaunch.qml
-singleton SystemInfo 1.0 singletons/info/SystemInfo.qml
-singleton SysData 1.0 singletons/info/SysData.qml
-
-singleton TrayMenuController 1.0 singletons/widgetcontrols/TrayMenuController.qml
-singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qml
-singleton OsdController 1.0 singletons/widgetcontrols/OsdController.qml
-singleton SideMusicController 1.0 singletons/widgetcontrols/SideMusicController.qml
-singleton ClipboardController 1.0 singletons/widgetcontrols/ClipboardController.qml
-singleton FloatingController 1.0 singletons/widgetcontrols/FloatingController.qml
-singleton WidgetSync 1.0 singletons/widgetcontrols/WidgetSync.qml
-
-PopoutManager 1.0 popouts/PopoutManager.qml
-
-WidgetLoader 1.0 widgets/WidgetLoader.qml
-WidgetRedactor 1.0 widgets/WidgetRedactor.qml
-
-WallpaperEngine 1.0 wallpaper/WallpaperEngine.qml
-
+Bar 1.0 bar/Bar.qml
+Floating 1.0 quickactions/Floating.qml
+Clipboard 1.0 clipboard/Clipboard.qml
+Launcher 1.0 launcher/Launcher.qml
 ScreenshotOverlay 1.0 screenshot/ScreenshotOverlay.qml
-
+WallpaperEngine 1.0 wallpaper/WallpaperEngine.qml
 Idle 1.0 idle/Idle.qml
+Lock 1.0 lock/Lock.qml
 
 Start 1.0 serp/Start.qml
 Serpantinum 1.0 serp/Serpantinum.qml
 
-Lock 1.0 lock/Lock.qml
+Osd 1.0 popouts/Osd.qml
+PopoutManager 1.0 popouts/PopoutManager.qml
+SideMusicPopout 1.0 popouts/SideMusicPopout.qml
+TrayBase 1.0 popouts/TrayBase.qml
+
+WidgetLoader 1.0 widgets/WidgetLoader.qml
+WidgetRedactor 1.0 widgets/WidgetRedactor.qml
 
 Polkit 1.0 polkit/Polkit.qml
 singleton PolkitService 1.0 polkit/PolkitService.qml
-
 singleton NotificationManager 1.0 notifications/NotificationManager.qml
 
-Floating 1.0 quickactions/Floating.qml
+singleton Audio 1.0 singletons/audio/Audio.qml
+singleton Cava 1.0 singletons/audio/Cava.qml
+singleton MprisController 1.0 singletons/audio/MprisController.qml
+singleton Sounds 1.0 singletons/audio/Sounds.qml
 
-Bar 1.0 bar/Bar.qml
+singleton Matugen 1.0 singletons/theme/Matugen.qml
+singleton Scaler 1.0 singletons/theme/Scaler.qml
+singleton ThemeBackend 1.0 singletons/theme/ThemeBackend.qml
+singleton Wallpaper 1.0 singletons/theme/Wallpaper.qml
 
+singleton BlueLight 1.0 singletons/environment/BlueLight.qml
+singleton Location 1.0 singletons/environment/Location.qml
+singleton Weather 1.0 singletons/environment/Weather.qml
 
+singleton Caching 1.0 singletons/system/Caching.qml
+singleton Config 1.0 singletons/system/Config.qml
+singleton CurrentFocus 1.0 singletons/system/CurrentFocus.qml
+singleton DateTime 1.0 singletons/system/DateTime.qml
+singleton FirstLaunch 1.0 singletons/system/FirstLaunch.qml
+singleton I18n 1.0 singletons/system/I18n.qml
+singleton SysNotif 1.0 singletons/system/SysNotif.qml
+singleton TimerState 1.0 singletons/system/TimerState.qml
+singleton Updater 1.0 singletons/system/Updater.qml
 
+singleton SysData 1.0 singletons/info/SysData.qml
+singleton SystemInfo 1.0 singletons/info/SystemInfo.qml
+
+singleton ClipboardController 1.0 singletons/widgetcontrols/ClipboardController.qml
+singleton FloatingController 1.0 singletons/widgetcontrols/FloatingController.qml
+singleton LauncherController 1.0 singletons/widgetcontrols/LauncherController.qml
+singleton OsdController 1.0 singletons/widgetcontrols/OsdController.qml
+singleton SideMusicController 1.0 singletons/widgetcontrols/SideMusicController.qml
+singleton TrayMenuController 1.0 singletons/widgetcontrols/TrayMenuController.qml
+singleton WidgetSync 1.0 singletons/widgetcontrols/WidgetSync.qml
