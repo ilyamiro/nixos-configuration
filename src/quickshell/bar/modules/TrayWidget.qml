@@ -79,7 +79,7 @@ Rectangle {
             TrayMenuController.hide();
         }
         function onIsRevealedChanged() {
-            if (barWindow && !barWindow.isRevealed) {
+            if (barWindow && !barWindow.isRevealed && !TrayMenuController.menuHovered) {
                 TrayMenuController.hide();
             }
         }

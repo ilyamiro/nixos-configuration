@@ -36,9 +36,9 @@ Item {
     readonly property real boxRadius: Math.min(ThemeBackend.borderRadius, root.s(20))
     readonly property real cardRadius: Math.min(ThemeBackend.borderRadius, root.s(14))
 
-    readonly property color briColor: Qt.lighter(ThemeBackend.mauve, 1.1)
-    readonly property color volColor: Qt.lighter(ThemeBackend.sapphire, 1.5)
-    readonly property color profileColor: Qt.lighter(ThemeBackend.blue, 1.55)
+    readonly property color briColor: ThemeBackend.peach
+    readonly property color volColor: ThemeBackend.blue
+    readonly property color profileColor: ThemeBackend.mauve
     readonly property int batCapacity: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
 
     readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
@@ -384,7 +384,7 @@ Item {
         signal leftClicked()
         signal rightClicked()
 
-        color: isActive ? activeColor : (qaMa.containsMouse ? ThemeBackend.surface1 : Qt.darker(ThemeBackend.surface0, 1.04))
+        color: isActive ? activeColor : (qaMa.containsMouse ? ThemeBackend.surface2 : ThemeBackend.surface1)
         Behavior on color {
             enabled: root.visible
             ColorAnimation { duration: 150 }
@@ -400,7 +400,7 @@ Item {
             anchors.centerIn: parent
             font.family: "Iosevka Nerd Font"
             font.pixelSize: root.s(22)
-            color: qaBtn.isActive ? ThemeBackend.crust : (qaMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
+            color: qaBtn.isActive ? ThemeBackend.crust : (qaMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext1)
             text: qaBtn.iconText
             Behavior on color {
                 enabled: root.visible
@@ -424,7 +424,7 @@ Item {
     Rectangle {
         id: sidebarPanel
         anchors.fill: parent
-        color: Qt.rgba(ThemeBackend.base.r, ThemeBackend.base.g, ThemeBackend.base.b, 0.97)
+        color: Qt.rgba(ThemeBackend.base.r, ThemeBackend.base.g, ThemeBackend.base.b, 0.98)
         radius: Math.min(ThemeBackend.borderRadius, root.s(28))
         border.width: 0
         clip: true
@@ -448,7 +448,7 @@ Item {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: root.s(8)
-                spacing: root.s(5)
+                spacing: root.s(6)
 
                 Rectangle {
                     id: userBox
@@ -456,7 +456,7 @@ Item {
                     Layout.preferredHeight: root.s(54)
                     Layout.maximumHeight: root.s(54)
                     radius: root.boxRadius
-                    color: Qt.darker(ThemeBackend.surface0, 1.04)
+                    color: ThemeBackend.surface0
 
                     opacity: root.introTop
                     transform: [
@@ -549,7 +549,7 @@ Item {
                     Layout.preferredHeight: slidersCol.implicitHeight + root.s(20)
                     Layout.maximumHeight: slidersCol.implicitHeight + root.s(20)
                     radius: root.boxRadius
-                    color: Qt.darker(ThemeBackend.surface0, 1.04)
+                    color: ThemeBackend.surface0
 
                     opacity: root.introSliders
                     transform: [
@@ -612,18 +612,18 @@ Item {
                                 showValueBubble: true
                                 valueFormatter: function(v) { return Math.round(v) }
                                 value: root.sysVolume
-                                backgroundColor: ThemeBackend.surface1
+                                backgroundColor: ThemeBackend.surface2
                                 accentColor: root.sysMuted ? ThemeBackend.surface2 : root.volColor
-                                gradColor1: root.sysMuted ? ThemeBackend.surface2 : root.volColor
-                                gradColor2: root.sysMuted ? ThemeBackend.surface2 : Qt.lighter(root.volColor, 1.05)
-                                gradColor3: root.sysMuted ? ThemeBackend.surface2 : Qt.lighter(root.volColor, 1.10)
+                                gradColor1: accentColor
+                                gradColor2: accentColor
+                                gradColor3: accentColor
                                 cornerRadius: root.s(6)
                                 handleSize: root.s(22)
 
-                                handleColor: root.sysMuted ? ThemeBackend.overlay0 : Qt.lighter(root.volColor, 1.15)
-                                handleHoverColor: root.sysMuted ? ThemeBackend.subtext0 : Qt.lighter(root.volColor, 1.5)
-                                handleDragColor: root.sysMuted ? ThemeBackend.text : Qt.lighter(root.volColor, 1.45)
-                                handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
+                                handleColor: root.sysMuted ? ThemeBackend.overlay0 : root.volColor
+                                handleHoverColor: root.sysMuted ? ThemeBackend.subtext0 : Qt.lighter(root.volColor, 1.15)
+                                handleDragColor: root.sysMuted ? ThemeBackend.text : Qt.darker(root.volColor, 1.1)
+                                handleBorderColor: Qt.rgba(0, 0, 0, 0.15)
 
                                 onDragStarted: {
                                     volSyncDelay.stop();
@@ -697,18 +697,18 @@ Item {
                                 showValueBubble: true
                                 valueFormatter: function(v) { return Math.round(v) }
                                 value: root.sysBrightness
-                                backgroundColor: ThemeBackend.surface1
+                                backgroundColor: ThemeBackend.surface2
                                 accentColor: root.briColor
-                                gradColor1: root.briColor
-                                gradColor2: Qt.lighter(root.briColor, 1.05)
-                                gradColor3: Qt.lighter(root.briColor, 1.10)
+                                gradColor1: accentColor
+                                gradColor2: accentColor
+                                gradColor3: accentColor
                                 cornerRadius: root.s(6)
                                 handleSize: root.s(22)
 
-                                handleColor: Qt.lighter(root.briColor, 1.15)
-                                handleHoverColor: Qt.lighter(root.briColor, 1.3)
-                                handleDragColor: Qt.lighter(root.briColor, 1.45)
-                                handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
+                                handleColor: root.briColor
+                                handleHoverColor: Qt.lighter(root.briColor, 1.15)
+                                handleDragColor: Qt.darker(root.briColor, 1.1)
+                                handleBorderColor: Qt.rgba(0, 0, 0, 0.15)
 
                                 onDragStarted: {
                                     briSyncDelay.stop();
@@ -834,7 +834,7 @@ Item {
                         QuickActionBtn {
                             id: coffeeBtn
                             iconText: "󰅶"
-                            activeColor: Qt.tint(ThemeBackend.peach, "#5c3016")
+                            activeColor: ThemeBackend.yellow
 
                             function updateState() {
                                 let idleObj = Config.getSetting("idle", {"manualInhibit": false});
@@ -928,7 +928,7 @@ Item {
                     Layout.minimumHeight: root.s(68)
                     cornerRadius: root.boxRadius
                     cardRadius: root.cardRadius
-                    baseColor: Qt.darker(ThemeBackend.surface0, 1.04)
+                    baseColor: ThemeBackend.surface0
                     rootContext: root
 
                     opacity: root.introNotifs
@@ -965,6 +965,17 @@ Item {
                             property bool showError: false
                             property int chargingSoundHandle: -1
 
+                            readonly property color actionColor: {
+                                switch (cmd) {
+                                    case "lock": return ThemeBackend.blue;
+                                    case "sleep": return ThemeBackend.teal;
+                                    case "hibernate": return ThemeBackend.flamingo;
+                                    case "reboot": return ThemeBackend.peach;
+                                    case "poweroff": return ThemeBackend.red;
+                                    default: return ThemeBackend.blue;
+                                }
+                            }
+
                             opacity: root.introActions
                             transform: [
                                 Translate { id: shakeTranslate; x: 0 },
@@ -972,7 +983,7 @@ Item {
                                 Scale { origin.x: actionCapsule.width / 2; origin.y: actionCapsule.height / 2; xScale: 0.90 + (0.10 * root.introActions); yScale: 0.90 + (0.10 * root.introActions) }
                             ]
 
-                            color: (actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : Qt.darker(ThemeBackend.surface0, 1.04)
+                            color: (actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : ThemeBackend.surface0
                             Behavior on color {
                                 enabled: root.visible
                                 ColorAnimation { duration: 200 }
@@ -1078,7 +1089,7 @@ Item {
                                     }
                                     ctx.closePath();
 
-                                    ctx.fillStyle = (cmd === "poweroff" || cmd === "hibernate" ? ThemeBackend.red : ThemeBackend.blue).toString();
+                                    ctx.fillStyle = actionCapsule.actionColor.toString();
                                     ctx.fill();
                                     ctx.restore();
                                 }
@@ -1106,7 +1117,7 @@ Item {
                                 anchors.centerIn: parent
                                 font.family: "Iosevka Nerd Font"
                                 font.pixelSize: root.s(24)
-                                color: isDisabled ? ThemeBackend.surface2 : (actionMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
+                                color: isDisabled ? ThemeBackend.surface2 : (actionMa.containsMouse ? actionCapsule.actionColor : ThemeBackend.subtext1)
                                 text: icon
                                 Behavior on color {
                                     enabled: root.visible
@@ -1230,7 +1241,7 @@ Item {
                     Layout.preferredHeight: root.isDesktop ? root.s(52) : root.s(72)
                     Layout.maximumHeight: Layout.preferredHeight
                     radius: root.isDesktop ? root.s(15) : root.boxRadius
-                    color: root.isDesktop ? "transparent" : Qt.darker(ThemeBackend.surface0, 1.04)
+                    color: root.isDesktop ? "transparent" : ThemeBackend.surface0
                     clip: true
 
                     opacity: root.introCore
@@ -1396,7 +1407,7 @@ Item {
                             }
                             accentColor: root.profileColor
                             baseColor: ThemeBackend.surface1
-                            textColor: ThemeBackend.text
+                            textColor: ThemeBackend.subtext1
                             activeTextColor: ThemeBackend.crust
                             currentIndex: {
                                 if (PowerProfiles.hasPerformanceProfile) {
