@@ -24,6 +24,7 @@ Scope {
     property bool isSway: false
     property string kbLayout: "US"
     property int connectedScreenCount: 1
+    property bool dualAuthAvailable: false
 
     readonly property bool isDesktop: UPower.displayDevice.ready ? !UPower.displayDevice.isLaptopBattery : SystemInfo.isDesktop
     readonly property int batCap: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
@@ -53,6 +54,7 @@ Scope {
         SystemInfo.fetch();
         root.updateDeInfo();
         root.updateScreenCount();
+        pamConfigCheck.running = true;
     }
 
     Connections {
@@ -81,6 +83,15 @@ Scope {
             kbWaiter.running = false;
             kbPoller.running = false;
             if (rootLock.locked) kbPoller.running = true;
+        }
+    }
+
+    Process {
+        id: pamConfigCheck
+        command: ["test", "-f", "/etc/pam.d/quickshell-fprint"]
+        onExited: (exitCode) => {
+            root.dualAuthAvailable = (exitCode === 0);
+            pamPassword.config = root.dualAuthAvailable ? "quickshell-password" : "quickshell";
         }
     }
 
@@ -192,7 +203,7 @@ Scope {
         lockUI.authenticating = false;
         lockUI.statusText = I18n.t("lock.status.locked");
         rootLock.locked = true;
-        pamActionTimer.start();
+        if (root.dualAuthAvailable) fingerprintRetryTimer.start();
         kbPollerRestartTimer.restart();
     }
 
@@ -234,18 +245,49 @@ Scope {
         property string statusText: I18n.t("lock.status.locked")
     }
 
-    Timer {
-        id: pamActionTimer
+        Timer {
+        id: fingerprintRetryTimer
         interval: 350
         onTriggered: {
-            if (rootLock.locked) {
-                pam.start();
+            if (!rootLock.locked || root.isUnlocking || !root.dualAuthAvailable) return;
+            if (!pamFingerprint.start()) {
+                fingerprintRetryTimer.start();
             }
         }
     }
 
     PamContext {
-        id: pam
+        id: pamFingerprint
+        config: "quickshell-fprint"
+
+        onPamMessage: {
+            if (pamFingerprint.message !== "") {
+                lockUI.statusText = pamFingerprint.messageIsError
+                    ? I18n.t("lock.status.fingerprint_retry")
+                    : pamFingerprint.message;
+            }
+        }
+
+        onCompleted: (result) => {
+            if (result === PamResult.Success) {
+                root.finishUnlock();
+            } else if (root.dualAuthAvailable) {
+                fingerprintRetryTimer.start();
+            }
+        }
+    }
+
+    PamContext {
+        id: pamPassword
+        config: "quickshell"
+        property string pendingPassword: ""
+
+        onResponseRequiredChanged: {
+            if (responseRequired && pendingPassword !== "") {
+                respond(pendingPassword);
+                pendingPassword = "";
+            }
+        }
 
         onCompleted: (result) => {
             lockUI.authenticating = false;
@@ -254,7 +296,6 @@ Scope {
             } else {
                 lockUI.failed = true;
                 lockUI.statusText = I18n.t("lock.status.access_denied");
-                pamActionTimer.start();
             }
         }
     }
@@ -265,10 +306,10 @@ Scope {
         onExited: {
             SystemInfo.fetch();
             root.updateDeInfo();
-            pamActionTimer.restart();
             kbPollerRestartTimer.restart();
-            if (rootLock.locked) {
-                pam.start();
+            if (rootLock.locked && root.dualAuthAvailable) {
+                fingerprintRetryTimer.restart();
+                pamFingerprint.start();
             }
         }
     }
@@ -1520,11 +1561,12 @@ Scope {
                                                 isRevealed: !lockSettings.hidePassword
 
                                                 onAccepted: (finalText) => {
-                                                    if (finalText.length > 0 && pam.responseRequired && !lockUI.authenticating) {
+                                                    if (finalText.length > 0 && !lockUI.authenticating) {
                                                         lockUI.authenticating = true;
                                                         lockUI.statusText = I18n.t("lock.status.authenticating");
                                                         lockUI.failed = false;
-                                                        pam.respond(finalText);
+                                                        pamPassword.pendingPassword = finalText;
+                                                        pamPassword.start();
                                                     }
                                                 }
 
