@@ -82,11 +82,13 @@ Rectangle {
         function onBarPositionChanged() {
             TrayMenuController.hide();
         }
-        function onIsRevealedChanged() {
-            if (barWindow && !barWindow.isRevealed) {
+	function onIsRevealedChanged() {
+            if (barWindow && !barWindow.isRevealed && !TrayMenuController.menuHovered) {
                 TrayMenuController.hide();
-            }
+	     }
+	
         }
+
     }
 
     color: "transparent"
