@@ -656,6 +656,16 @@
         "pomo_skipped_focus_body": "Focus session skipped. Moving to break.",
         "pomo_skipped_break_body": "Break skipped. Moving back to focus."
       }
+    },
+    "notepad": {
+      "title": "Notes",
+      "new": "+ New",
+      "back_to_list": "← List",
+      "empty_list": "No notes.\nTap + New to get started.",
+      "untitled": "Untitled note",
+      "tap_to_write": "Tap to write...",
+      "placeholder": "Write here...",
+      "click_to_edit": "Click anywhere to edit"
     }
   },
   "screenshot": {

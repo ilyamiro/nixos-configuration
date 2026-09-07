@@ -24,6 +24,7 @@ WidgetRedactor 1.0 widgets/WidgetRedactor.qml
 Polkit 1.0 polkit/Polkit.qml
 singleton PolkitService 1.0 polkit/PolkitService.qml
 singleton NotificationManager 1.0 notifications/NotificationManager.qml
+singleton NotesManager 1.0 singletons/NotesManager.qml
 
 singleton Audio 1.0 singletons/audio/Audio.qml
 singleton Cava 1.0 singletons/audio/Cava.qml
