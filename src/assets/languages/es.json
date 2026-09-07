@@ -578,7 +578,8 @@
       "locked": "Bloqueado",
       "access_denied": "Acceso denegado",
       "authenticating": "Autenticando...",
-      "enter_pin": "Introduce el PIN"
+      "enter_pin": "Introduce el PIN",
+      "fingerprint_retry": "Huella no reconocida, inténtalo de nuevo"
     },
     "power": {
       "suspend": "Suspender",

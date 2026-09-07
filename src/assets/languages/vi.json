@@ -534,7 +534,8 @@
       "locked": "Đã khóa",
       "access_denied": "Truy cập bị từ chối",
       "authenticating": "Đang xác thực...",
-      "enter_pin": "Nhập mã PIN"
+      "enter_pin": "Nhập mã PIN",
+      "fingerprint_retry": "Không nhận dạng được vân tay, vui lòng thử lại"
     },
     "power": {
       "suspend": "Ngủ",

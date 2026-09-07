@@ -578,7 +578,8 @@
       "locked": "Gesperrt",
       "access_denied": "Zugriff verweigert",
       "authenticating": "Authentifizierung läuft...",
-      "enter_pin": "PIN eingeben"
+      "enter_pin": "PIN eingeben",
+      "fingerprint_retry": "Fingerabdruck nicht erkannt, bitte erneut versuchen"
     },
     "power": {
       "suspend": "Standby",

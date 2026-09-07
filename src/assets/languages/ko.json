@@ -534,7 +534,8 @@
       "locked": "잠김",
       "access_denied": "접근이 거부되었습니다",
       "authenticating": "인증 중...",
-      "enter_pin": "PIN 입력"
+      "enter_pin": "PIN 입력",
+      "fingerprint_retry": "지문이 인식되지 않았습니다. 다시 시도해주세요"
     },
     "power": {
       "suspend": "절전",

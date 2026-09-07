@@ -578,7 +578,8 @@
       "locked": "Заблокировано",
       "access_denied": "Отказано в доступе",
       "authenticating": "Аутентификация...",
-      "enter_pin": "Введите PIN"
+      "enter_pin": "Введите PIN",
+      "fingerprint_retry": "Отпечаток не распознан, попробуйте ещё раз"
     },
     "power": {
       "suspend": "Сон",
